@@ -1,0 +1,88 @@
+# =========================
+
+# Python / FastAPI
+
+# =========================
+
+**pycache**/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+
+venv/
+.env
+.venv/
+
+# Python Packaging
+
+build/
+dist/
+*.egg-info/
+
+# Logs
+
+*.log
+
+# Testing
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+
+.vscode/
+.idea/
+
+# macOS
+
+.DS_Store
+
+# =========================
+
+# React / Vite
+
+# =========================
+
+frontend/node_modules/
+frontend/dist/
+
+# Environment Variables
+
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# Vite Cache
+
+frontend/.vite/
+
+# =========================
+
+# Misc
+
+# =========================
+
+*.swp
+*.swo
+*.tmp
+
+# =========================
+
+# Database
+
+# =========================
+
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+
+# Secrets
+
+# =========================
+
+.env.*
+!.env.example
