@@ -1,5 +1,6 @@
 # Favorite Language
-- Python
+- Aaron's Favorite Programming language is Python.
+- He has a year of experience with Python.
 
 # Programming Languages
 

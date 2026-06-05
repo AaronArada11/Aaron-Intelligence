@@ -40,7 +40,6 @@ def chat(request: ChatRequest):
     - Education
     - Experience
     - Leadership
-    - Achievements
 
     Rules:
     - Use only the provided knowledge base.

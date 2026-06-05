@@ -43,3 +43,7 @@ Unlike traditional chatbots that answer general-purpose questions, Aaron Intelli
 The chatbot uses a Retrieval-Augmented Generation (RAG) architecture to retrieve information from Aaron's personal knowledge base, including project documentation, experience, education, technical skills, and achievements. This enables it to provide accurate, context-aware responses while remaining up to date as new projects and experiences are added.
 
 Aaron Intelligence serves as both a portfolio project that demonstrates full-stack AI engineering skills and a practical tool for showcasing Aaron's work in an engaging and interactive way.
+
+---
+# What Remote Options is Aaron Open to?
+As a student Aaron is currently open to Remote or Hybrid Workplaces.
