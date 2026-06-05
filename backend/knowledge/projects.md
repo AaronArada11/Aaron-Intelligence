@@ -10,7 +10,7 @@ Tech Stack:
 - Vercel
 
 Description:
-Mirror Mentor is an AI-powered educational platform built during ACM TechSprint: Asteria.
+Mirror Mentor is an AI-powered code reviewer educational platform built during ACM TechSprint: Asteria.
 
 Contributions:
 - Built 17 REST API endpoints
