@@ -54,32 +54,41 @@ The chatbot uses Google's Gemini model and a custom knowledge base built from st
 
 ## Project Structure
 
-```text
+```
 Aaron Intelligence (AI)
-├── backend
-│   ├── knowledge
-│   │   ├── about.md
-│   │   ├── achievements.md
-│   │   ├── education.md
-│   │   ├── experience.md
-│   │   ├── faq.md
-│   │   ├── projects.md
-│   │   └── skills.md
-│   ├── knowledge_loader.py
-│   ├── main.py
-│   └── .env
-│
-├── frontend
-│   ├── public
-│   ├── src
-│   │   ├── components
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   └── package.json
-│
-├── requirements.txt
-├── README.md
-└── .gitignore
+├──backend
+│   ├──knowledge
+│   │   ├──about.md
+│   │   ├──achievements.md
+│   │   ├──education.md
+│   │   ├──experience.md
+│   │   ├──faq.md
+│   │   ├──projects.md
+│   │   └──skills.md
+│   ├──knowledge_loader.py
+│   └──main.py
+├──frontend
+│   ├──public
+│   ├──src
+│   │   ├──assets
+│   │   ├──components
+│   │   │   ├──ChatInput.jsx
+│   │   │   ├──ChatWindow.jsx
+│   │   │   └──MessageBubble.jsx
+│   │   ├──App.css
+│   │   ├──App.jsx
+│   │   ├──index.css
+│   │   └──main.jsx
+│   ├──eslint.config.js
+│   ├──index.html
+│   ├──package-lock.json
+│   ├──package.json
+│   ├──README.md
+│   ├──vite.config.js
+│   └──.gitignore
+├──README.md
+├──requirements.txt
+└──.gitignore
 ```
 
 ---
