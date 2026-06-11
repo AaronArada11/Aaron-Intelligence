@@ -22,7 +22,6 @@ Aaron has worked on:
 These projects involve AI integration using Google's Gemini API.
 
 - AlgoVisualizer
-- 
 
 ---
 

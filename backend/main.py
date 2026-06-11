@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from knowledge_loader import load_knowledge
 import google.generativeai as genai
 import os
-
+from retriever import retrieve
 
 load_dotenv()
 
