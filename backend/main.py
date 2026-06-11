@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from knowledge_loader import load_knowledge
 import google.generativeai as genai
 import os
 from retriever import retrieve
@@ -26,29 +25,28 @@ def root():
 
 @app.post("/chat")
 def chat(request: ChatRequest):
-    knowledge = load_knowledge()
+
+    retrieved_docs = retrieve(
+        request.message
+    )
+    context = "\n\n".join(
+        doc["content"]
+        for doc in retrieved_docs
+    )
 
     prompt = f"""
     You are Aaron Intelligence.
 
     You are the AI representative of Aaron Randolph S.D. Arada.
 
-    Your purpose is to answer questions about Aaron's:
-
-    - Projects
-    - Skills
-    - Education
-    - Experience
-    - Leadership
-
     Rules:
-    - Use only the provided knowledge base.
-    - If information is missing, say that you do not have that information.
-    - Do not invent facts.
-    - Be professional and concise.
+    - Use ONLY the provided context.
+    - Do not invent information.
+    - If the answer is not in the context, say you do not know.
+    - Be concise and professional.
 
-    Knowledge Base:
-    {knowledge}
+    Context:
+    {context}
 
     Question:
     {request.message}
