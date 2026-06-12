@@ -70,7 +70,7 @@ function Chat({ onClose }) {
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
-          <h1 className="text-sm font-semibold tracking-tight text-white">Aaron Intelligence</h1>
+          <h1 className="text-sm font-semibold tracking-tight text-white">Aaron Intelligence "AI"</h1>
           <p className="text-[10px] text-gray-400">AI representative</p>
         </div>
         <button
