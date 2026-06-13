@@ -2,10 +2,12 @@ import { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Send, Bot, User, Sparkles, X } from 'lucide-react'
+import { useTheme } from './ThemeContext'
 
 const API_URL = '/chat'
 
 function Chat({ onClose }) {
+  useTheme()
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
@@ -64,9 +66,9 @@ function Chat({ onClose }) {
   }
 
   return (
-    <div className="fixed bottom-24 right-6 z-50 w-[320px] h-[400px] flex flex-col rounded-2xl overflow-hidden bg-gray-950 text-gray-100 shadow-2xl shadow-black/50 border border-emerald-800">
-      <header className="flex items-center gap-3 px-4 py-3 border-b border-emerald-800/60 bg-gray-900/80">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-300 to-emerald-900 shadow-lg shadow-emerald-500/20">
+    <div className="fixed bottom-24 right-6 z-50 w-[320px] h-[400px] flex flex-col rounded-2xl overflow-hidden bg-gray-950 text-gray-100 shadow-2xl shadow-black/50 border border-[var(--ctp-accent)]">
+      <header className="flex items-center gap-3 px-4 py-3 border-b border-[var(--ctp-accent)] bg-gray-900/80">
+        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--ctp-accent)] shadow-lg">
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
@@ -89,7 +91,7 @@ function Chat({ onClose }) {
               className={`flex gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role === 'assistant' && (
-                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-emerald-300 to-emerald-900 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-accent)] flex items-center justify-center shadow-lg">
                   <Bot className="w-3.5 h-3.5 text-white" />
                 </div>
               )}
@@ -98,7 +100,7 @@ function Chat({ onClose }) {
                 className={`px-4 py-2.5 rounded-2xl max-w-[80%] text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-blue-600 text-white rounded-br-sm'
-                    : 'bg-gray-800 border border-emerald-700 text-gray-100 rounded-bl-sm'
+                    : 'bg-gray-800 border border-[var(--ctp-accent)] text-gray-100 rounded-bl-sm'
                 }`}
               >
                 {msg.role === 'assistant' ? (
@@ -108,8 +110,8 @@ function Chat({ onClose }) {
                     prose-ul:my-1 prose-ol:my-1
                     prose-li:my-0.5
                     prose-code:text-blue-300 prose-code:bg-gray-700 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-[11px] prose-code:before:content-none prose-code:after:content-none
-                    prose-pre:bg-gray-900 prose-pre:border prose-pre:border-emerald-700 prose-pre:rounded-lg prose-pre:p-3 prose-pre:text-xs
-                    prose-blockquote:border-l-emerald-500 prose-blockquote:text-gray-300">
+                    prose-pre:bg-gray-900 prose-pre:border prose-pre:border-[var(--ctp-accent)] prose-pre:rounded-lg prose-pre:p-3 prose-pre:text-xs
+                    prose-blockquote:border-l-[var(--ctp-accent)] prose-blockquote:text-gray-300">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {msg.content}
                     </ReactMarkdown>
@@ -129,10 +131,10 @@ function Chat({ onClose }) {
 
           {isLoading && (
             <div className="flex gap-2.5 justify-start">
-              <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-emerald-300 to-emerald-900 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-accent)] flex items-center justify-center shadow-lg">
                 <Bot className="w-3.5 h-3.5 text-white" />
               </div>
-              <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-gray-800 border border-emerald-700">
+              <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-gray-800 border border-[var(--ctp-accent)]">
                 <div className="flex gap-1.5 items-center">
                   <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce [animation-delay:-0.3s]" />
                   <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce [animation-delay:-0.15s]" />
@@ -146,7 +148,7 @@ function Chat({ onClose }) {
         </div>
       </main>
 
-      <footer className="border-t border-emerald-800/60 bg-gray-900/80 px-4 py-3">
+      <footer className="border-t border-[var(--ctp-accent)] bg-gray-900/80 px-4 py-3">
         {error && (
           <div className="mb-2 px-3 py-2 rounded-lg bg-red-900/30 border border-red-700/50 text-red-300 text-xs">
             {error}
@@ -161,14 +163,14 @@ function Chat({ onClose }) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={isLoading}
-            className="flex-1 bg-gray-800 border border-emerald-700 rounded-xl px-3 py-2.5 pr-12 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-gray-800 border border-[var(--ctp-accent)] rounded-xl px-3 py-2.5 pr-12 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
             className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-colors disabled:shadow-none ${
               input.trim()
-                ? 'bg-gradient-to-br from-emerald-300 to-emerald-900 text-white hover:shadow-emerald-500/30'
+                ? 'bg-[var(--ctp-accent)] text-white shadow-lg'
                 : 'bg-gray-700 text-gray-500'
             }`}
           >
