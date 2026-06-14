@@ -10,7 +10,7 @@ export function Footer() {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span className="font-mono text-sm" style={{ color: "var(--ctp-subtext0)" }}>~/</span>
-            <span className="font-mono text-sm" style={{ color: "var(--ctp-subtext0)" }}>© 2026 Jason Cameron</span>
+            <span className="font-mono text-sm" style={{ color: "var(--ctp-subtext0)" }}>© 2026 Aaron Arada</span>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
@@ -42,9 +42,8 @@ export function Footer() {
 
         <div className="flex gap-3">
           {[
-             { icon: FolderGit2, href: "https://github.com/jasoncameron", label: "GitHub"   },
-             { icon: User,   href: "https://linkedin.com", label: "LinkedIn" },
-             { icon: Globe,  href: "https://twitter.com",  label: "Twitter"  },
+             { icon: FolderGit2, href: "https://github.com/AaronArada11", label: "GitHub"   },
+             { icon: User,   href: "https://www.linkedin.com/in/aaronarada/", label: "LinkedIn" },
           ].map(({ icon: Icon, href, label }) => (
             <a
               key={label}

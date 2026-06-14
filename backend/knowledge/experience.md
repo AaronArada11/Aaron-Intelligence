@@ -8,7 +8,6 @@ March 2026
 
 Responsibilities:
 - Co-led accreditation and launch efforts
-- Organized cloud-computing learning initiatives
 - Coordinated with student organizations and faculty
 
 Focus Areas:
