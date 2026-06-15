@@ -36,18 +36,16 @@ def chat(request: ChatRequest):
             f"{doc['source']} | Similarity: {doc['similarity']:.4f}"
         )
 
-    top_similarity = retrieved_docs[0]["similarity"]
-
-    if top_similarity < 0.50:
+    if (
+    not retrieved_docs
+    or retrieved_docs[0]["similarity"] < 0.25
+    ):
         return {
-            "answer": (
-                "Sorry, I can't help with that. "
-                "I'm Aaron Intelligence, a portfolio chatbot focused "
-                "exclusively on Aaron Randolph S.D. Arada. "
-                "Feel free to ask about Aaron's projects, skills, "
-                "experience, education, achievements, interests, "
-                "or career goals."
-            )
+        "answer": (
+            "Sorry, I can't help with that. "
+            "I'm Aaron Intelligence, a portfolio chatbot focused "
+            "exclusively on Aaron Randolph S.D. Arada."
+        )
         }
 
     context = "\n\n".join(
@@ -73,6 +71,8 @@ def chat(request: ChatRequest):
     - Aaron's interests
     - Aaron's leadership experience
     - Aaron's career goals
+
+    If a user refers to Aaron using pronouns such as he, him, his, the student, the developer, the creator, or the candidate, treat those references as Aaron Randolph S.D. Arada.
 
     Rules:
     - Use ONLY the provided context.

@@ -1,4 +1,4 @@
-import { User, Globe, FolderGit2 } from "lucide-react";
+import { User, Globe, FolderGit2, Mail } from "lucide-react";
 
 function GoldLink({ href, children }) {
   return (
@@ -17,7 +17,7 @@ function GoldLink({ href, children }) {
 
 export function Hero() {
   return (
-    <section style={{ background: "var(--ctp-base)" }} className="px-6 pt-20 pb-24">
+    <section style={{ background: "var(--ctp-base)" }} className="px-6 pt-20 ">
       <div className="max-w-4xl mx-auto">
         {/* Heading */}
         <h1
@@ -25,7 +25,7 @@ export function Hero() {
           style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)", color: "var(--ctp-text)" }}
         >
           Hi! I'm{" "}
-          <span style={{ color: "var(--ctp-accent)" }}>Aaron Randolph Arada</span>
+          <span style={{ color: "var(--ctp-accent)" }}>Aaron Arada</span>
         </h1>
 
         {/* Body */}
@@ -42,6 +42,7 @@ export function Hero() {
           {[
             { icon: <FolderGit2 size={14} />, label: "GitHub", href: "https://github.com/AaronArada11" },
             { icon: <User size={14} />, label: "LinkedIn", href: "https://www.linkedin.com/in/aaronarada/" },
+            {icon: <Mail size={14} />, label: "Email",href: "mailto:aaronarada011@gmail.com" }
           ].map((item, i) => (
             <span key={item.label} className="flex items-center">
               {i > 0 && (

@@ -38,7 +38,7 @@ Tech Stack:
 - PayMongo
 
 Description:
-Collaborative AI-powered workspace platform for document management and research collaboration.
+AI-powered collaborative study workspace where students can upload files, create shared workspaces, and collaborate with others. Each workspace acts as a shared knowledge environment where an AI assistant can answer questions, summarize content, and explain concepts based on uploaded materials.
 
 Features:
 - Real-time collaboration

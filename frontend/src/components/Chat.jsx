@@ -11,7 +11,7 @@ function Chat({ onClose }) {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Hello! I\'m Aaron Intelligence, the AI representative of Aaron Randolph S.D. Arada. How can I help you today?'
+      content: 'Hello! I\'m Aaron Intelligence, the AI representative of Aaron Randolph S.D. Arada. Feel free to ask questions about Aaron.'
     }
   ])
   const [input, setInput] = useState('')
@@ -111,7 +111,8 @@ function Chat({ onClose }) {
                     prose-li:my-0.5
                     prose-code:text-blue-300 prose-code:bg-gray-700 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-[11px] prose-code:before:content-none prose-code:after:content-none
                     prose-pre:bg-gray-900 prose-pre:border prose-pre:border-[var(--ctp-accent)] prose-pre:rounded-lg prose-pre:p-3 prose-pre:text-xs
-                    prose-blockquote:border-l-[var(--ctp-accent)] prose-blockquote:text-gray-300">
+                    prose-blockquote:border-l-[var(--ctp-accent)] prose-blockquote:text-gray-300
+                    prose-a:break-words prose-a:overflow-wrap-anywhere">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {msg.content}
                     </ReactMarkdown>

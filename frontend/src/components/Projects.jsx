@@ -1,23 +1,41 @@
-import { ExternalLink, FolderGit2, Shield, BarChart2 } from "lucide-react";
+import { ExternalLink, FolderGit2, Bot, BarChart2, MirrorRectangular, Notebook } from "lucide-react";
 
 const projects = [
   {
-    name: "Anubis",
+    name: "Aaron Intelligence",
     description:
-      "HTTP proof-of-work bot defense tool. Protects web services from scrapers and bots using client-side proof-of-work challenges.",
-    tags: ["Go", "HTTP", "Security", "Bot Defense"],
-    accentColor: "#f9e2af",
-    icon: Shield,
-    github: "https://github.com/TecharoHQ/anubis",
+      "Personalized AI-powered portfolio chatbot designed to act as an interactive digital representative of Aaron Randolph S.D. Arada. Built using a Retrieval-Augmented Generation (RAG) architecture that retrieves information from a personal knowledge base and generates context-aware responses about Aaron's projects, skills, education, experience, and career goals.",
+    tags: ["Gemini", "React", "Supabase", "FastAPI"],
+    accentColor: "var(--ctp-accent)",
+    icon: Bot,
+    github: "https://github.com/AaronArada11/Aaron-Intelligence",
   },
   {
-    name: "Abacus",
+    name: "AlgoVisualizer",
     description:
-      "Scalable Golang/Redis page-view counter. Powers the view counter on this very site with minimal overhead.",
-    tags: ["Go", "Redis", "Scalable", "Analytics"],
-    accentColor: "#89b4fa",
+      "Interactive algorithm visualization platform designed to help students and developers understand fundamental computer science concepts through real-time animations and visual feedback.",
+    tags: ["JavaScript", "TypeScript", "React"],
+    accentColor: "var(--ctp-accent)",
     icon: BarChart2,
-    github: "https://github.com/jasoncameron/abacus",
+    github: "https://github.com/AaronArada11/AlgoVisualizer",
+  },
+  {
+    name: "Mirror Mentor",
+    description:
+      "AI-powered educational platform that helps students improve programming skills through guided Socratic questioning instead of direct answers. Built during ACM TechSprint: Asteria",
+    tags: ["Gemini", "Supabase", "FastAPI", "Vercel"],
+    accentColor: "var(--ctp-accent)",
+    icon: MirrorRectangular,
+    github: "https://github.com/Goodness-Gracious-GG/demo",
+  },
+  {
+    name: "Scriptorium",
+    description:
+      "AI-powered collaborative study workspace where students can upload files, create shared workspaces, and collaborate with others. Each workspace acts as a shared knowledge environment where an AI assistant can answer questions, summarize content, and explain concepts based on uploaded materials.",
+    tags: ["Next.js", "Convex", "Clerk", "Gemini API", "PayMongo", "TailwindCSS"],
+    accentColor: "var(--ctp-accent)",
+    icon: Notebook,
+    github: "https://github.com/AaronArada11/Scriptorium",
   },
 ];
 
@@ -26,10 +44,10 @@ export function Projects() {
     <section
       id="projects"
       className="py-16 px-6"
-      style={{ background: "var(--ctp-mantle)", borderTop: "1px solid var(--ctp-surface0)" }}
+      style={{ background: "var(--ctp-base)" }}
     >
       <div className="max-w-4xl mx-auto">
-        <p className="font-mono text-xs mb-6 uppercase tracking-widest" style={{ color: "var(--ctp-accent)" }}>
+        <p className="font-mono text-s mb-6 tracking-widest" style={{ color: "var(--ctp-accent)", }}>
           $ ls ~/projects
         </p>
 
@@ -41,6 +59,8 @@ export function Projects() {
                 key={p.name}
                 className="rounded-lg p-6 group hover:scale-[1.01] transition-transform"
                 style={{ background: "var(--ctp-base)", border: "1px solid var(--ctp-surface0)" }}
+                onMouseEnter={(e) => e.currentTarget.style.outline = "1px solid var(--ctp-accent)"}
+                onMouseLeave={(e) => e.currentTarget.style.outline = "none"}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">

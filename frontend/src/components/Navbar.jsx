@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Menu, X, Palette } from "lucide-react";
 import { ThemeSelector } from "./ThemeSelector";
+import { TextType }from './TextType';
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -21,7 +22,16 @@ export function Navbar() {
         {/* Logo */}
         <a href="#" className="flex items-center gap-1.5 font-mono text-sm" style={{ color: "var(--ctp-text)" }}>
           ~/
-          <span className="w-3.5 h-3.5 rounded-sm" style={{ background: "var(--ctp-accent)" }} />
+          <TextType
+            texts={[""]}
+            typingSpeed={20}
+            deletingSpeed={15}
+            pauseDuration={1500}
+            showCursor
+            cursorCharacter="▎"
+            cursorBlinkDuration={1}
+            loop
+          />
         </a>
 
         {/* Desktop nav */}
