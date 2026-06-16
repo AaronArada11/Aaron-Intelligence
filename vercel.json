@@ -1,27 +1,11 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "npm --prefix frontend ci && npm --prefix frontend run build",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
     {
-      "src": "public/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "backend/main.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/favicon.ico",
-      "dest": "/public/favicon.ico"
-    },
-    {
-      "src": "/favicon.png",
-      "dest": "/public/favicon.png"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "backend/main.py"
+      "source": "/chat",
+      "destination": "/api/chat"
     }
   ]
 }
