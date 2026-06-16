@@ -84,7 +84,7 @@ export function Dashboard() {
           {/* Let's Connect */}
           <Card>
             <div className="flex items-center gap-2 mb-1">
-              <Calendar size={13} style={{ color: "var(--ctp-green)" }} />
+              <Calendar size={13} style={{ color: "var(--ctp-accent)" }} />
               <SectionLabel>Let's Connect</SectionLabel>
             </div>
             <p className="font-mono text-sm leading-relaxed mb-4" style={{ color: "var(--ctp-subtext1)" }}>
@@ -95,7 +95,7 @@ export function Dashboard() {
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 px-4 py-2 rounded font-mono text-sm hover:opacity-80 transition-opacity"
-              style={{ background: "var(--ctp-green)", color: "var(--ctp-base)" }}
+              style={{ background: "var(--ctp-accent)", color: "var(--ctp-base)" }}
             >
               <ExternalLink size={13} />
               Book on Cal.com
@@ -134,30 +134,7 @@ export function Dashboard() {
             </div>
           </Card>
 
-          {/* Language Breakdown */}
-          <Card>
-            <SectionLabel>Language Breakdown</SectionLabel>
-            <div className="flex h-2.5 rounded-full overflow-hidden mb-4">
-              {langBreakdown.map((l) => (
-                <div
-                  key={l.lang}
-                  style={{ width: `${l.pct}%`, background: l.color }}
-                  title={`${l.lang}: ${l.pct}%`}
-                />
-              ))}
-            </div>
-            <div className="space-y-2">
-              {langBreakdown.map((l) => (
-                <div key={l.lang} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{ background: l.color }} />
-                    <span className="font-mono" style={{ fontSize: "0.75rem", color: "var(--ctp-subtext1)" }}>{l.lang}</span>
-                  </div>
-                  <span className="font-mono" style={{ fontSize: "0.75rem", color: "var(--ctp-subtext0)" }}>{l.pct}%</span>
-                </div>
-              ))}
-            </div>
-          </Card>
+          
 
           {/* Recent Commits */}
           <Card className="md:col-span-2">

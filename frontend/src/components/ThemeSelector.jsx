@@ -1,8 +1,8 @@
 import { useTheme, flavors, accentList } from "./ThemeContext";
 
 const flavourLabels = [
-  { key: "latte", label: "Latte" },
-  { key: "frappe", label: "Frappé" },
+  { key: "nimbus", label: "Nimbus" },
+  { key: "sage", label: "Sage" },
   { key: "neptune", label: "Neptune" },
   { key: "abyss", label: "Abyss" },
 ];

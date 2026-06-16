@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 
 const flavors = {
-  latte: {
+  nimbus: {
     base: "#eff1f5", mantle: "#e6e9ef", crust: "#dce0e8",
     text: "#4c4f69", subtext1: "#5c5f77", subtext0: "#6c6f85",
     overlay2: "#7c7f93", overlay1: "#8c8fa1", overlay0: "#9ca0b0",
@@ -12,8 +12,8 @@ const flavors = {
     teal: "#179299", sky: "#04a5e5", sapphire: "#209fb5",
     blue: "#1e66f5", lavender: "#7287fd",
   },
-  frappe: {
-    base: "#303446", mantle: "#292c3c", crust: "#232634",
+  sage: {
+    base: "#1A231F", mantle: "#141C18", crust: "#0D1310",
     text: "#c6d0f5", subtext1: "#b5bfe2", subtext0: "#a5adce",
     overlay2: "#949cbb", overlay1: "#838ba7", overlay0: "#737994",
     surface2: "#626880", surface1: "#51576d", surface0: "#414559",
