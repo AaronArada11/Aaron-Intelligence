@@ -1,14 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import google.generativeai as genai
-import os
 from retriever import retrieve
 
 load_dotenv()
-
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 app = FastAPI()
 
@@ -31,9 +28,12 @@ def root():
 @app.post("/chat")
 def chat(request: ChatRequest):
 
-    retrieved_docs = retrieve(
-        request.message
-    )
+    try:
+        retrieved_docs = retrieve(
+            request.message
+        )
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
     
     print("\nRetrieved Documents:")
     for doc in retrieved_docs:

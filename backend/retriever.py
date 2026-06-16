@@ -1,9 +1,26 @@
 import google.generativeai as genai
 import os
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+_CONFIGURED = False
+
+
+def configure_genai():
+    global _CONFIGURED
+
+    if _CONFIGURED:
+        return
+
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("Missing GEMINI_API_KEY environment variable")
+
+    genai.configure(api_key=api_key)
+    _CONFIGURED = True
+
 
 def retrieve(question):
+    configure_genai()
+
     result = genai.embed_content(
         model="models/embedding-001",
         content=question
