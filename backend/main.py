@@ -7,11 +7,11 @@ from retriever import retrieve
 
 load_dotenv()
 
-app = FastAPI()
+fastapi_app = FastAPI()
 
 
-@app.get("/favicon.ico")
-@app.get("/favicon.png")
+@fastapi_app.get("/favicon.ico")
+@fastapi_app.get("/favicon.png")
 def favicon():
     return Response(status_code=204)
 
@@ -20,13 +20,13 @@ class ChatRequest(BaseModel):
     message: str
 
 
-@app.get("/")
+@fastapi_app.get("/")
 def root():
     return {"message": "Aaron Intelligence is running"}
 
 
-@app.post("/chat")
-@app.post("/api/chat")
+@fastapi_app.post("/chat")
+@fastapi_app.post("/api/chat")
 def chat(request: ChatRequest):
 
     try:
