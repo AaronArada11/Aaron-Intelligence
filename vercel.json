@@ -2,11 +2,19 @@
   "version": 2,
   "builds": [
     {
+      "src": "public/**",
+      "use": "@vercel/static"
+    },
+    {
       "src": "backend/main.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
+    {
+      "src": "/favicon.png",
+      "dest": "/public/favicon.png"
+    },
     {
       "src": "/(.*)",
       "dest": "backend/main.py"
