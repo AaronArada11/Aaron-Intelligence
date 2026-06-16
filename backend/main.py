@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import Response
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import google.generativeai as genai
@@ -9,9 +10,13 @@ load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("gemini-2.5-flash")
-
 app = FastAPI()
+
+
+@app.get("/favicon.ico")
+@app.get("/favicon.png")
+def favicon():
+    return Response(status_code=204)
 
 
 class ChatRequest(BaseModel):
@@ -52,6 +57,8 @@ def chat(request: ChatRequest):
         doc["content"]
         for doc in retrieved_docs
     )
+
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     prompt = f"""
     You are Aaron Intelligence.

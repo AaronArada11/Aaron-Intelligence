@@ -5,9 +5,11 @@ import re
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-from supabase_client import supabase
+from supabase_client import get_supabase
 
-knowledge_dir = Path("knowledge")
+supabase = get_supabase()
+
+knowledge_dir = Path(__file__).parent / "knowledge"
 
 for file in knowledge_dir.glob("*.md"):
     text = file.read_text(encoding="utf-8")

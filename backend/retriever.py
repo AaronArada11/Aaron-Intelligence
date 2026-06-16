@@ -10,9 +10,9 @@ def retrieve(question):
     )
     query_embedding = result["embedding"]
 
-    from supabase_client import supabase
+    from supabase_client import get_supabase
 
-    results = supabase.rpc(
+    results = get_supabase().rpc(
         "match_documents",
         {
             "query_embedding": query_embedding,
