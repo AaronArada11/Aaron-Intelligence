@@ -18,7 +18,7 @@ export function Navbar() {
       className="sticky top-0 z-50"
       style={{ background: "var(--ctp-mantle)", borderBottom: "1px solid var(--ctp-surface0)" }}
     >
-      <div className="max-w-4xl mx-auto px-6 flex items-center justify-between h-12">
+      <div className="max-w-4xl mx-auto px-20 flex items-center justify-between h-12">
         {/* Logo */}
         <a href="#" className="flex items-center gap-1.5 font-mono text-sm" style={{ color: "var(--ctp-text)" }}>
           ~/
@@ -35,7 +35,7 @@ export function Navbar() {
         </a>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-5">
+        <div className="hidden md:flex items-center gap-10">
           {navLinks.map((l) => (
             <a
               key={l.label}

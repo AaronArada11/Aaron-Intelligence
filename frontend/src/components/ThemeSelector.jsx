@@ -3,8 +3,8 @@ import { useTheme, flavors, accentList } from "./ThemeContext";
 const flavourLabels = [
   { key: "latte", label: "Latte" },
   { key: "frappe", label: "Frappé" },
-  { key: "macchiato", label: "Macchiato" },
-  { key: "mocha", label: "Mocha" },
+  { key: "neptune", label: "Neptune" },
+  { key: "abyss", label: "Abyss" },
 ];
 
 export function ThemeSelector() {
