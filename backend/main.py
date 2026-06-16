@@ -1,13 +1,16 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import google.generativeai as genai
 from retriever import retrieve
+from pathlib import Path
 
 load_dotenv()
 
 fastapi_app = FastAPI()
+FRONTEND_DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
 
 
 @fastapi_app.get("/favicon.ico")
@@ -18,11 +21,6 @@ def favicon():
 
 class ChatRequest(BaseModel):
     message: str
-
-
-@fastapi_app.get("/")
-def root():
-    return {"message": "Aaron Intelligence is running"}
 
 
 @fastapi_app.post("/chat")
@@ -103,3 +101,7 @@ def chat(request: ChatRequest):
     return {
         "answer": response.text
     }
+
+
+if FRONTEND_DIST.exists():
+    fastapi_app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
