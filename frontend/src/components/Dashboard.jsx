@@ -62,44 +62,13 @@ export function Dashboard() {
 
           {/* Click counter */}
           <Card className="flex flex-col items-center justify-center text-center">
-            <MousePointer2 size={22} className="mb-3" style={{ color: "var(--ctp-accent)" }} />
-            <p className="font-mono uppercase tracking-widest mb-1" style={{ fontSize: "0.65rem", color: "var(--ctp-subtext0)" }}>
-              Global Clicks
-            </p>
-            <p className="font-mono mb-1" style={{ fontSize: "2rem", color: "var(--ctp-text)" }}>
-              {clicks.toLocaleString()}
-            </p>
-            <p className="font-mono mb-4" style={{ fontSize: "0.7rem", color: "var(--ctp-subtext0)" }}>
-              completely pointless, yet oddly satisfying
-            </p>
-            <button
-              onClick={() => setClicks(c => c + 1)}
-              className="px-5 py-2 rounded font-mono text-sm hover:opacity-80 transition-all active:scale-95"
-              style={{ background: "var(--ctp-accent)", color: "var(--ctp-base)" }}
-            >
-              Click me!
-            </button>
+            <SectionLabel>Theme</SectionLabel>
+            
           </Card>
 
           {/* Let's Connect */}
           <Card>
-            <div className="flex items-center gap-2 mb-1">
-              <Calendar size={13} style={{ color: "var(--ctp-accent)" }} />
-              <SectionLabel>Let's Connect</SectionLabel>
-            </div>
-            <p className="font-mono text-sm leading-relaxed mb-4" style={{ color: "var(--ctp-subtext1)" }}>
-              Want to chat about tech, open source, or potential collaborations? Book a time below.
-            </p>
-            <a
-              href="https://cal.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 px-4 py-2 rounded font-mono text-sm hover:opacity-80 transition-opacity"
-              style={{ background: "var(--ctp-accent)", color: "var(--ctp-base)" }}
-            >
-              <ExternalLink size={13} />
-              Book on Cal.com
-            </a>
+            
           </Card>
 
           {/* Location */}
@@ -128,7 +97,7 @@ export function Dashboard() {
                   className="font-mono rounded px-2 py-0.5"
                   style={{ fontSize: "0.65rem", background: "var(--ctp-mantle)", color: "var(--ctp-subtext0)" }}
                 >
-                  Toronto, ON 🍁
+                  Manila, PH
                 </span>
               </div>
             </div>
@@ -143,22 +112,8 @@ export function Dashboard() {
               <SectionLabel>Recent Commits</SectionLabel>
             </div>
             <div className="space-y-3">
-              {recentCommits.map((c) => (
-                <div key={c.hash} className="flex items-start gap-3">
-                  <span
-                    className="font-mono rounded shrink-0 mt-0.5 px-1.5 py-0.5"
-                    style={{ fontSize: "0.65rem", background: "var(--ctp-surface0)", color: "var(--ctp-accent)" }}
-                  >
-                    {c.hash}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-mono truncate" style={{ fontSize: "0.75rem", color: "var(--ctp-text)" }}>{c.message}</p>
-                    <p className="font-mono" style={{ fontSize: "0.7rem", color: "var(--ctp-subtext0)" }}>
-                      {c.repo} · {c.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
+              
+
             </div>
           </Card>
 

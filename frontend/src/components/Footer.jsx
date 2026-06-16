@@ -18,26 +18,10 @@ export function Footer() {
               className="font-mono rounded px-2 py-0.5"
               style={{ fontSize: "0.7rem", background: "var(--ctp-surface0)", color: "var(--ctp-subtext0)" }}
             >
-              deploy: <span style={{ color: "var(--ctp-accent)" }}>a3f9c12</span>
-            </span>
-            <span
-              className="font-mono rounded px-2 py-0.5"
-              style={{ fontSize: "0.7rem", background: "var(--ctp-surface0)", color: "var(--ctp-subtext0)" }}
-            >
-              views: <span style={{ color: "var(--ctp-green)" }}>1,384,291</span>
+              views: <span style={{ color: "var(--ctp-green)" }}>(in development)</span>
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <span className="font-mono" style={{ fontSize: "0.7rem", color: "var(--ctp-subtext0)" }}>Webring:</span>
-            <a
-              href="#"
-              className="font-mono hover:opacity-70 transition-opacity"
-              style={{ fontSize: "0.7rem", color: "var(--ctp-accent)" }}
-            >
-              ← Catppuccin →
-            </a>
-          </div>
         </div>
 
         <div className="flex gap-3">
