@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import google.generativeai as genai
 from retriever import retrieve
+from mangum import Mangum
 
 load_dotenv()
 
@@ -102,3 +103,5 @@ def chat(request: ChatRequest):
     return {
         "answer": response.text
     }
+
+handler = Mangum(app)
