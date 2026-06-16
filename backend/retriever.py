@@ -1,12 +1,18 @@
-from sentence_transformers import SentenceTransformer
-from supabase_client import supabase
+import google.generativeai as genai
+import os
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def retrieve(question):
-    query_embedding = model.encode(question).tolist()
+    result = genai.embed_content(
+        model="models/embedding-001",
+        content=question
+    )
+    query_embedding = result["embedding"]
 
-    result = supabase.rpc(
+    from supabase_client import supabase
+
+    results = supabase.rpc(
         "match_documents",
         {
             "query_embedding": query_embedding,
@@ -14,5 +20,4 @@ def retrieve(question):
         }
     ).execute()
 
-    return result.data
-
+    return results.data
