@@ -13,7 +13,7 @@ export function ThemeSelector() {
   return (
     <div className="space-y-4">
       <div>
-        <p style={{ color: "var(--ctp-subtext0)" }} className="font-mono text-xs mb-2 uppercase tracking-widest">Flavor</p>
+        <p style={{ color: "var(--ctp-subtext0)" }} className="font-mono text-xs mb-2 uppercase tracking-widest">Theme</p>
         <div className="flex gap-2 flex-wrap">
           {flavourLabels.map(({ key, label }) => (
             <button
