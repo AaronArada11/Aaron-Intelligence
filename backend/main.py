@@ -6,10 +6,21 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from backend.retriever import retrieve
 from pathlib import Path
+import os
+import traceback
 
 load_dotenv()
 
+# Configure Gemini
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+if not GEMINI_API_KEY:
+    print("ERROR: GEMINI_API_KEY not found")
+
+genai.configure(api_key=GEMINI_API_KEY)
+
 fastapi_app = FastAPI()
+
 FRONTEND_DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
 FRONTEND_ASSETS = FRONTEND_DIST / "assets"
 
@@ -28,82 +39,145 @@ class ChatRequest(BaseModel):
 @fastapi_app.post("/api/chat")
 def chat(request: ChatRequest):
 
+    print("\n====================")
+    print("NEW CHAT REQUEST")
+    print("====================")
+    print("Question:", request.message)
+
+    # -------------------------
+    # Retrieval
+    # -------------------------
     try:
-        retrieved_docs = retrieve(
-            request.message
-        )
-    except RuntimeError as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
-    
-    print("\nRetrieved Documents:")
-    for doc in retrieved_docs:
-        print(
-            f"{doc['source']} | Similarity: {doc['similarity']:.4f}"
+        print("Running retriever...")
+
+        retrieved_docs = retrieve(request.message)
+
+        print(f"Retriever returned {len(retrieved_docs)} documents")
+
+        for doc in retrieved_docs:
+            print(
+                f"{doc['source']} | Similarity: {doc['similarity']:.4f}"
+            )
+
+    except Exception as exc:
+        print("RETRIEVER ERROR")
+        print(repr(exc))
+        traceback.print_exc()
+
+        raise HTTPException(
+            status_code=500,
+            detail=f"Retriever error: {str(exc)}"
         )
 
+    # -------------------------
+    # Out of scope
+    # -------------------------
     if (
-    not retrieved_docs
-    or retrieved_docs[0]["similarity"] < 0.25
+        not retrieved_docs
+        or retrieved_docs[0]["similarity"] < 0.25
     ):
+        print("Question classified as out-of-scope")
+
         return {
-        "answer": (
-            "Sorry, I can't help with that. "
-            "I'm Aaron Intelligence, a portfolio chatbot focused "
-            "exclusively on Aaron Randolph S.D. Arada."
-        )
+            "answer": (
+                "Sorry, I can't help with that. "
+                "I'm Aaron Intelligence, a portfolio chatbot focused "
+                "exclusively on Aaron Randolph S.D. Arada."
+            )
         }
 
-    context = "\n\n".join(
-        doc["content"]
-        for doc in retrieved_docs
-    )
+    # -------------------------
+    # Context Creation
+    # -------------------------
+    try:
+        context = "\n\n".join(
+            doc["content"]
+            for doc in retrieved_docs
+        )
 
-    model = genai.GenerativeModel("gemini-2.5-flash")
+        print("Context built successfully")
 
-    prompt = f"""
-    You are Aaron Intelligence.
+    except Exception as exc:
+        print("CONTEXT BUILD ERROR")
+        print(repr(exc))
+        traceback.print_exc()
 
-    You are the AI representative of Aaron Randolph S.D. Arada.
+        raise HTTPException(
+            status_code=500,
+            detail=f"Context error: {str(exc)}"
+        )
 
-    Your purpose is to help visitors, recruiters, and collaborators
-    learn about Aaron through conversation.
+    # -------------------------
+    # Gemini
+    # -------------------------
+    try:
+        print("Creating Gemini model...")
 
-    You may only answer questions related to:
+        model = genai.GenerativeModel(
+            "gemini-2.5-flash"
+        )
 
-    - Aaron's projects
-    - Aaron's skills
-    - Aaron's education
-    - Aaron's experience
-    - Aaron's achievements
-    - Aaron's interests
-    - Aaron's leadership experience
-    - Aaron's career goals
+        prompt = f"""
+You are Aaron Intelligence.
 
-    If a user refers to Aaron using pronouns such as he, him, his, the student, the developer, the creator, or the candidate, treat those references as Aaron Randolph S.D. Arada.
+You are the AI representative of Aaron Randolph S.D. Arada.
 
-    Rules:
-    - Use ONLY the provided context.
-    - Do not invent facts.
-    - Do not make assumptions.
-    - If the answer cannot be found in the context, say that you do not have that information.
-    - Keep responses professional, concise, and accurate.
-    - Do not answer general knowledge questions.
-    - Do not answer questions unrelated to Aaron.
+Your purpose is to help visitors, recruiters, and collaborators
+learn about Aaron through conversation.
 
-    Context:
-    {context}
+You may only answer questions related to:
 
-    Question:
-    {request.message}
-    """
+- Aaron's projects
+- Aaron's skills
+- Aaron's education
+- Aaron's experience
+- Aaron's achievements
+- Aaron's interests
+- Aaron's leadership experience
+- Aaron's career goals
 
-    response = model.generate_content(prompt)
+If a user refers to Aaron using pronouns such as he, him, his,
+the student, the developer, the creator, or the candidate,
+treat those references as Aaron Randolph S.D. Arada.
 
-    return {
-        "answer": response.text
-    }
+Rules:
+- Use ONLY the provided context.
+- Do not invent facts.
+- Do not make assumptions.
+- If the answer cannot be found in the context, say that you do not have that information.
+- Keep responses professional, concise, and accurate.
+- Do not answer general knowledge questions.
+- Do not answer questions unrelated to Aaron.
+
+Context:
+{context}
+
+Question:
+{request.message}
+"""
+
+        print("Calling Gemini...")
+
+        response = model.generate_content(prompt)
+
+        print("Gemini response received successfully")
+
+        return {
+            "answer": response.text
+        }
+
+    except Exception as exc:
+        print("GEMINI ERROR")
+        print(repr(exc))
+        traceback.print_exc()
+
+        raise HTTPException(
+            status_code=500,
+            detail=f"Gemini error: {str(exc)}"
+        )
 
 
+# Explicit assets mount
 if FRONTEND_ASSETS.exists():
     fastapi_app.mount(
         "/assets",
@@ -111,7 +185,18 @@ if FRONTEND_ASSETS.exists():
         name="frontend-assets",
     )
 
-if FRONTEND_DIST.exists():
-    fastapi_app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
 
+# Frontend mount
+if FRONTEND_DIST.exists():
+    fastapi_app.mount(
+        "/",
+        StaticFiles(
+            directory=FRONTEND_DIST,
+            html=True
+        ),
+        name="frontend",
+    )
+
+
+# Vercel entrypoint
 app = fastapi_app
