@@ -4,13 +4,14 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import google.generativeai as genai
-from retriever import retrieve
+from backend.retriever import retrieve
 from pathlib import Path
 
 load_dotenv()
 
 fastapi_app = FastAPI()
 FRONTEND_DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
+FRONTEND_ASSETS = FRONTEND_DIST / "assets"
 
 
 @fastapi_app.get("/favicon.ico")
@@ -103,5 +104,14 @@ def chat(request: ChatRequest):
     }
 
 
+if FRONTEND_ASSETS.exists():
+    fastapi_app.mount(
+        "/assets",
+        StaticFiles(directory=FRONTEND_ASSETS),
+        name="frontend-assets",
+    )
+
 if FRONTEND_DIST.exists():
     fastapi_app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
+
+app = fastapi_app
