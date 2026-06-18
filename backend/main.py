@@ -12,12 +12,12 @@ import traceback
 load_dotenv()
 
 # Configure Gemini
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("GEMINI_API_KEY")
 
-if not GEMINI_API_KEY:
-    print("ERROR: GEMINI_API_KEY not found")
+if not api_key:
+    raise RuntimeError("Missing GEMINI_API_KEY")
 
-genai.configure(api_key=GEMINI_API_KEY)
+genai.configure(api_key=api_key)
 
 fastapi_app = FastAPI()
 
