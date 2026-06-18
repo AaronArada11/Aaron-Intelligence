@@ -49,7 +49,7 @@ const flavors = {
 
 const accentList = [
   "rosewater","flamingo","pink","mauve","red","maroon",
-  "peach","yellow","green","teal","sky","sapphire","blue","lavender",
+  "peach","yellow","green","teal","sky","sapphire","blue","lavender", 
 ];
 
 const ThemeContext = createContext({

@@ -25,11 +25,7 @@ def retrieve(question):
         contents=question,
     )
 
-    print(len(result.embeddings[0].values))
-
     query_embedding = result.embeddings[0].values
-
-    print("Embedding length:", len(query_embedding))
 
     from backend.supabase_client import get_supabase
 

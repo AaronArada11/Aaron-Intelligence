@@ -29,30 +29,9 @@ class ChatRequest(BaseModel):
 @fastapi_app.post("/chat")
 @fastapi_app.post("/api/chat")
 def chat(request: ChatRequest):
-
-    print("\n====================")
-    print("NEW CHAT REQUEST")
-    print("====================")
-    print("Question:", request.message)
-
-    # -------------------------
-    # Retrieval
-    # -------------------------
     try:
-        print("Running retriever...")
-
         retrieved_docs = retrieve(request.message)
-
-        print(f"Retriever returned {len(retrieved_docs)} documents")
-
-        for doc in retrieved_docs:
-            print(
-                f"{doc['source']} | Similarity: {doc['similarity']:.4f}"
-            )
-
     except Exception as exc:
-        print("RETRIEVER ERROR")
-        print(repr(exc))
         traceback.print_exc()
 
         raise HTTPException(
@@ -60,15 +39,10 @@ def chat(request: ChatRequest):
             detail=f"Retriever error: {str(exc)}"
         )
 
-    # -------------------------
-    # Out of scope
-    # -------------------------
     if (
         not retrieved_docs
         or retrieved_docs[0]["similarity"] < 0.25
     ):
-        print("Question classified as out-of-scope")
-
         return {
             "answer": (
                 "Sorry, I can't help with that. "
@@ -77,20 +51,13 @@ def chat(request: ChatRequest):
             )
         }
 
-    # -------------------------
-    # Context Creation
-    # -------------------------
     try:
         context = "\n\n".join(
             doc["content"]
             for doc in retrieved_docs
         )
 
-        print("Context built successfully")
-
     except Exception as exc:
-        print("CONTEXT BUILD ERROR")
-        print(repr(exc))
         traceback.print_exc()
 
         raise HTTPException(
@@ -98,12 +65,7 @@ def chat(request: ChatRequest):
             detail=f"Context error: {str(exc)}"
         )
 
-    # -------------------------
-    # Gemini
-    # -------------------------
     try:
-        print("Creating Gemini client...")
-
         client = _get_client()
 
         prompt = f"""
@@ -145,22 +107,16 @@ Question:
 {request.message}
 """
 
-        print("Calling Gemini...")
-
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt,
         )
-
-        print("Gemini response received successfully")
 
         return {
             "answer": response.text
         }
 
     except Exception as exc:
-        print("GEMINI ERROR")
-        print(repr(exc))
         traceback.print_exc()
 
         raise HTTPException(

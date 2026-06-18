@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { MousePointer2, MapPin, GitCommit, Calendar, ExternalLink } from "lucide-react";
+import { MousePointer2, MapPin, GitCommit, Calendar, ExternalLink, Palette } from "lucide-react";
+import { ThemeSelector } from "./ThemeSelector";
 
 const recentCommits = [
   { repo: "anubis", message: "feat: optimize NEON engine PoW validation", time: "2h ago", hash: "a3f9c12" },
@@ -62,8 +63,10 @@ export function Dashboard() {
 
           {/* Click counter */}
           <Card className="flex flex-col items-center justify-center text-center">
-            <SectionLabel>Theme</SectionLabel>
-            
+            <div>
+            <Palette />
+            <ThemeSelector className="flex items-start justify-between mb-3" />
+            </div>
           </Card>
 
           {/* Let's Connect */}

@@ -4,13 +4,6 @@ Aaron Randolph S.D. Arada is a Filipino Computer Science student specializing in
 
 Driven by a passion for modern technology and problem-solving, he focuses on bridging the gap between robust software architecture and intelligent systems.
 
-# Aaron's Contact
-Email: aaronarada011@gmail.com
-Number: +639264841614
-
-
-# Aaron's age 
-- Aaron is 20 year old, He was born January 2006
 ---
 
 ### Why Computer Science?
