@@ -1,39 +1,33 @@
 import os
-import google.generativeai as genai
+from pathlib import Path
 
-_CONFIGURED = False
+from dotenv import load_dotenv
+from google import genai
+
+load_dotenv(Path(__file__).resolve().parent / ".env")
+
+_client = None
 
 
-def configure_genai():
-    global _CONFIGURED
-
-    if _CONFIGURED:
-        return
-
-    api_key = os.getenv("GEMINI_API_KEY")
-
-    if not api_key:
-        raise RuntimeError(
-            "Missing GEMINI_API_KEY environment variable"
-        )
-
-    genai.configure(api_key=api_key)
-    _CONFIGURED = True
+def _get_client():
+    global _client
+    if _client is None:
+        api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        if not api_key:
+            raise RuntimeError("Missing GEMINI_API_KEY environment variable")
+        _client = genai.Client(api_key=api_key)
+    return _client
 
 
 def retrieve(question):
-    configure_genai()
+    result = _get_client().models.embed_content(
+        model="gemini-embedding-001",
+        contents=question,
+    )
 
-    result = genai.embed_content(
-    model="models/embedding-001",
-    content=question,
-    task_type="retrieval_query"
+    print(len(result.embeddings[0].values))
 
-)
-
-    print(len(result["embedding"]))
-
-    query_embedding = result["embedding"]
+    query_embedding = result.embeddings[0].values
 
     print("Embedding length:", len(query_embedding))
 

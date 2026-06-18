@@ -3,20 +3,12 @@ from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from dotenv import load_dotenv
-import google.generativeai as genai
-from backend.retriever import retrieve
+from backend.retriever import _get_client, retrieve
 from pathlib import Path
 import os
 import traceback
 
-load_dotenv()
-
-api_key = os.getenv("GEMINI_API_KEY")
-
-if not api_key:
-    raise RuntimeError("Missing GEMINI_API_KEY")
-
-genai.configure(api_key=api_key)
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 fastapi_app = FastAPI()
 
@@ -110,11 +102,9 @@ def chat(request: ChatRequest):
     # Gemini
     # -------------------------
     try:
-        print("Creating Gemini model...")
+        print("Creating Gemini client...")
 
-        model = genai.GenerativeModel(
-            "gemini-2.5-flash"
-        )
+        client = _get_client()
 
         prompt = f"""
 You are Aaron Intelligence.
@@ -157,7 +147,10 @@ Question:
 
         print("Calling Gemini...")
 
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+        )
 
         print("Gemini response received successfully")
 
