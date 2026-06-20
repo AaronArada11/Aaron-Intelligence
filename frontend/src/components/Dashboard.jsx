@@ -61,12 +61,14 @@ export function Dashboard() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-          {/* Click counter */}
-          <Card className="flex flex-col items-center justify-center text-center">
-            <div>
-            <Palette />
-            <ThemeSelector className="flex items-start justify-between mb-3" />
+          {/* Theme */}
+          <Card className="p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <Palette size={18} />
+              <SectionLabel>Theme</SectionLabel>
             </div>
+
+            <ThemeSelector />
           </Card>
 
           {/* Let's Connect */}
