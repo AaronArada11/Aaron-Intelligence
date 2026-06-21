@@ -3,7 +3,8 @@ import '../index.css';
 import '../SortingVisualizer.css';
 import * as sortingAlgorithms from '../assets/sortingAlgorithms';
 const PRIMARY_COLOR = 'var(--ctp-accent)';
-const SECONDARY_COLOR = 'var(--ctp-red)';
+const SECONDARY_COLOR = 'var(--ctp-crimson)' ? 'var(--ctp-green' : 'var(--ctp-crimson';
+
 export class SortingVisualizer extends React.Component {
     constructor(props) {
         super(props);
