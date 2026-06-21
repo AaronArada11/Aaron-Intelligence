@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { MousePointer2, MapPin, GitCommit, Calendar, ExternalLink, Palette } from "lucide-react";
+import { MousePointer2, MapPin, GitCommit, Calendar, ExternalLink, Palette, ChartNoAxesColumnIncreasing } from "lucide-react";
 import { ThemeSelector } from "./ThemeSelector";
+import { SortingVisualizer } from "./SortingVisualizer"
 
 const recentCommits = [
   { repo: "anubis", message: "feat: optimize NEON engine PoW validation", time: "2h ago", hash: "a3f9c12" },
@@ -76,40 +77,6 @@ export function Dashboard() {
             
           </Card>
 
-          {/* Location */}
-          <Card>
-            <div className="flex items-center gap-2 mb-1">
-              <MapPin size={13} style={{ color: "var(--ctp-red)" }} />
-              <SectionLabel>Location</SectionLabel>
-            </div>
-            <div
-              className="rounded-lg overflow-hidden relative"
-              style={{ height: "7rem", background: "var(--ctp-surface0)" }}
-            >
-              <svg viewBox="0 0 300 140" className="w-full h-full" style={{ opacity: 0.35 }}>
-                <path
-                  d="M40,20 Q80,10 140,15 Q200,20 240,40 Q260,60 250,90 Q240,120 200,130 Q160,140 120,135 Q80,130 50,110 Q20,90 25,60 Z"
-                  fill="var(--ctp-surface1)" stroke="var(--ctp-surface2)" strokeWidth="1"
-                />
-                <ellipse cx="150" cy="68" rx="10" ry="4" fill="var(--ctp-sapphire)" opacity="0.5" />
-                <ellipse cx="136" cy="72" rx="6" ry="3" fill="var(--ctp-sapphire)" opacity="0.4" />
-              </svg>
-              <div className="absolute" style={{ left: "50%", top: "42%", transform: "translate(-50%,-50%)" }}>
-                <div className="w-2.5 h-2.5 rounded-full animate-pulse" style={{ background: "var(--ctp-red)" }} />
-              </div>
-              <div className="absolute bottom-2 left-2">
-                <span
-                  className="font-mono rounded px-2 py-0.5"
-                  style={{ fontSize: "0.65rem", background: "var(--ctp-mantle)", color: "var(--ctp-subtext0)" }}
-                >
-                  Manila, PH
-                </span>
-              </div>
-            </div>
-          </Card>
-
-          
-
           {/* Recent Commits */}
           <Card className="md:col-span-2">
             <div className="flex items-center gap-2 mb-1">
@@ -122,21 +89,15 @@ export function Dashboard() {
             </div>
           </Card>
 
-          {/* Latest Posts */}
-          <Card id="posts">
-            <SectionLabel>Latest Posts</SectionLabel>
+          {/* AlgoVisualizer */}
+          <Card className="md:col-span-4">
+            <div className="flex items-center gap-2 mb-1">
+              <ChartNoAxesColumnIncreasing size={13} style={{ color: "var(--ctp-accent)" }} />
+              <SectionLabel>AlgoVisualizer</SectionLabel>
+            </div>
             <div className="space-y-3">
-              {posts.map((p) => (
-                <a key={p.title} href="#" className="block group">
-                  <p
-                    className="font-mono leading-snug group-hover:opacity-70 transition-opacity"
-                    style={{ fontSize: "0.75rem", color: "var(--ctp-text)" }}
-                  >
-                    {p.title}
-                  </p>
-                  <p className="font-mono" style={{ fontSize: "0.7rem", color: "var(--ctp-subtext0)" }}>{p.date}</p>
-                </a>
-              ))}
+              <SortingVisualizer />
+
             </div>
           </Card>
 
