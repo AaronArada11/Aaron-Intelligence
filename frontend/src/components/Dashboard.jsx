@@ -41,7 +41,7 @@ function Card({ children, className = "" }) {
 function SectionLabel({ children }) {
   return (
     <p
-      className="font-mono uppercase tracking-widest mb-4"
+      className="font-mono uppercase tracking-widest"
       style={{ fontSize: "0.65rem", color: "var(--ctp-accent)" }}
     >
       {children}
@@ -64,7 +64,7 @@ export function Dashboard() {
           {/* Theme */}
           <Card className="p-6">
             <div className="flex items-center gap-2 mb-6">
-              <Palette size={18} />
+              <Palette  size={13} style={{ color: "var(--ctp-accent)" }} />
               <SectionLabel>Theme</SectionLabel>
             </div>
 

@@ -6,4 +6,15 @@
 - FirstName: Aaron Randolph
 - MiddleName: Sto. Domingo
 - LastName: Arada
+- FullName: Aaron Randolph S.D. Arada
 - Girlfriend: Ella Marie
+
+# Hobbies
+Playing:
+- Blilliards
+- Valorant
+- CS2
+- NBA2k
+- Hogwarts Legacy
+
+
