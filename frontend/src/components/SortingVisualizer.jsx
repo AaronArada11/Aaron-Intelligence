@@ -1,7 +1,7 @@
 import React from "react";
 import '../index.css';
 import '../SortingVisualizer.css';
-import * as sortingAlgorithms from '../assets/sortingAlgorithms';
+import * as sortingAlgorithms from './sortingAlgorithms';
 const PRIMARY_COLOR = 'var(--ctp-accent)';
 const SECONDARY_COLOR = 'var(--ctp-crimson)' ? 'var(--ctp-green' : 'var(--ctp-crimson';
 
