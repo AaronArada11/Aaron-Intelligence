@@ -1,4 +1,4 @@
-import { User, Globe, FolderGit2, Mail } from "lucide-react";
+import { User, Globe, FolderGit2, Mail, MapPin } from "lucide-react";
 
 function GoldLink({ href, children }) {
   return (
@@ -35,7 +35,12 @@ export function Hero() {
         >
           I'm a Computer Science Student @{" "}
           <GoldLink href="https://www.feutech.edu.ph/">FEUTECH</GoldLink>. I enjoy developing AI-powered applications, experimenting with emerging technologies, and transforming ideas into practical solutions that create meaningful impact.
+          
         </p>
+
+        <div className="flex flex-wrap items-center mb-12 font-mono" style={{ fontSize: "0.85rem" }}>
+          <MapPin size ={14}/> <p>Manila, PH</p>
+        </div>
 
         {/* Social links */}
         <div className="flex flex-wrap items-center mb-12 font-mono" style={{ fontSize: "0.85rem" }}>

@@ -11,7 +11,7 @@ function Chat({ onClose }) {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Hello! I\'m Aaron Intelligence, the AI representative of Aaron Randolph S.D. Arada. Feel free to ask questions about Aaron.'
+      content: 'Hello! I\'m Aaron Intelligence, the AI representative of Aaron. Feel free to ask questions about Aaron.'
     }
   ])
   const [input, setInput] = useState('')
@@ -68,8 +68,8 @@ function Chat({ onClose }) {
   return (
     <div className="fixed bottom-24 right-6 z-50 w-[320px] h-[400px] flex flex-col rounded-2xl overflow-hidden bg-gray-950 text-gray-100 shadow-2xl shadow-black/50 border border-[var(--ctp-accent)]">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-[var(--ctp-accent)] bg-gray-900/80">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--ctp-accent)] shadow-lg">
-          <Sparkles className="w-4 h-4 text-white" />
+        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--ctp-base)] shadow-lg">
+          <Sparkles className="w-4 h-4 text-[var(--ctp-accent)]" />
         </div>
         <div className="flex-1">
           <h1 className="text-sm font-semibold tracking-tight text-white">Aaron Intelligence "AI"</h1>
@@ -91,8 +91,8 @@ function Chat({ onClose }) {
               className={`flex gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role === 'assistant' && (
-                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-accent)] flex items-center justify-center shadow-lg">
-                  <Bot className="w-3.5 h-3.5 text-white" />
+                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-base)] flex items-center justify-center shadow-lg">
+                  <Bot className="w-3.5 h-3.5 text-[var(--ctp-accent)]" />
                 </div>
               )}
 
@@ -169,13 +169,13 @@ function Chat({ onClose }) {
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-colors disabled:shadow-none ${
+            className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-[var(--ctp-accent)] transition-colors disabled:shadow-none ${
               input.trim()
-                ? 'bg-[var(--ctp-accent)] text-white shadow-lg'
+                ? 'bg-[var(--ctp-base)] text-white shadow-lg'
                 : 'bg-gray-700 text-gray-500'
             }`}
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-4 h-4 text-[var(--ctp-accent)]" />
           </button>
         </form>
 

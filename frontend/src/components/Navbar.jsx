@@ -3,8 +3,9 @@ import { Menu, X } from "lucide-react";
 import { ThemeSelector } from "./ThemeSelector";
 import { TextType } from "./TextType";
 
+
 const navLinks = [
-  { label: "About", href: "#about" },
+  { label: "About", href: "/About.jsx" },
   { label: "Projects", href: "#projects" },
 ];
 
