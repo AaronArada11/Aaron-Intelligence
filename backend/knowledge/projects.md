@@ -81,56 +81,70 @@ Key Learnings:
 - Educational software design
 
 
-
 # Aaron Intelligence
 
 Role:
+
 Personal Project
 
 Tech Stack:
 
-- React
-- Vite
-- FastAPI
-- Supabase
-- PostgreSQL
-- pgvector
-- Sentence Transformers
-- Gemini 2.5 Flash
+* React
+* Vite
+* FastAPI
+* Supabase
+* PostgreSQL
+* pgvector
+* Gemini Embedding 001
+* Gemini 2.5 Flash
+* Google GenAI SDK
 
 Description:
+
 Personalized AI-powered portfolio chatbot designed to act as an interactive digital representative of Aaron Randolph S.D. Arada.
 
-Built using a Retrieval-Augmented Generation (RAG) architecture that retrieves information from a personal knowledge base and generates context-aware responses about Aaron's projects, skills, education, experience, and career goals.
+Built using a Retrieval-Augmented Generation (RAG) architecture that retrieves relevant information from a personal knowledge base and generates context-aware responses about Aaron's projects, skills, education, experience, achievements, and career goals.
+
+The project serves as both an interactive portfolio experience and a demonstration of practical AI engineering concepts including semantic retrieval, vector search, prompt engineering, and large language model integration.
 
 Features:
 
-- Semantic search using vector embeddings
-- Retrieval-Augmented Generation (RAG)
-- Personalized knowledge base
-- Context-aware question answering
-- Interactive chat interface
-- Out-of-scope question detection
-- Vector similarity search with Supabase pgvector
+* Retrieval-Augmented Generation (RAG)
+* Semantic search using vector embeddings
+* Personalized knowledge base
+* Context-aware question answering
+* Interactive chat interface
+* Out-of-scope question detection
+* Similarity threshold filtering
+* Vector similarity search using Supabase pgvector
+* Document chunking for improved retrieval accuracy
+* Scalable knowledge base architecture
 
 Contributions:
 
-- Designed and implemented the RAG pipeline
-- Built FastAPI backend services
-- Developed semantic retrieval using Sentence Transformers
-- Integrated Gemini 2.5 Flash for response generation
-- Configured Supabase PostgreSQL and pgvector
-- Created ingestion pipeline for knowledge base embeddings
-- Implemented document chunking for improved retrieval accuracy
-- Developed React-based chatbot interface
+* Designed and implemented the complete RAG architecture
+* Built FastAPI backend services and API endpoints
+* Developed semantic retrieval using Gemini Embeddings
+* Integrated Gemini 2.5 Flash for response generation
+* Configured Supabase PostgreSQL and pgvector
+* Designed vector similarity search workflows
+* Created ingestion pipeline for embedding generation and storage
+* Implemented document chunking to improve retrieval precision
+* Added out-of-scope detection using similarity thresholds
+* Developed React-based chatbot interface
+* Integrated frontend and backend deployment workflows
 
 Key Learnings:
 
-- Retrieval-Augmented Generation (RAG)
-- Vector databases and embeddings
-- Semantic search
-- Prompt engineering
-- AI application architecture
-- FastAPI development
-- Full-stack AI systems
-- LLM integration
+* Retrieval-Augmented Generation (RAG)
+* Vector databases and pgvector
+* Semantic search and embeddings
+* Prompt engineering
+* AI application architecture
+* FastAPI backend development
+* Supabase integration
+* Vector similarity retrieval
+* Full-stack AI systems
+* LLM integration and orchestration
+* Production deployment workflows
+* Knowledge base design and management

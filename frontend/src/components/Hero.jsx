@@ -39,7 +39,7 @@ export function Hero() {
         </p>
 
         <div className="flex flex-wrap items-center mb-12 font-mono" style={{ fontSize: "0.85rem" }}>
-          <MapPin size ={14}/> <p>Manila, PH</p>
+          <MapPin size ={14} className="mr-2"/> <p>Manila, PH</p>
         </div>
 
         {/* Social links */}

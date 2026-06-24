@@ -1,7 +1,8 @@
 # Aaron Intelligence
 
 Problem:
-Traditional portfolio websites require visitors to manually browse multiple pages to learn about a candidate's projects, skills, and experiences. Aaron Intelligence was built to create a more interactive and conversational way for visitors, recruiters, and collaborators to learn about Aaron.
+
+Traditional portfolio websites require visitors to manually browse multiple pages to learn about a candidate's projects, skills, and experiences. Aaron Intelligence was built to create a more interactive and conversational way for visitors, recruiters, and collaborators to learn about Aaron through natural conversation.
 
 Architecture:
 
@@ -9,8 +10,9 @@ Architecture:
 * Backend: FastAPI
 * Database: Supabase PostgreSQL
 * Vector Search: pgvector
-* Embeddings: Sentence Transformers (all-MiniLM-L6-v2)
+* Embeddings: Gemini Embedding 001
 * AI Model: Gemini 2.5 Flash
+* Deployment: Vercel
 
 Technical Decisions:
 
@@ -18,45 +20,67 @@ Why FastAPI?
 
 * FastAPI provides a lightweight and high-performance backend framework for building REST APIs.
 * It integrates naturally with Python-based AI workflows.
+* Its simplicity allowed rapid development and iteration of the chatbot backend.
 
 Why Supabase?
 
 * Aaron was already familiar with Supabase from previous projects.
-* Supabase provides PostgreSQL, authentication, and vector search capabilities through pgvector in a single platform.
-* Using Supabase reduced the learning curve and simplified deployment.
+* Supabase provides PostgreSQL and pgvector support within a single platform.
+* Using Supabase reduced infrastructure complexity and simplified development.
+* Vector search could be implemented directly inside PostgreSQL through pgvector.
 
 Why Gemini?
 
-* Gemini provides strong performance for AI-powered applications.
+* Gemini provides both embedding generation and response generation capabilities.
+* Using a single AI platform simplified the architecture.
 * Aaron had prior experience integrating Gemini into multiple projects.
+* Gemini 2.5 Flash offers a strong balance between performance, speed, and cost.
 
-Why Sentence Transformers?
+Why Gemini Embeddings?
 
-* Sentence Transformers enable semantic search through embeddings.
-* This allows the chatbot to retrieve information based on meaning rather than keyword matching.
+* Gemini Embedding 001 enables semantic search through vector representations.
+* Documents are retrieved based on meaning rather than exact keyword matches.
+* Using Gemini for both embeddings and generation reduces dependency complexity.
 
 Challenges:
 
 * Designing a chatbot that only answers questions related to Aaron.
 * Improving retrieval accuracy as the knowledge base expanded.
-* Reducing token usage while maintaining response quality.
+* Preventing hallucinations and unsupported responses.
+* Reducing token consumption while maintaining response quality.
+* Building a scalable architecture that could continue growing alongside Aaron's portfolio.
 
 Solutions:
 
 * Implemented semantic search using vector embeddings.
+* Stored embeddings inside Supabase using pgvector.
 * Added chunk-based document retrieval instead of loading entire documents.
-* Added out-of-scope detection to prevent unrelated responses.
+* Implemented similarity threshold filtering to detect out-of-scope questions.
+* Added prompt-level guardrails to restrict responses to Aaron-related topics.
 * Migrated from direct markdown loading to a Retrieval-Augmented Generation (RAG) architecture.
 
 Why RAG?
-Initially, the chatbot loaded the entire knowledge base into every prompt. While functional, this approach became inefficient as more information was added.
 
-Aaron migrated the project to a RAG architecture to:
+The first version of Aaron Intelligence loaded the entire knowledge base into every prompt. While functional, this approach became inefficient as more information was added.
+
+Aaron migrated the project to a Retrieval-Augmented Generation (RAG) architecture to:
 
 * Improve retrieval accuracy
 * Reduce prompt size
 * Lower token consumption
-* Improve scalability as the knowledge base grows
+* Improve scalability
+* Reduce hallucinations
+* Support a growing knowledge base without increasing context size
+
+How It Works:
+
+1. The user submits a question.
+2. Gemini generates an embedding for the query.
+3. Supabase performs semantic similarity search using pgvector.
+4. The most relevant knowledge chunks are retrieved.
+5. Retrieved context is injected into the prompt.
+6. Gemini 2.5 Flash generates a response grounded in the retrieved information.
+7. Out-of-scope questions are filtered using similarity thresholds.
 
 Key Learnings:
 
@@ -65,7 +89,9 @@ Key Learnings:
 * Embedding models
 * Prompt engineering
 * FastAPI backend development
+* Supabase and pgvector
 * AI application architecture
+* Production deployment workflows
 * Full-stack AI systems
 
 Future Improvements:
@@ -76,11 +102,12 @@ Future Improvements:
 * Conversation memory to provide more natural and context-aware interactions.
 * Source citations to improve transparency and allow users to see where responses originate from.
 * Improved retrieval ranking for more accurate and relevant responses.
-* Expansion of the knowledge base as Aaron gains new experiences, projects, and certifications.
-
+* Expansion of the knowledge base as Aaron gains new experiences, projects, certifications, and leadership roles.
 
 Impact:
-Aaron Intelligence serves as both a portfolio project and a demonstration of practical AI engineering skills. The project combines frontend development, backend engineering, vector databases, semantic retrieval, and large language model integration into a single production-ready application.
+
+Aaron Intelligence serves as both a portfolio project and a demonstration of practical AI engineering skills. The project combines frontend development, backend engineering, vector databases, semantic retrieval, large language models, and production deployment into a single end-to-end application. Beyond showcasing Aaron's background, the project demonstrates his ability to design, build, and deploy modern AI-powered software systems using industry-relevant technologies and architectures.
+
 
 # Mirror Mentor
 
