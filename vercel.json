@@ -28,7 +28,7 @@
       "destination": "/api/chat"
     },
     {
-      "source": "/(.*)",
+      "source": "^/(?!assets/|favicon\\.ico$|favicon\\.png$).*",
       "destination": "/index.html"
     }
   ]
