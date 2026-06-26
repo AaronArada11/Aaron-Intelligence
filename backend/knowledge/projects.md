@@ -12,7 +12,7 @@ Tech Stack:
 Description:
 AI-powered educational platform that helps students improve programming skills through guided Socratic questioning instead of direct answers.
 
-Built during ACM TechSprint: Asteria using FastAPI, Supabase, Gemini API, and Vercel.
+Built during ACM Developers using FastAPI, Supabase, Gemini API, and Vercel.
 
 Contributions:
 - Built 17 REST API endpoints
@@ -148,3 +148,42 @@ Key Learnings:
 * LLM integration and orchestration
 * Production deployment workflows
 * Knowledge base design and management
+
+
+# KUMPAS
+
+Role:
+Hackathon Team Member / ML Developer
+
+Tech Stack:
+- React
+- Vite
+- TypeScript
+- Python
+- TensorFlow/Keras
+- MediaPipe
+- OpenCV
+- Railway
+- Vercel
+
+Description:
+Machine learning-powered Filipino Sign Language recognition and translation system that uses webcam input to recognize FSL gestures and translate them into readable text across multiple Philippine languages.
+
+Built during ACM TechSprint: Asteria 2026 using React, Vite, Python, TensorFlow/Keras, MediaPipe, OpenCV, Railway, and Vercel.
+
+Contributions:
+- Helped build the Filipino Sign Language recognition workflow
+- Trained an LSTM model using MediaPipe hand landmark sequences
+- Connected webcam-based gesture input to a Python inference backend
+- Integrated real-time prediction results into the React frontend
+- Added multilingual translation support for Philippine languages
+- Helped deploy the frontend on Vercel and backend on Railway
+
+Key Learnings:
+- Machine learning model training
+- LSTM sequence classification
+- MediaPipe hand landmark extraction
+- Real-time computer vision
+- Full-stack ML application development
+- Frontend and backend deployment
+- Hackathon teamwork under time constraints

@@ -1,6 +1,6 @@
 # Leadership Experience
 
-## ACM TechSprint: Asteria
+## ACM Developers Week
 
 Role:
 Hackathon Project Lead

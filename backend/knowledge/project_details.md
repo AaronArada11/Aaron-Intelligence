@@ -131,7 +131,7 @@ Team:
 Hackathon Result:
 
 * 4th Place
-* Developed during ACM TechSprint: Asteria
+* Developed during ACM Developers Week
 
 Role:
 
@@ -303,3 +303,112 @@ Future Improvements:
 Impact:
 
 Although still under development, Scriptorium represents Aaron's exploration of SaaS architecture, collaborative systems, and AI-powered knowledge management. The project serves as a learning platform for advanced full-stack development concepts while addressing real challenges encountered during group collaboration.
+
+
+# KUMPAS
+
+Problem:
+
+Communication barriers can make it difficult for Deaf and hard-of-hearing Filipinos to communicate with people who do not understand Filipino Sign Language. KUMPAS was built during ACM TechSprint: Asteria 2026 to explore how machine learning can recognize Filipino Sign Language gestures through a webcam and translate them into readable text and Philippine regional languages.
+
+Architecture:
+
+* Frontend: React, Vite, TypeScript
+* Backend: Python inference server hosted on Railway
+* Computer Vision: OpenCV, MediaPipe Holistic
+* Machine Learning: TensorFlow, Keras
+* Model Architecture: LSTM sequence classifier
+* Dataset Format: MediaPipe hand landmark sequences stored as NumPy files
+* Translation Layer: Local phrase and language translation tables
+* Database: None
+* Deployment: Vercel frontend, Railway backend
+
+Technical Decisions:
+
+Why MediaPipe?
+
+* MediaPipe provides reliable hand landmark detection from webcam input.
+* It allowed the team to focus on gesture recognition instead of building hand tracking from scratch.
+* Hand landmarks reduced the complexity of the model input compared to using raw images or videos.
+
+Why TensorFlow and Keras?
+
+* TensorFlow and Keras are widely used for machine learning model development.
+* Keras made it easier to build, train, and iterate on the LSTM model within the short hackathon timeline.
+* TensorFlow supported saving trained models for real-time inference.
+
+Why LSTM?
+
+* Filipino Sign Language gestures are movement-based, not just static hand poses.
+* LSTM models are designed to learn patterns across sequences of frames.
+* This made LSTM a good fit for recognizing gestures based on hand movement over time.
+
+Why React and Vite?
+
+* React made it easier to build an interactive web interface for webcam-based translation.
+* Vite provided a fast development workflow during the hackathon.
+* The frontend could be deployed quickly through Vercel.
+
+Why Railway?
+
+* Railway allowed the Python inference backend to be hosted separately from the frontend.
+* This made it possible to run the machine learning inference server outside the browser.
+* Hosting the backend separately helped connect the web interface to the TensorFlow model.
+
+Challenges:
+
+* Training the model within a short hackathon development timeline.
+* Collecting enough gesture data for multiple Filipino Sign Language signs.
+* Making predictions reliable when hand movement, lighting, or camera visibility changed.
+* Connecting real-time browser webcam input to a Python-based ML backend.
+* Supporting multiple Philippine language outputs while keeping the system usable.
+
+Solutions:
+
+* Used MediaPipe to extract hand landmarks from webcam frames.
+* Trained an LSTM model on sequential landmark data instead of raw video.
+* Built a Python inference backend to process frames and return predictions.
+* Connected the React frontend to the backend for real-time translation.
+* Added translation support for Filipino, Cebuano, Ilocano, Waray, Hiligaynon, and Kapampangan.
+* Focused on clear and visible hand movements to improve prediction reliability during testing.
+
+How It Works:
+
+1. The user opens KUMPAS in the browser.
+2. The user allows webcam access.
+3. The user performs a Filipino Sign Language gesture.
+4. MediaPipe extracts hand landmarks from the camera frames.
+5. The landmark sequence is sent to the TensorFlow LSTM model.
+6. The model predicts the most likely sign.
+7. The predicted sign is converted into readable text.
+8. The output is translated into the selected Philippine language.
+
+Performance Note:
+
+Formal accuracy metrics were not finalized during the hackathon. However, during testing, the system produced more reliable outputs when the user’s hand movement was clear, visible, and performed in front of the camera with good lighting.
+
+Key Learnings:
+
+* Machine learning model training
+* Filipino Sign Language recognition
+* MediaPipe hand landmark extraction
+* LSTM sequence classification
+* TensorFlow and Keras model development
+* Real-time computer vision with OpenCV
+* React and Vite frontend development
+* Connecting a web frontend to a hosted ML backend
+* Deploying frontend and backend services separately
+* Building AI-powered accessibility tools under time constraints
+
+Future Improvements:
+
+* Add more Filipino Sign Language signs.
+* Add an option to recognize ASL.
+* Support more Philippine dialects and regional languages.
+* Improve the dataset with more samples per gesture.
+* Add stronger evaluation metrics for accuracy and reliability.
+* Improve recognition under different lighting, camera angles, and signing styles.
+
+Impact:
+
+KUMPAS demonstrates practical machine learning skills through an end-to-end sign language recognition system. The project combines computer vision, sequence modeling, real-time inference, frontend development, backend deployment, and multilingual translation into one working application. Built during ACM TechSprint: Asteria 2026, KUMPAS shows how machine learning can be applied to accessibility-focused software while also highlighting the team’s ability to design, train, deploy, and connect ML systems within a short development timeline.

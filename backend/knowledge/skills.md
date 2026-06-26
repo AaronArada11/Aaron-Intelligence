@@ -26,6 +26,17 @@
 - FastAPI
 - Node.js
 - REST APIs
+- Python HTTP Servers
+
+# AI / Machine Learning
+
+- TensorFlow
+- Keras
+- MediaPipe
+- OpenCV
+- LSTM Models
+- NumPy
+- scikit-learn
 
 # Databases
 
@@ -39,6 +50,7 @@
 - AWS EC2
 - AWS S3
 - Vercel
+- Railway
 
 # Tools
 

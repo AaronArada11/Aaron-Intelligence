@@ -1,6 +1,16 @@
-import { ExternalLink, FolderGit2, Bot, BarChart2, MirrorRectangular, Notebook } from "lucide-react";
+import { ExternalLink, FolderGit2, Bot, BarChart2, MirrorRectangular, Notebook, Languages } from "lucide-react";
 
 const projects = [
+    {
+    name: "KUMPAS",
+    description:
+      "Machine learning-powered Filipino Sign Language recognition and translation system that uses webcam input to recognize FSL gestures and translate them into readable text across multiple Philippine languages. Built during ACM TechSprint: Asteria 2026.",
+    tags: ["React", "Vite", "TensorFlow", "MediaPipe", "OpenCV", "Railway", "Vercel"],
+    accentColor: "var(--ctp-accent)",
+    icon: Languages,
+    github: "https://github.com/Praybeyt-Benjamin-Techsprint/Kumpas",
+    liveDemo: "https://kumpas-translator.vercel.app/",
+  },
   {
     name: "Aaron Intelligence",
     description:
@@ -83,7 +93,7 @@ export function Projects() {
                       <FolderGit2 size={15} />
                     </a>
                     <a
-                      href={p.github}
+                      href={p.liveDemo}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ color: "var(--ctp-subtext0)" }}
