@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Activity, ExternalLink, Palette, ChartNoAxesColumnIncreasing } from "lucide-react";
+import { GitCommitHorizontal, ExternalLink, Palette, ChartNoAxesColumnIncreasing } from "lucide-react";
 import { ThemeSelector } from "./ThemeSelector";
 import { SortingVisualizer } from "./SortingVisualizer"
 
@@ -126,15 +126,10 @@ export function Dashboard() {
           <Card className="md:col-span-2 min-h-[220px]">
             <div className="mb-6 flex items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-2">
-                <Activity size={13} style={{ color: "var(--ctp-accent)" }} />
+                <GitCommitHorizontal size={13} style={{ color: "var(--ctp-accent)" }} />
                 <SectionLabel>Recent Commits</SectionLabel>
               </div>
-              <span
-                className="whitespace-nowrap font-mono text-xs"
-                style={{ color: "var(--ctp-accent)" }}
-              >
-                [info]
-              </span>
+              
             </div>
 
             <div className="space-y-3">
