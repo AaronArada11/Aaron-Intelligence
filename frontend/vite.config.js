@@ -11,6 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/chat': 'http://localhost:8000',
+      '/github-commits': 'http://localhost:8000',
     },
   },
 })

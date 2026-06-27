@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from backend.retriever import _get_client, retrieve
 from pathlib import Path
 import os
+import requests
+import time
 import traceback
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
@@ -14,6 +16,49 @@ fastapi_app = FastAPI()
 
 FRONTEND_DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
 FRONTEND_ASSETS = FRONTEND_DIST / "assets"
+GITHUB_API_URL = "https://api.github.com"
+COMMITS_CACHE_SECONDS = 300
+commits_cache = {
+    "key": None,
+    "expires_at": 0,
+    "data": None,
+}
+
+LANGUAGE_BY_EXTENSION = {
+    ".astro": "Astro",
+    ".c": "C",
+    ".cc": "C++",
+    ".cpp": "C++",
+    ".cs": "C#",
+    ".css": "CSS",
+    ".dart": "Dart",
+    ".go": "Go",
+    ".html": "HTML",
+    ".java": "Java",
+    ".js": "JavaScript",
+    ".jsx": "JavaScript",
+    ".json": "JSON",
+    ".kt": "Kotlin",
+    ".md": "Markdown",
+    ".php": "PHP",
+    ".py": "Python",
+    ".rb": "Ruby",
+    ".rs": "Rust",
+    ".scss": "SCSS",
+    ".sh": "Shell",
+    ".sql": "SQL",
+    ".swift": "Swift",
+    ".ts": "TypeScript",
+    ".tsx": "TypeScript",
+    ".vue": "Vue",
+    ".yaml": "YAML",
+    ".yml": "YAML",
+}
+
+LANGUAGE_BY_FILENAME = {
+    "dockerfile": "Dockerfile",
+    "makefile": "Makefile",
+}
 
 
 @fastapi_app.get("/favicon.ico")
@@ -24,6 +69,233 @@ def favicon():
 
 class ChatRequest(BaseModel):
     message: str
+
+
+def _github_headers():
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    token = os.getenv("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    return headers
+
+
+def _get_commit_detail(repo_name, sha):
+    response = requests.get(
+        f"{GITHUB_API_URL}/repos/{repo_name}/commits/{sha}",
+        headers=_github_headers(),
+        timeout=10,
+    )
+    if not response.ok:
+        return None
+    return response.json()
+
+
+def _language_for_file(filename):
+    name = filename.rsplit("/", 1)[-1].lower()
+    if name in LANGUAGE_BY_FILENAME:
+        return LANGUAGE_BY_FILENAME[name]
+
+    extension = os.path.splitext(name)[1]
+    return LANGUAGE_BY_EXTENSION.get(extension)
+
+
+def _build_language_segments(commits):
+    totals = {}
+    for commit in commits:
+        for file in commit.get("files", []):
+            language = file.get("language")
+            if not language:
+                continue
+
+            changes = file.get("changes") or 0
+            if changes <= 0:
+                changes = 1
+
+            totals[language] = totals.get(language, 0) + changes
+
+    total_changes = sum(totals.values())
+    if not total_changes:
+        return []
+
+    ranked = sorted(totals.items(), key=lambda item: item[1], reverse=True)
+    if len(ranked) > 8:
+        visible = ranked[:7]
+        other_total = sum(changes for _, changes in ranked[7:])
+        ranked = visible + [("Other", other_total)]
+
+    segments = []
+    for language, changes in ranked:
+        segments.append({
+            "language": language,
+            "percentage": round((changes / total_changes) * 100, 1),
+        })
+
+    displayed_total = sum(segment["percentage"] for segment in segments)
+    if segments and displayed_total != 100:
+        segments[0]["percentage"] = round(
+            segments[0]["percentage"] + (100 - displayed_total),
+            1,
+        )
+
+    return segments
+
+
+def _normalize_commit(repo_name, commit, fallback_date, fallback_author):
+    sha = commit.get("sha")
+    commit_data = commit.get("commit", {})
+    stats = commit.get("stats") or {}
+    message = commit_data.get("message", "").splitlines()[0]
+    if not sha or not message:
+        return None
+
+    repository_url = f"https://github.com/{repo_name}"
+    author = commit_data.get("author") or {}
+    files = []
+
+    for file in commit.get("files", []):
+        language = _language_for_file(file.get("filename", ""))
+        if not language:
+            continue
+
+        additions = file.get("additions") or 0
+        deletions = file.get("deletions") or 0
+        files.append({
+            "filename": file.get("filename"),
+            "language": language,
+            "changes": additions + deletions,
+        })
+
+    return {
+        "oid": sha,
+        "abbreviatedOid": sha[:7],
+        "messageHeadline": message,
+        "committedDate": author.get("date") or fallback_date,
+        "url": commit.get("html_url") or f"{repository_url}/commit/{sha}",
+        "repository": repo_name,
+        "repositoryUrl": repository_url,
+        "additions": stats.get("additions"),
+        "deletions": stats.get("deletions"),
+        "files": files,
+        "author": {
+            "name": author.get("name") or fallback_author.get("name"),
+            "avatarUrl": fallback_author.get("avatarUrl"),
+        },
+    }
+
+
+def _get_push_commits(event, limit):
+    repo_name = event.get("repo", {}).get("name")
+    payload = event.get("payload", {})
+    before = payload.get("before")
+    head = payload.get("head")
+    if not repo_name or not head:
+        return []
+
+    fallback_author = {
+        "name": event.get("actor", {}).get("display_login"),
+        "avatarUrl": event.get("actor", {}).get("avatar_url"),
+    }
+
+    if before and set(before) != {"0"}:
+        response = requests.get(
+            f"{GITHUB_API_URL}/repos/{repo_name}/compare/{before}...{head}",
+            headers=_github_headers(),
+            timeout=10,
+        )
+        if response.ok:
+            commits = response.json().get("commits", [])
+            normalized = []
+            for commit in reversed(commits):
+                detail = _get_commit_detail(repo_name, commit.get("sha"))
+                normalized_commit = _normalize_commit(
+                    repo_name,
+                    detail or commit,
+                    event.get("created_at"),
+                    fallback_author,
+                )
+                if normalized_commit:
+                    normalized.append(normalized_commit)
+                if len(normalized) >= limit:
+                    break
+            return normalized
+
+    commit_detail = _get_commit_detail(repo_name, head)
+    if not commit_detail:
+        return []
+
+    commit = _normalize_commit(
+        repo_name,
+        commit_detail,
+        event.get("created_at"),
+        fallback_author,
+    )
+    return [commit] if commit else []
+
+
+def _get_recent_commits(username: str, limit: int):
+    events_path = "events" if os.getenv("GITHUB_TOKEN") else "events/public"
+    response = requests.get(
+        f"{GITHUB_API_URL}/users/{username}/{events_path}",
+        params={"per_page": 100},
+        headers=_github_headers(),
+        timeout=10,
+    )
+
+    if response.status_code == 404:
+        raise HTTPException(status_code=404, detail="GitHub user not found.")
+    if response.status_code >= 400:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="GitHub events request failed."
+        )
+
+    commits = []
+    for event in response.json():
+        if event.get("type") != "PushEvent":
+            continue
+
+        for commit in _get_push_commits(event, limit - len(commits)):
+            commits.append(commit)
+            if len(commits) >= limit:
+                break
+
+        if len(commits) >= limit:
+            break
+
+    return {
+        "username": username,
+        "source": "authenticated" if os.getenv("GITHUB_TOKEN") else "public",
+        "commits": commits,
+        "languageSegments": _build_language_segments(commits),
+    }
+
+
+@fastapi_app.get("/github-commits")
+@fastapi_app.get("/api/github-commits")
+@fastapi_app.get("/api/github_commits")
+def github_commits():
+    username = os.getenv("GITHUB_USERNAME", os.getenv("GITHUB_OWNER", "AaronArada11"))
+    limit = int(os.getenv("GITHUB_COMMITS_LIMIT", "5"))
+    cache_key = f"{username}:{limit}"
+    now = time.time()
+
+    if (
+        commits_cache["key"] == cache_key
+        and commits_cache["data"]
+        and commits_cache["expires_at"] > now
+    ):
+        return commits_cache["data"]
+
+    data = _get_recent_commits(username, limit)
+    commits_cache.update({
+        "key": cache_key,
+        "expires_at": now + COMMITS_CACHE_SECONDS,
+        "data": data,
+    })
+    return data
 
 
 @fastapi_app.post("/chat")

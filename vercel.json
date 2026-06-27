@@ -28,6 +28,10 @@
       "destination": "/api/chat"
     },
     {
+      "source": "/github-commits",
+      "destination": "/api/github_commits"
+    },
+    {
       "source": "/((?!api/|assets/|favicon\\.ico$|favicon\\.png$).*)",
       "destination": "/index.html"
     }
