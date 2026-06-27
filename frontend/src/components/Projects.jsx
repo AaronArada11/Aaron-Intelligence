@@ -32,20 +32,11 @@ const projects = [
   {
     name: "Mirror Mentor",
     description:
-      "AI-powered educational platform that helps students improve programming skills through guided Socratic questioning instead of direct answers. Built during ACM TechSprint: Asteria",
+      "AI-powered educational platform that helps students improve programming skills through guided Socratic questioning instead of direct answers. Built during ACM Developers Week",
     tags: ["Gemini", "Supabase", "FastAPI", "Vercel"],
     accentColor: "var(--ctp-accent)",
     icon: MirrorRectangular,
     github: "https://github.com/Goodness-Gracious-GG/demo",
-  },
-  {
-    name: "Scriptorium",
-    description:
-      "AI-powered collaborative study workspace where students can upload files, create shared workspaces, and collaborate with others. Each workspace acts as a shared knowledge environment where an AI assistant can answer questions, summarize content, and explain concepts based on uploaded materials.",
-    tags: ["Next.js", "Convex", "Clerk", "Gemini API", "PayMongo", "TailwindCSS"],
-    accentColor: "var(--ctp-accent)",
-    icon: Notebook,
-    github: "https://github.com/AaronArada11/Scriptorium",
   },
 ];
 
@@ -56,9 +47,19 @@ export function Projects() {
       className="py-16 px-6"
       style={{ background: "var(--ctp-base)" }}
     >
-      <div className="max-w-4xl mx-auto">
-        <p className="font-mono text-s mb-6 tracking-widest" style={{ color: "var(--ctp-accent)", }}>
-          $ ls ~/projects
+      <div className="max-w-4xl mx-auto ">
+        <p
+          className="font-mono text-sm mb-6 tracking-widest flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+          style={{ color: "var(--ctp-accent)" }}
+        >
+          <span>$ ls ~/projects</span>
+          <a
+            href="#projects"
+            className="transition-opacity hover:opacity-70"
+            style={{ color: "var(--ctp-subtext1)" }}
+          >
+            More projects →
+          </a>
         </p>
 
         <div className="grid md:grid-cols-2 gap-4">
