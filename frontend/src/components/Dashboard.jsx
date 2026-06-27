@@ -55,10 +55,16 @@ export function Dashboard() {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => {
+      controller.abort();
+    }, 12000);
 
     async function loadCommits() {
       try {
-        const response = await fetch(COMMITS_API_URL);
+        const response = await fetch(COMMITS_API_URL, {
+          signal: controller.signal,
+        });
 
         if (!response.ok) {
           throw new Error(`GitHub request failed (${response.status})`);
@@ -74,9 +80,15 @@ export function Dashboard() {
         }
       } catch (error) {
         if (isMounted) {
-          setCommitsError(error.message);
+          setCommitsError(
+            error.name === "AbortError"
+              ? "GitHub commits request timed out."
+              : error.message
+          );
           setCommitsStatus("error");
         }
+      } finally {
+        window.clearTimeout(timeoutId);
       }
     }
 
@@ -84,6 +96,8 @@ export function Dashboard() {
 
     return () => {
       isMounted = false;
+      controller.abort();
+      window.clearTimeout(timeoutId);
     };
   }, []);
 

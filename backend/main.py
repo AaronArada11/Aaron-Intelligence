@@ -187,6 +187,9 @@ def _normalize_commit(repo_name, commit, fallback_date, fallback_author):
 
 
 def _get_push_commits(event, limit):
+    if limit <= 0:
+        return []
+
     repo_name = event.get("repo", {}).get("name")
     payload = event.get("payload", {})
     before = payload.get("before")
@@ -235,7 +238,75 @@ def _get_push_commits(event, limit):
     return [commit] if commit else []
 
 
+def _configured_repositories(username):
+    configured = os.getenv("GITHUB_REPOS", "").strip()
+    if configured:
+        return [
+            repo.strip()
+            for repo in configured.split(",")
+            if "/" in repo.strip()
+        ]
+
+    repo = os.getenv("GITHUB_REPO", "").strip()
+    owner = os.getenv("GITHUB_OWNER", username).strip()
+    if repo:
+        return [f"{owner}/{repo}"]
+
+    if os.getenv("GITHUB_TOKEN"):
+        return [f"{username}/Aaron-Intelligence"]
+
+    return []
+
+
+def _get_repository_commits(repo_name, limit):
+    response = requests.get(
+        f"{GITHUB_API_URL}/repos/{repo_name}/commits",
+        params={"per_page": limit},
+        headers=_github_headers(),
+        timeout=10,
+    )
+    if not response.ok:
+        return []
+
+    commits = []
+    for commit in response.json():
+        detail = _get_commit_detail(repo_name, commit.get("sha"))
+        normalized_commit = _normalize_commit(
+            repo_name,
+            detail or commit,
+            commit.get("commit", {}).get("author", {}).get("date"),
+            {
+                "name": commit.get("commit", {}).get("author", {}).get("name"),
+                "avatarUrl": None,
+            },
+        )
+        if normalized_commit:
+            commits.append(normalized_commit)
+        if len(commits) >= limit:
+            break
+
+    return commits
+
+
+def _dedupe_and_sort_commits(commits, limit):
+    by_sha = {}
+    for commit in commits:
+        by_sha[commit["oid"]] = commit
+
+    return sorted(
+        by_sha.values(),
+        key=lambda commit: commit.get("committedDate") or "",
+        reverse=True,
+    )[:limit]
+
+
 def _get_recent_commits(username: str, limit: int):
+    configured_repositories = _configured_repositories(username)
+    commits = []
+
+    for repo_name in configured_repositories:
+        commits.extend(_get_repository_commits(repo_name, limit))
+
     events_path = "events" if os.getenv("GITHUB_TOKEN") else "events/public"
     response = requests.get(
         f"{GITHUB_API_URL}/users/{username}/{events_path}",
@@ -244,30 +315,34 @@ def _get_recent_commits(username: str, limit: int):
         timeout=10,
     )
 
-    if response.status_code == 404:
+    if response.status_code == 404 and not commits:
         raise HTTPException(status_code=404, detail="GitHub user not found.")
-    if response.status_code >= 400:
+    if response.status_code >= 400 and not commits:
         raise HTTPException(
             status_code=response.status_code,
             detail="GitHub events request failed."
         )
 
-    commits = []
-    for event in response.json():
+    events = response.json() if response.ok else []
+    event_commits = 0
+    for event in events:
+        if event_commits >= limit:
+            break
+
         if event.get("type") != "PushEvent":
             continue
 
-        for commit in _get_push_commits(event, limit - len(commits)):
+        for commit in _get_push_commits(event, limit - event_commits):
             commits.append(commit)
-            if len(commits) >= limit:
+            event_commits += 1
+            if event_commits >= limit:
                 break
 
-        if len(commits) >= limit:
-            break
-
+    commits = _dedupe_and_sort_commits(commits, limit)
     return {
         "username": username,
         "source": "authenticated" if os.getenv("GITHUB_TOKEN") else "public",
+        "repositories": configured_repositories,
         "commits": commits,
         "languageSegments": _build_language_segments(commits),
     }
@@ -279,7 +354,8 @@ def _get_recent_commits(username: str, limit: int):
 def github_commits():
     username = os.getenv("GITHUB_USERNAME", os.getenv("GITHUB_OWNER", "AaronArada11"))
     limit = int(os.getenv("GITHUB_COMMITS_LIMIT", "5"))
-    cache_key = f"{username}:{limit}"
+    repo_key = ",".join(_configured_repositories(username))
+    cache_key = f"{username}:{limit}:{repo_key}:{bool(os.getenv('GITHUB_TOKEN'))}"
     now = time.time()
 
     if (
