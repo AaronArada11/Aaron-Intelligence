@@ -174,6 +174,17 @@ Add:
 GEMINI_API_KEY=YOUR_API_KEY_HERE
 ```
 
+Optional Langfuse tracing:
+
+```env
+LANGFUSE_PUBLIC_KEY=YOUR_LANGFUSE_PUBLIC_KEY
+LANGFUSE_SECRET_KEY=YOUR_LANGFUSE_SECRET_KEY
+LANGFUSE_BASE_URL=https://jp.cloud.langfuse.com
+```
+
+Langfuse tracing is server-side only. If these variables are missing, the
+chatbot still runs without sending traces.
+
 ---
 
 ## Run Backend

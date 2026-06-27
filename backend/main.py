@@ -3,7 +3,18 @@ from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from backend.retriever import _get_client, retrieve
+from backend.langfuse_tracing import (
+    flush_langfuse,
+    get_runtime_environment,
+    safe_update,
+    start_observation,
+)
+from backend.retriever import (
+    EMBEDDING_MODEL,
+    RETRIEVAL_MATCH_COUNT,
+    _get_client,
+    retrieve,
+)
 from pathlib import Path
 import os
 import requests
@@ -18,6 +29,8 @@ FRONTEND_DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
 FRONTEND_ASSETS = FRONTEND_DIST / "assets"
 GITHUB_API_URL = "https://api.github.com"
 COMMITS_CACHE_SECONDS = 300
+CHAT_MODEL = "gemini-2.5-flash"
+RETRIEVAL_MIN_SIMILARITY = 0.25
 commits_cache = {
     "key": None,
     "expires_at": 0,
@@ -377,46 +390,143 @@ def github_commits():
 @fastapi_app.post("/chat")
 @fastapi_app.post("/api/chat")
 def chat(request: ChatRequest):
-    try:
-        retrieved_docs = retrieve(request.message)
-    except Exception as exc:
-        traceback.print_exc()
+    trace_metadata = {
+        "app": "Aaron Intelligence",
+        "route": "/chat",
+        "model": CHAT_MODEL,
+        "environment": get_runtime_environment(),
+    }
 
-        raise HTTPException(
-            status_code=500,
-            detail=f"Retriever error: {str(exc)}"
-        )
+    with start_observation(
+        as_type="span",
+        name="chat-request",
+        input=request.message,
+        metadata=trace_metadata,
+    ) as trace:
+        try:
+            retrieval_span = None
+            try:
+                with start_observation(
+                    as_type="retriever",
+                    name="retrieve-context",
+                    input=request.message,
+                    metadata={
+                        "embedding_model": EMBEDDING_MODEL,
+                        "match_count": RETRIEVAL_MATCH_COUNT,
+                        "similarity_threshold": RETRIEVAL_MIN_SIMILARITY,
+                    },
+                ) as retrieval_span:
+                    retrieved_docs = retrieve(request.message)
+                    top_similarity = (
+                        retrieved_docs[0].get("similarity")
+                        if retrieved_docs
+                        else None
+                    )
+                    passed_threshold = (
+                        isinstance(top_similarity, (int, float))
+                        and top_similarity >= RETRIEVAL_MIN_SIMILARITY
+                    )
 
-    if (
-        not retrieved_docs
-        or retrieved_docs[0]["similarity"] < 0.25
-    ):
-        return {
-            "answer": (
-                "Sorry, I can't help with that. "
-                "I'm Aaron Intelligence, a portfolio chatbot focused "
-                "exclusively on Aaron Randolph S.D. Arada."
-            )
-        }
+                    safe_update(
+                        retrieval_span,
+                        output={
+                            "document_count": len(retrieved_docs or []),
+                            "top_similarity": top_similarity,
+                            "passed_threshold": passed_threshold,
+                        },
+                        metadata={
+                            "embedding_model": EMBEDDING_MODEL,
+                            "match_count": RETRIEVAL_MATCH_COUNT,
+                            "similarity_threshold": RETRIEVAL_MIN_SIMILARITY,
+                        },
+                    )
+            except Exception as exc:
+                safe_update(
+                    retrieval_span,
+                    level="ERROR",
+                    status_message=str(exc),
+                )
+                safe_update(
+                    trace,
+                    level="ERROR",
+                    status_message=f"Retriever error: {str(exc)}",
+                )
+                traceback.print_exc()
 
-    try:
-        context = "\n\n".join(
-            doc["content"]
-            for doc in retrieved_docs
-        )
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Retriever error: {str(exc)}"
+                )
 
-    except Exception as exc:
-        traceback.print_exc()
+            if (
+                not retrieved_docs
+                or top_similarity is None
+                or top_similarity < RETRIEVAL_MIN_SIMILARITY
+            ):
+                answer = (
+                    "Sorry, I can't help with that. "
+                    "I'm Aaron Intelligence, a portfolio chatbot focused "
+                    "exclusively on Aaron Randolph S.D. Arada."
+                )
+                safe_update(
+                    trace,
+                    output=answer,
+                    metadata={
+                        **trace_metadata,
+                        "refused": True,
+                        "reason": "low_similarity",
+                        "document_count": len(retrieved_docs or []),
+                        "top_similarity": top_similarity,
+                    },
+                )
+                return {
+                    "answer": answer
+                }
 
-        raise HTTPException(
-            status_code=500,
-            detail=f"Context error: {str(exc)}"
-        )
+            context_span = None
+            try:
+                with start_observation(
+                    as_type="span",
+                    name="build-context",
+                    metadata={
+                        "document_count": len(retrieved_docs),
+                    },
+                ) as context_span:
+                    context = "\n\n".join(
+                        doc["content"]
+                        for doc in retrieved_docs
+                    )
+                    safe_update(
+                        context_span,
+                        output={
+                            "document_count": len(retrieved_docs),
+                            "context_length": len(context),
+                        },
+                    )
 
-    try:
-        client = _get_client()
+            except Exception as exc:
+                safe_update(
+                    context_span,
+                    level="ERROR",
+                    status_message=str(exc),
+                )
+                safe_update(
+                    trace,
+                    level="ERROR",
+                    status_message=f"Context error: {str(exc)}",
+                )
+                traceback.print_exc()
 
-        prompt = f"""
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Context error: {str(exc)}"
+                )
+
+            generation = None
+            try:
+                client = _get_client()
+
+                prompt = f"""
 You are Aaron Intelligence.
 
 You are the AI representative of Aaron Randolph S.D. Arada.
@@ -455,22 +565,62 @@ Question:
 {request.message}
 """
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-        )
+                with start_observation(
+                    as_type="generation",
+                    name="gemini-response",
+                    input=prompt,
+                    model=CHAT_MODEL,
+                    metadata={
+                        "provider": "google",
+                        "document_count": len(retrieved_docs),
+                        "context_length": len(context),
+                    },
+                ) as generation:
+                    response = client.models.generate_content(
+                        model=CHAT_MODEL,
+                        contents=prompt,
+                    )
+                    answer = response.text
+                    safe_update(
+                        generation,
+                        output=answer,
+                    )
 
-        return {
-            "answer": response.text
-        }
+                safe_update(
+                    trace,
+                    output=answer,
+                    metadata={
+                        **trace_metadata,
+                        "refused": False,
+                        "document_count": len(retrieved_docs),
+                        "top_similarity": retrieved_docs[0].get("similarity"),
+                        "context_length": len(context),
+                    },
+                )
 
-    except Exception as exc:
-        traceback.print_exc()
+                return {
+                    "answer": answer
+                }
 
-        raise HTTPException(
-            status_code=500,
-            detail=f"Gemini error: {str(exc)}"
-        )
+            except Exception as exc:
+                safe_update(
+                    generation,
+                    level="ERROR",
+                    status_message=str(exc),
+                )
+                safe_update(
+                    trace,
+                    level="ERROR",
+                    status_message=f"Gemini error: {str(exc)}",
+                )
+                traceback.print_exc()
+
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Gemini error: {str(exc)}"
+                )
+        finally:
+            flush_langfuse()
 
 
 # Explicit assets mount

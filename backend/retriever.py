@@ -8,6 +8,9 @@ load_dotenv(Path(__file__).resolve().parent / ".env")
 
 _client = None
 
+EMBEDDING_MODEL = "gemini-embedding-001"
+RETRIEVAL_MATCH_COUNT = 3
+
 
 def _get_client():
     global _client
@@ -21,7 +24,7 @@ def _get_client():
 
 def retrieve(question):
     result = _get_client().models.embed_content(
-        model="gemini-embedding-001",
+        model=EMBEDDING_MODEL,
         contents=question,
     )
 
@@ -33,7 +36,7 @@ def retrieve(question):
         "match_documents",
         {
             "query_embedding": query_embedding,
-            "match_count": 3,
+            "match_count": RETRIEVAL_MATCH_COUNT,
         },
     ).execute()
 
