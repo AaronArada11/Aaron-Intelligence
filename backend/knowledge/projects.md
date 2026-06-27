@@ -1,3 +1,11 @@
+# Project Recency
+
+Aaron's most recent listed project is KUMPAS.
+
+KUMPAS was built during ACM TechSprint: Asteria 2026 and is the newest project in Aaron's current portfolio project list.
+
+If asked about Aaron's most recent, latest, or newest project, the answer is KUMPAS.
+
 # Mirror Mentor
 
 Role:

@@ -132,8 +132,8 @@ function Chat({ onClose }) {
 
           {isLoading && (
             <div className="flex gap-2.5 justify-start">
-              <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-accent)] flex items-center justify-center shadow-lg">
-                <Bot className="w-3.5 h-3.5 text-white" />
+              <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-base)] flex items-center justify-center shadow-lg">
+                <Bot className="w-3.5 h-3.5 text-[var(--ctp-accent)]" />
               </div>
               <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-gray-800 border border-[var(--ctp-accent)]">
                 <div className="flex gap-1.5 items-center">
