@@ -7,6 +7,7 @@ import { TextType } from "./TextType";
 const navLinks = [
   { label: "About", href: "/About.jsx" },
   { label: "Projects", href: "#projects" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export function Navbar() {

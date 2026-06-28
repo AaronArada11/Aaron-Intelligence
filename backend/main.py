@@ -84,6 +84,23 @@ class ChatRequest(BaseModel):
     message: str
 
 
+def _is_rate_limit_error(exc):
+    status_code = getattr(exc, "status_code", None) or getattr(exc, "code", None)
+    if status_code == 429:
+        return True
+
+    message = str(exc).lower()
+    rate_limit_terms = (
+        "429",
+        "rate limit",
+        "rate_limit",
+        "quota",
+        "resource_exhausted",
+        "too many requests",
+    )
+    return any(term in message for term in rate_limit_terms)
+
+
 def _github_headers():
     headers = {
         "Accept": "application/vnd.github+json",
@@ -453,6 +470,15 @@ def chat(request: ChatRequest):
                 )
                 traceback.print_exc()
 
+                if _is_rate_limit_error(exc):
+                    raise HTTPException(
+                        status_code=429,
+                        detail=(
+                            "Aaron Intelligence is temporarily rate limited. "
+                            "Please wait a moment and try again."
+                        ),
+                    )
+
                 raise HTTPException(
                     status_code=500,
                     detail=f"Retriever error: {str(exc)}"
@@ -614,6 +640,15 @@ Question:
                     status_message=f"Gemini error: {str(exc)}",
                 )
                 traceback.print_exc()
+
+                if _is_rate_limit_error(exc):
+                    raise HTTPException(
+                        status_code=429,
+                        detail=(
+                            "Aaron Intelligence is temporarily rate limited. "
+                            "Please wait a moment and try again."
+                        ),
+                    )
 
                 raise HTTPException(
                     status_code=500,

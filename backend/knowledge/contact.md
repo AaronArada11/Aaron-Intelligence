@@ -4,7 +4,7 @@ I'm always open to discussing software engineering, artificial intelligence, mac
 
 ## Get in Touch
 
-* **Email:** [aaronarada011@gmail.com.com](mailto:aaronarada011@gmail.com)
+* **Email:** [aaronarada011@gmail.com](mailto:aaronarada011@gmail.com)
 * **Location:** Philippines
 
 ## Professional Profiles

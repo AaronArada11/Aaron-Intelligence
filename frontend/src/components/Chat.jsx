@@ -5,6 +5,20 @@ import { Send, Bot, User, Sparkles, X } from 'lucide-react'
 import { useTheme } from './ThemeContext'
 
 const API_URL = '/chat'
+const RATE_LIMIT_MESSAGE = 'Aaron Intelligence is temporarily rate limited. Please wait a moment and try again.'
+const GENERIC_ERROR_MESSAGE = 'Sorry, I encountered an error while generating a response. Please try again in a moment.'
+
+const isRateLimitDetail = (value) => {
+  const message = String(value || '').toLowerCase()
+  return (
+    message.includes('429') ||
+    message.includes('rate limit') ||
+    message.includes('rate_limit') ||
+    message.includes('quota') ||
+    message.includes('resource_exhausted') ||
+    message.includes('too many requests')
+  )
+}
 
 function Chat({ onClose }) {
   useTheme()
@@ -48,16 +62,30 @@ function Chat({ onClose }) {
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        let detail = ''
+        try {
+          const errorData = await response.json()
+          detail = errorData.detail || ''
+        } catch {
+          detail = ''
+        }
+
+        const error = new Error(detail || `HTTP error! status: ${response.status}`)
+        error.status = response.status
+        error.detail = detail
+        throw error
       }
 
       const data = await response.json()
       setMessages(prev => [...prev, { role: 'assistant', content: data.answer }])
     } catch (err) {
-      setError(err.message)
+      const isRateLimited = err.status === 429 || isRateLimitDetail(err.detail || err.message)
+      const message = isRateLimited ? RATE_LIMIT_MESSAGE : GENERIC_ERROR_MESSAGE
+
+      setError(message)
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Sorry, I encountered an error connecting to the server. Please make sure the backend is running.'
+        content: message
       }])
     } finally {
       setIsLoading(false)
@@ -97,14 +125,14 @@ function Chat({ onClose }) {
               )}
 
               <div
-                className={`px-4 py-2.5 rounded-2xl max-w-[80%] text-sm leading-relaxed ${
+                className={`min-w-0 max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-words [overflow-wrap:anywhere] ${
                   msg.role === 'user'
                     ? 'bg-blue-600 text-white rounded-br-sm'
                     : 'bg-gray-800 border border-[var(--ctp-accent)] text-gray-100 rounded-bl-sm'
                 }`}
               >
                 {msg.role === 'assistant' ? (
-                  <div className="prose prose-invert prose-sm max-w-none
+                  <div className="prose prose-invert prose-sm max-w-none break-words [overflow-wrap:anywhere]
                     prose-p:leading-relaxed prose-p:mb-1 prose-p:mt-0
                     prose-headings:mt-2 prose-headings:mb-1
                     prose-ul:my-1 prose-ol:my-1
@@ -118,7 +146,7 @@ function Chat({ onClose }) {
                     </ReactMarkdown>
                   </div>
                 ) : (
-                  <p className="whitespace-pre-wrap">{msg.content}</p>
+                  <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{msg.content}</p>
                 )}
               </div>
 

@@ -1,4 +1,4 @@
-import { User, Globe, FolderGit2, Mail, MapPin } from "lucide-react";
+import { User, FolderGit2, Mail, MapPin, FileDown } from "lucide-react";
 
 function GoldLink({ href, children }) {
   return (
@@ -47,7 +47,7 @@ export function Hero() {
           {[
             { icon: <FolderGit2 size={14} />, label: "GitHub", href: "https://github.com/AaronArada11" },
             { icon: <User size={14} />, label: "LinkedIn", href: "https://www.linkedin.com/in/aaronarada/" },
-            {icon: <Mail size={14} />, label: "Email",href: "mailto:aaronarada011@gmail.com" }
+            {icon: <Mail size={14} />, label: "Email",href: "https://mail.google.com/mail/?view=cm&fs=1&to=aaronarada011%40gmail.com&su=Let%27s%20connect" }
           ].map((item, i) => (
             <span key={item.label} className="flex items-center">
               {i > 0 && (
@@ -65,7 +65,18 @@ export function Hero() {
               </a>
             </span>
           ))}
-          
+          <span className="mx-3" style={{ color: "var(--ctp-surface2)" }}>|</span>
+          <a
+            href="/Aaron-Arada-Resume.pdf"
+            download
+            className="inline-flex min-h-5 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-mono text-sm text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] hover:shadow-[0_4px_0_var(--ctp-surface0)] active:translate-y-0 active:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            style={{
+              outlineColor: "var(--ctp-accent)",
+            }}
+          >
+            <FileDown size={14} />
+            Resume
+          </a>
         </div>
       </div>
     </section>

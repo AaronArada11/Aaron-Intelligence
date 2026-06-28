@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar'
 import { Hero } from './components/Hero'
 import { Projects } from './components/Projects'
 import { Dashboard } from './components/Dashboard'
+import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
 import Chat from './components/Chat'
 import ChatButton from './components/ChatButton'
@@ -18,6 +19,7 @@ function App() {
           <Hero />
           <Projects />
           <Dashboard />
+          <Contact />
           {isChatOpen && <Chat onClose={() => setIsChatOpen(false)} />}
           <ChatButton onClick={() => setIsChatOpen(!isChatOpen)} isOpen={isChatOpen} />
         </main>
