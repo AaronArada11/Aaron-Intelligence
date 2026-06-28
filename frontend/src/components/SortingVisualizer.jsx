@@ -4,6 +4,8 @@ import '../SortingVisualizer.css';
 import * as sortingAlgorithms from './sortingAlgorithms';
 const PRIMARY_COLOR = 'var(--ctp-accent)';
 let SECONDARY_COLOR = "#dc143c";
+const BAR_HEADROOM = 18;
+const MIN_BAR_HEIGHT = 8;
 
 export class SortingVisualizer extends React.Component {
     constructor(props) {
@@ -14,17 +16,37 @@ export class SortingVisualizer extends React.Component {
             animationSpeed: 5,
             numberOfArrayBars: 120,
         };
+        this.arrayContainerRef = React.createRef();
+        this.resizeObserver = null;
     }
 
     componentDidMount() {
         this.resetArray();
+        this.resizeObserver = new ResizeObserver(() => {
+            this.resetArray();
+        });
+        if (this.arrayContainerRef.current) {
+            this.resizeObserver.observe(this.arrayContainerRef.current);
+        }
+    }
+
+    componentWillUnmount() {
+        this.resizeObserver?.disconnect();
+    }
+
+    getMaxBarHeight() {
+        const containerHeight = this.arrayContainerRef.current?.clientHeight;
+        if (!containerHeight) return 360;
+
+        return Math.max(MIN_BAR_HEIGHT, containerHeight - BAR_HEADROOM);
     }
 
     resetArray() {
         const array = [];
         const { numberOfArrayBars } = this.state;
+        const maxBarHeight = this.getMaxBarHeight();
         for (let i = 0; i < numberOfArrayBars; i++) {
-            array.push(randomIntFromInterval(5, 450));
+            array.push(randomIntFromInterval(MIN_BAR_HEIGHT, maxBarHeight));
         }
         this.setState({array});
     }
@@ -286,7 +308,7 @@ radixSort() {
                             />
                         </div>
                     </div>
-                    <div className="div3 array-container">
+                    <div className="div3 array-container" ref={this.arrayContainerRef}>
                       {array.map((value, idx) => (
                           <div className="array-bar" 
                           key={idx}

@@ -102,17 +102,17 @@ export function Dashboard() {
   }, []);
 
   return (
-    <section style={{ background: "var(--ctp-base)" }} className="py-16 px-6">
+    <section style={{ background: "var(--ctp-base)" }} className="py-14 px-6">
       <div className="max-w-4xl mx-auto">
-        <p className="scroll-parallax scroll-parallax-soft font-mono text-xs mb-6 uppercase tracking-widest" style={{ color: "var(--ctp-accent)" }}>
+        <p className="scroll-parallax scroll-parallax-soft font-mono text-xs mb-5 uppercase tracking-widest" style={{ color: "var(--ctp-accent)" }}>
           $ cat ~/dashboard.json
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
 
           {/* Theme */}
-          <Card className="p-6">
-            <div className="flex items-center gap-2 mb-6">
+          <Card>
+            <div className="flex items-center gap-2 mb-5">
               <Palette  size={13} style={{ color: "var(--ctp-accent)" }} />
               <SectionLabel>Theme</SectionLabel>
             </div>
@@ -124,7 +124,7 @@ export function Dashboard() {
 
           {/* Recent Commits */}
           <Card className="md:col-span-2 min-h-[220px]">
-            <div className="mb-6 flex items-center justify-between gap-4">
+            <div className="mb-5 flex items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-2">
                 <GitCommitHorizontal size={13} style={{ color: "var(--ctp-accent)" }} />
                 <SectionLabel>Recent Commits</SectionLabel>
@@ -132,7 +132,7 @@ export function Dashboard() {
               
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {commitsStatus === "loading" && (
                 <p className="font-mono text-sm" style={{ color: "var(--ctp-subtext0)" }}>
                   Loading commits...
@@ -184,7 +184,7 @@ export function Dashboard() {
               ))}
             </div>
 
-            <div className="mt-6 flex items-center gap-5">
+            <div className="mt-5 flex items-center gap-5">
               <a
                 href={`https://github.com/${githubUsername}`}
                 target="_blank"
@@ -222,14 +222,13 @@ export function Dashboard() {
           </Card>
 
           {/* AlgoVisualizer */}
-          <Card className="md:col-span-4">
-            <div className="flex items-center gap-2 mb-1">
+          <Card className="md:col-span-2 lg:col-span-3">
+            <div className="mb-4 flex items-center gap-2">
               <ChartNoAxesColumnIncreasing size={13} style={{ color: "var(--ctp-accent)" }} />
               <SectionLabel>AlgoVisualizer</SectionLabel>
             </div>
-            <div className="space-y-3">
+            <div>
               <SortingVisualizer />
-
             </div>
           </Card>
 
