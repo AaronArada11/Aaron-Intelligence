@@ -9,6 +9,8 @@
 - FullName: Aaron Randolph S.D. Arada
 - Girlfriend: Ella Marie
 
+If asked What does Aaron do, answer Aaron is currently a student at FEUTECH
+
 # Hobbies
 Playing:
 - Blilliards

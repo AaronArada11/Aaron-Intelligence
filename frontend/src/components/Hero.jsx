@@ -66,13 +66,6 @@ export function Hero() {
             </span>
           ))}
           <span className="mx-3" style={{ color: "var(--ctp-surface2)" }}>|</span>
-          <a
-            href="#about"
-            className="transition-opacity hover:opacity-70"
-            style={{ color: "var(--ctp-subtext1)" }}
-          >
-            More about me →
-          </a>
         </div>
       </div>
     </section>
