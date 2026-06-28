@@ -7,6 +7,7 @@ Used In:
 
 * Aaron Intelligence
 * Mirror Mentor
+* KUMPAS
 
 Applications:
 
@@ -14,6 +15,8 @@ Applications:
 * AI integration
 * REST API development
 * Backend services
+* Machine learning inference backend development
+* Computer vision and sign language recognition workflows
 
 Key Learnings:
 
@@ -21,6 +24,8 @@ Key Learnings:
 * Backend architecture
 * AI application development
 * FastAPI development
+* Full-stack ML application development
+* Connecting frontend applications to hosted Python services
 
 # JavaScript
 
@@ -44,16 +49,14 @@ Key Learnings:
 
 Used In:
 
-* Aaron Intelligence
-* AlgoVisualizer
-* Scriptorium
+* KUMPAS
 
 Applications:
 
 * React frontend development
 * Component architecture
 * Type-safe web development
-* Full-stack application development
+* Full-stack ML application development
 
 Key Learnings:
 
@@ -87,7 +90,6 @@ Used In:
 
 * Aaron Intelligence
 * Mirror Mentor
-* Scriptorium
 * Academic coursework
 
 Databases:
@@ -166,6 +168,7 @@ Used In:
 
 * Aaron Intelligence
 * AlgoVisualizer
+* KUMPAS
 
 Applications:
 
@@ -224,7 +227,6 @@ Used In:
 
 * Aaron Intelligence
 * Mirror Mentor
-* Scriptorium
 
 Applications:
 
@@ -239,6 +241,97 @@ Key Learnings:
 * Authentication systems
 * Vector databases
 * Backend-as-a-Service platforms
+
+# Vite
+
+Used In:
+
+* Aaron Intelligence
+* KUMPAS
+
+Applications:
+
+* Fast frontend development workflow
+* React application setup
+* Frontend build tooling
+
+Key Learnings:
+
+* Modern frontend tooling
+* Development server workflows
+* Frontend deployment preparation
+
+# Convex
+
+Used In:
+
+* Scriptorium
+
+Applications:
+
+* Backend infrastructure
+* Real-time collaboration features
+* Full-stack application data workflows
+
+Key Learnings:
+
+* Real-time backend development
+* Backend-as-a-Service architecture
+* Collaborative application design
+
+# Clerk
+
+Used In:
+
+* Scriptorium
+
+Applications:
+
+* User authentication
+* Workspace access management
+* SaaS identity workflows
+
+Key Learnings:
+
+* Authentication integration
+* User management
+* SaaS application architecture
+
+# TailwindCSS
+
+Used In:
+
+* Scriptorium
+
+Applications:
+
+* Frontend styling
+* Component-based interface design
+* Responsive web application layouts
+
+Key Learnings:
+
+* Utility-first CSS workflows
+* Modern UI development
+* Design system implementation
+
+# PayMongo
+
+Used In:
+
+* Scriptorium
+
+Applications:
+
+* Subscription management
+* Payment integration planning
+* SaaS billing workflows
+
+Key Learnings:
+
+* Payment integration concepts
+* Subscription-based product architecture
+* SaaS monetization workflows
 
 # Gemini API
 
@@ -260,6 +353,62 @@ Key Learnings:
 * LLM integration
 * Prompt engineering
 * AI application design
+
+# TensorFlow/Keras
+
+Used In:
+
+* KUMPAS
+
+Applications:
+
+* LSTM model training
+* Sequence classification
+* Filipino Sign Language recognition
+* Real-time prediction workflows
+
+Key Learnings:
+
+* Machine learning model development
+* LSTM sequence modeling
+* Gesture recognition
+* ML application integration
+
+# MediaPipe
+
+Used In:
+
+* KUMPAS
+
+Applications:
+
+* Hand landmark extraction
+* Webcam-based gesture input processing
+* Computer vision preprocessing
+
+Key Learnings:
+
+* Landmark-based computer vision
+* Real-time hand tracking workflows
+* Preparing structured inputs for ML models
+
+# OpenCV
+
+Used In:
+
+* KUMPAS
+
+Applications:
+
+* Webcam frame processing
+* Real-time computer vision workflows
+* Python-based image processing
+
+Key Learnings:
+
+* Computer vision fundamentals
+* Real-time video processing
+* Integrating CV pipelines with ML inference
 
 # Git & GitHub
 
@@ -317,3 +466,40 @@ Key Learnings:
 * Deployment workflows
 * Scalable infrastructure concepts
 
+# Vercel
+
+Used In:
+
+* Mirror Mentor
+* Aaron Intelligence
+* KUMPAS
+
+Applications:
+
+* Frontend deployment
+* Full-stack project hosting
+* Portfolio and hackathon project deployment
+
+Key Learnings:
+
+* Deployment workflows
+* Web application hosting
+* Connecting deployed frontends with backend services
+
+# Railway
+
+Used In:
+
+* KUMPAS
+
+Applications:
+
+* Python backend deployment
+* ML inference server hosting
+* Connecting a deployed frontend to a hosted backend
+
+Key Learnings:
+
+* Backend deployment workflows
+* Service hosting
+* Full-stack ML deployment

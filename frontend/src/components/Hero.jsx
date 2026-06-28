@@ -65,7 +65,7 @@ export function Hero() {
               </a>
             </span>
           ))}
-          <span className="mx-3" style={{ color: "var(--ctp-surface2)" }}>|</span>
+          
         </div>
       </div>
     </section>

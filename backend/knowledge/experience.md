@@ -1,6 +1,6 @@
 # School Organizations
 
-# AWS Learning Club - FEU Tech
+## AWS Learning Club - FEU Tech
 
 Role:
 Founding Co-Lead
