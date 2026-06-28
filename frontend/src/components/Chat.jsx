@@ -95,7 +95,7 @@ function Chat({ onClose }) {
 
   return (
     <div className="fixed bottom-24 right-6 z-50 w-[320px] h-[400px] flex flex-col rounded-2xl overflow-hidden bg-gray-950 text-gray-100 shadow-2xl shadow-black/50 border border-[var(--ctp-accent)]">
-      <header className="flex items-center gap-3 px-4 py-3 border-b border-[var(--ctp-accent)] bg-gray-900/80">
+      <header className="flex items-center gap-3 px-4 py-3 border-b border-[var(--ctp-surface0)] bg-gray-900/80">
         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--ctp-base)] shadow-lg">
           <Sparkles className="w-4 h-4 text-[var(--ctp-accent)]" />
         </div>
@@ -128,7 +128,7 @@ function Chat({ onClose }) {
                 className={`min-w-0 max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-words [overflow-wrap:anywhere] ${
                   msg.role === 'user'
                     ? 'bg-blue-600 text-white rounded-br-sm'
-                    : 'bg-gray-800 border border-[var(--ctp-accent)] text-gray-100 rounded-bl-sm'
+                    : 'bg-gray-800 border border-[var(--ctp-surface0)] text-gray-100 rounded-bl-sm'
                 }`}
               >
                 {msg.role === 'assistant' ? (
@@ -138,8 +138,8 @@ function Chat({ onClose }) {
                     prose-ul:my-1 prose-ol:my-1
                     prose-li:my-0.5
                     prose-code:text-blue-300 prose-code:bg-gray-700 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-[11px] prose-code:before:content-none prose-code:after:content-none
-                    prose-pre:bg-gray-900 prose-pre:border prose-pre:border-[var(--ctp-accent)] prose-pre:rounded-lg prose-pre:p-3 prose-pre:text-xs
-                    prose-blockquote:border-l-[var(--ctp-accent)] prose-blockquote:text-gray-300
+                    prose-pre:bg-gray-900 prose-pre:border prose-pre:border-[var(--ctp-surface0)] prose-pre:rounded-lg prose-pre:p-3 prose-pre:text-xs
+                    prose-blockquote:border-l-[var(--ctp-surface0)] prose-blockquote:text-gray-300
                     prose-a:break-words prose-a:overflow-wrap-anywhere">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {msg.content}
@@ -177,7 +177,7 @@ function Chat({ onClose }) {
         </div>
       </main>
 
-      <footer className="border-t border-[var(--ctp-accent)] bg-gray-900/80 px-4 py-3">
+      <footer className="border-t border-[var(--ctp-surface0)] bg-gray-900/80 px-4 py-3">
         {error && (
           <div className="mb-2 px-3 py-2 rounded-lg bg-red-900/30 border border-red-700/50 text-red-300 text-xs">
             {error}
@@ -192,7 +192,7 @@ function Chat({ onClose }) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={isLoading}
-            className="flex-1 bg-gray-800 border border-[var(--ctp-accent)] rounded-xl px-3 py-2.5 pr-12 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-gray-800 border border-[var(--ctp-surface0)] rounded-xl px-3 py-2.5 pr-12 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             type="submit"

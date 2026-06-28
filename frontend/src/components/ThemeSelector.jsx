@@ -11,27 +11,31 @@ export function ThemeSelector() {
   const { flavor, accent, setFlavor, setAccent } = useTheme();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div>
-        <p style={{ color: "var(--ctp-subtext0)" }} className="font-mono text-xs mb-2 uppercase tracking-widest">Theme</p>
-        <div className="flex gap-2 flex-wrap">
+        <div
+          className="grid grid-cols-[repeat(auto-fit,minmax(6.75rem,1fr))] gap-1 rounded-lg border p-1"
+          style={{ borderColor: "var(--ctp-surface0)" }}
+        >
           {flavourLabels.map(({ key, label }) => (
             <button
               key={key}
               onClick={() => setFlavor(key)}
               style={{
-                background: flavor === key ? "var(--ctp-accent)" : "var(--ctp-surface0)",
-                color: flavor === key ? "var(--ctp-base)" : "var(--ctp-subtext1)",
+                background: flavor === key ? "var(--ctp-surface0)" : "transparent",
+                boxShadow: flavor === key ? "inset 0 0 0 1px var(--ctp-accent)" : "none",
+                color: flavor === key ? "var(--ctp-text)" : "var(--ctp-subtext1)",
               }}
-              className="px-4 py-1.5 rounded font-mono text-sm transition-all">
+              className="min-h-10 min-w-0 rounded-md px-3 py-2 font-mono text-sm transition-colors hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-text)]"
+            >
               {label}
             </button>
           ))}
         </div>
       </div>
       <div>
-        <p style={{ color: "var(--ctp-subtext0)" }} className="font-mono text-xs mb-2 uppercase tracking-widest">Accent</p>
-        <div className="flex gap-2 flex-wrap">
+        
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(2.35rem,1fr))] gap-2">
           {accentList.map((a) => {
             const color = flavors[flavor][a];
             return (
@@ -39,12 +43,12 @@ export function ThemeSelector() {
                 key={a}
                 onClick={() => setAccent(a)}
                 title={a}
+                aria-label={`Use ${a} accent`}
                 style={{
                   background: color,
-                  outline: accent === a ? `2px solid ${color}` : "none",
-                  outlineOffset: "2px",
+                  boxShadow: accent === a ? `0 0 0 3px var(--ctp-base), 0 0 0 5px ${color}` : "none",
                 }}
-                className="w-6 h-6 rounded-full transition-transform hover:scale-110"
+                className="aspect-square w-full min-w-0 rounded-lg border border-[var(--ctp-surface0)] transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ctp-accent)]"
               />
             );
           })}
