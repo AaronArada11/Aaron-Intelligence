@@ -1,9 +1,9 @@
-import { User, Globe, FolderGit2 } from "lucide-react";
+import { User, FolderGit2 } from "lucide-react";
 
 export function Footer() {
   return (
     <footer
-      className="py-10 px-6"
+      className="scroll-parallax scroll-parallax-soft py-10 px-6"
       style={{ background: "var(--ctp-crust)", borderTop: "1px solid var(--ctp-surface0)" }}
     >
       <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-5">

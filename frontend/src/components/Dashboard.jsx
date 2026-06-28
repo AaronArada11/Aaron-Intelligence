@@ -8,7 +8,7 @@ const COMMITS_API_URL = "/github-commits";
 function Card({ children, className = "" }) {
   return (
     <div
-      className={`rounded-xl p-5 ${className}`}
+      className={`scroll-parallax scroll-parallax-card rounded-xl p-5 ${className}`}
       style={{ background: "var(--ctp-mantle)", border: "1px solid var(--ctp-surface0)" }}
     >
       {children}
@@ -104,7 +104,7 @@ export function Dashboard() {
   return (
     <section style={{ background: "var(--ctp-base)" }} className="py-16 px-6">
       <div className="max-w-4xl mx-auto">
-        <p className="font-mono text-xs mb-6 uppercase tracking-widest" style={{ color: "var(--ctp-accent)" }}>
+        <p className="scroll-parallax scroll-parallax-soft font-mono text-xs mb-6 uppercase tracking-widest" style={{ color: "var(--ctp-accent)" }}>
           $ cat ~/dashboard.json
         </p>
 

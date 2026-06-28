@@ -1,4 +1,4 @@
-import { ExternalLink, FolderGit2, Bot, BarChart2, MirrorRectangular, Notebook, Languages } from "lucide-react";
+import { ExternalLink, FolderGit2, Bot, BarChart2, MirrorRectangular, Languages } from "lucide-react";
 
 const projects = [
     {
@@ -14,7 +14,7 @@ const projects = [
   {
     name: "Aaron Intelligence",
     description:
-      "Personalized AI-powered portfolio chatbot designed to act as an interactive digital representative of Aaron Randolph S.D. Arada. Built using a Retrieval-Augmented Generation (RAG) architecture that retrieves information from a personal knowledge base and generates context-aware responses about Aaron's projects, skills, education, experience, and career goals.",
+      "Personalized AI portfolio chatbot that answers questions about my projects, skills, education, and experience using a RAG-powered knowledge base.",
     tags: ["Gemini", "React", "Supabase", "FastAPI"],
     accentColor: "var(--ctp-accent)",
     icon: Bot,
@@ -49,7 +49,7 @@ export function Projects() {
     >
       <div className="max-w-4xl mx-auto ">
         <p
-          className="font-mono text-sm mb-6 tracking-widest flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+          className="scroll-parallax scroll-parallax-soft font-mono text-sm mb-6 tracking-widest flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
           style={{ color: "var(--ctp-accent)" }}
         >
           <span>$ ls ~/projects</span>
@@ -62,70 +62,78 @@ export function Projects() {
           </a>
         </p>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          {projects.map((p) => {
+        <div className="grid items-stretch gap-4 md:grid-cols-2 md:auto-rows-fr">
+          {projects.map((p, index) => {
             const Icon = p.icon;
             return (
               <div
                 key={p.name}
-                className="rounded-lg p-6 group hover:scale-[1.01] transition-transform"
-                style={{ background: "var(--ctp-base)", border: "1px solid var(--ctp-surface0)" }}
-                onMouseEnter={(e) => e.currentTarget.style.outline = "1px solid var(--ctp-accent)"}
-                onMouseLeave={(e) => e.currentTarget.style.outline = "none"}
+                className="scroll-parallax scroll-parallax-card h-full"
+                style={{
+                  "--parallax-distance": index % 2 === 0 ? "44px" : "62px",
+                  "--parallax-end": index % 2 === 0 ? "-10px" : "-16px",
+                }}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="p-2 rounded-lg"
-                      style={{ background: `${p.accentColor}18`, color: p.accentColor }}
-                    >
-                      <Icon size={16} />
-                    </div>
-                    <span className="font-mono" style={{ color: "var(--ctp-text)" }}>{p.name}</span>
-                  </div>
-                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <a
-                      href={p.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ color: "var(--ctp-subtext0)" }}
-                      className="hover:opacity-70 transition-opacity"
-                    >
-                      <FolderGit2 size={15} />
-                    </a>
-                    <a
-                      href={p.liveDemo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ color: "var(--ctp-subtext0)" }}
-                      className="hover:opacity-70 transition-opacity"
-                    >
-                      <ExternalLink size={15} />
-                    </a>
-                  </div>
-                </div>
-
-                <p
-                  className="font-mono text-sm leading-relaxed mb-4"
-                  style={{ color: "var(--ctp-subtext1)" }}
+                <div
+                  className="group flex h-full min-h-[18rem] flex-col rounded-lg p-5 transition-transform hover:scale-[1.01]"
+                  style={{ background: "var(--ctp-base)", border: "1px solid var(--ctp-surface0)" }}
+                  onMouseEnter={(e) => e.currentTarget.style.outline = "1px solid var(--ctp-accent)"}
+                  onMouseLeave={(e) => e.currentTarget.style.outline = "none"}
                 >
-                  {p.description}
-                </p>
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="p-2 rounded-lg"
+                        style={{ background: `${p.accentColor}18`, color: p.accentColor }}
+                      >
+                        <Icon size={16} />
+                      </div>
+                      <span className="font-mono" style={{ color: "var(--ctp-text)" }}>{p.name}</span>
+                    </div>
+                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <a
+                        href={p.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "var(--ctp-subtext0)" }}
+                        className="hover:opacity-70 transition-opacity"
+                      >
+                        <FolderGit2 size={15} />
+                      </a>
+                      <a
+                        href={p.liveDemo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "var(--ctp-subtext0)" }}
+                        className="hover:opacity-70 transition-opacity"
+                      >
+                        <ExternalLink size={15} />
+                      </a>
+                    </div>
+                  </div>
 
-                <div className="flex flex-wrap gap-2">
-                  {p.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="font-mono rounded px-2 py-0.5"
-                      style={{
-                        fontSize: "0.7rem",
-                        background: "var(--ctp-surface0)",
-                        color: p.accentColor,
-                      }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                  <p
+                    className="mb-4 flex-1 font-mono text-sm leading-relaxed"
+                    style={{ color: "var(--ctp-subtext1)" }}
+                  >
+                    {p.description}
+                  </p>
+
+                  <div className="mt-auto flex flex-wrap gap-2">
+                    {p.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="font-mono rounded px-2 py-0.5"
+                        style={{
+                          fontSize: "0.7rem",
+                          background: "var(--ctp-surface0)",
+                          color: p.accentColor,
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             );

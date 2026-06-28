@@ -44,14 +44,14 @@ export function Contact() {
     >
       <div className="mx-auto max-w-4xl">
         <p
-          className="mb-6 flex items-center gap-2 font-mono text-sm tracking-widest"
+          className="scroll-parallax scroll-parallax-soft mb-6 flex items-center gap-2 font-mono text-sm tracking-widest"
           style={{ color: "var(--ctp-accent)" }}
         >
           <span>$ mail --compose ~/contact</span>
         </p>
 
         <div
-          className="grid gap-4 rounded-lg p-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,0.85fr)] md:p-6"
+          className="scroll-parallax scroll-parallax-deep grid gap-4 rounded-lg p-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,0.85fr)] md:p-6"
           style={{
             background: "var(--ctp-mantle)",
             border: "1px solid var(--ctp-surface0)",

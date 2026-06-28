@@ -21,7 +21,7 @@ export function Hero() {
       <div className="max-w-4xl mx-auto">
         {/* Heading */}
         <h1
-          className="font-mono mb-6 leading-tight"
+          className="scroll-parallax scroll-parallax-soft font-mono mb-6 leading-tight"
           style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)", color: "var(--ctp-text)" }}
         >
           Hi! I'm{" "}
@@ -30,7 +30,7 @@ export function Hero() {
 
         {/* Body */}
         <p
-          className="font-mono leading-relaxed mb-8 max-w-xl"
+          className="scroll-parallax scroll-parallax-soft font-mono leading-relaxed mb-8 max-w-xl"
           style={{ fontSize: "0.92rem", color: "var(--ctp-text)", lineHeight: "1.8" }}
         >
           I'm a Computer Science Student @{" "}
@@ -38,12 +38,12 @@ export function Hero() {
           
         </p>
 
-        <div className="flex flex-wrap items-center mb-12 font-mono" style={{ fontSize: "0.85rem" }}>
+        <div className="scroll-parallax scroll-parallax-soft flex flex-wrap items-center mb-12 font-mono" style={{ fontSize: "0.85rem" }}>
           <MapPin size ={14} className="mr-2"/> <p>Manila, PH</p>
         </div>
 
         {/* Social links */}
-        <div className="flex flex-wrap items-center mb-12 font-mono" style={{ fontSize: "0.85rem" }}>
+        <div className="scroll-parallax scroll-parallax-card mb-12 flex flex-wrap items-center gap-x-3 gap-y-3 font-mono" style={{ fontSize: "0.85rem" }}>
           {[
             { icon: <FolderGit2 size={14} />, label: "GitHub", href: "https://github.com/AaronArada11" },
             { icon: <User size={14} />, label: "LinkedIn", href: "https://www.linkedin.com/in/aaronarada/" },
@@ -51,7 +51,7 @@ export function Hero() {
           ].map((item, i) => (
             <span key={item.label} className="flex items-center">
               {i > 0 && (
-                <span className="mx-3" style={{ color: "var(--ctp-surface2)" }}>|</span>
+                <span className="mx-1 hidden sm:inline-block" style={{ color: "var(--ctp-surface2)" }}>|</span>
               )}
               <a
                 href={item.href}
@@ -65,18 +65,20 @@ export function Hero() {
               </a>
             </span>
           ))}
-          <span className="mx-3" style={{ color: "var(--ctp-surface2)" }}>|</span>
-          <a
-            href="/Aaron-Arada-Resume.pdf"
-            download
-            className="inline-flex min-h-5 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-mono text-sm text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] hover:shadow-[0_4px_0_var(--ctp-surface0)] active:translate-y-0 active:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-            style={{
-              outlineColor: "var(--ctp-accent)",
-            }}
-          >
-            <FileDown size={14} />
-            Resume
-          </a>
+          <span className="flex basis-full items-center gap-3 sm:basis-auto">
+            <span className="hidden sm:inline-block" style={{ color: "var(--ctp-surface2)" }}>|</span>
+            <a
+              href="/Aaron-Arada-Resume.pdf"
+              download
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-mono text-sm text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] hover:shadow-[0_4px_0_var(--ctp-surface0)] active:translate-y-0 active:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              style={{
+                outlineColor: "var(--ctp-accent)",
+              }}
+            >
+              <FileDown size={14} />
+              Resume
+            </a>
+          </span>
         </div>
       </div>
     </section>

@@ -1,0 +1,50 @@
+@keyframes scroll-parallax-rise {
+  0% {
+    opacity: 0.18;
+    transform: translate3d(0, var(--parallax-distance, 42px), 0) scale(0.985);
+  }
+
+  56% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, var(--parallax-end, -14px), 0) scale(1);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .scroll-parallax {
+    animation: scroll-parallax-rise linear both;
+    animation-timeline: view();
+    animation-range: entry -5% cover 48%;
+    transform-origin: center;
+  }
+
+  .scroll-parallax-soft {
+    --parallax-distance: 26px;
+    --parallax-end: -8px;
+    animation-range: entry 0% cover 38%;
+  }
+
+  .scroll-parallax-card {
+    --parallax-distance: 48px;
+    --parallax-end: -12px;
+    animation-range: entry -4% cover 44%;
+  }
+
+  .scroll-parallax-deep {
+    --parallax-distance: 72px;
+    --parallax-end: -18px;
+    animation-range: entry -8% cover 56%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-parallax {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
