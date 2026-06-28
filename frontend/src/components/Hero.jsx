@@ -1,4 +1,4 @@
-import { User, FolderGit2, Mail, MapPin, FileDown } from "lucide-react";
+import { User, FolderGit2, Mail, MapPin, FileDown, Terminal } from "lucide-react";
 
 function GoldLink({ href, children }) {
   return (
@@ -38,8 +38,23 @@ export function Hero() {
           
         </p>
 
-        <div className="scroll-parallax scroll-parallax-soft flex flex-wrap items-center mb-12 font-mono" style={{ fontSize: "0.85rem" }}>
-          <MapPin size ={14} className="mr-2"/> <p>Manila, PH</p>
+        <div className="scroll-parallax scroll-parallax-soft mb-12 flex flex-wrap items-center gap-3 font-mono" style={{ fontSize: "0.85rem" }}>
+          <span className="flex items-center gap-2">
+            <MapPin size={14} />
+            <span>Manila, PH</span>
+          </span>
+          <a
+            href="https://terminal-aaron.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-3 py-1.5 font-mono text-sm text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            style={{
+              outlineColor: "var(--ctp-accent)",
+            }}
+          >
+            <Terminal size={14} />
+            Terminal
+          </a>
         </div>
 
         {/* Social links */}
