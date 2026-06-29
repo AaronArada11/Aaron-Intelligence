@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Terminal } from "lucide-react";
 import { ThemeSelector } from "./ThemeSelector";
 import { TextType } from "./TextType";
 
@@ -163,6 +163,18 @@ export function Navbar() {
             </div>
 
             <ThemeSelector />
+            <a
+              href="https://terminal-aaron.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 flex min-h-10 w-full min-w-0 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-mono text-sm text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              style={{
+                outlineColor: "var(--ctp-accent)",
+              }}
+            >
+              <Terminal size={14} />
+              Terminal
+            </a>
           </div>
         </>
       )}
