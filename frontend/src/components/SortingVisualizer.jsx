@@ -4,6 +4,7 @@ import '../SortingVisualizer.css';
 import * as sortingAlgorithms from './sortingAlgorithms';
 import {
     getAStarAnimations,
+    getAStarSearchSteps,
     getNodesInShortestPathOrder,
 } from './pathAlgorithms';
 
@@ -166,7 +167,7 @@ export class SortingVisualizer extends React.Component {
         const algorithmGrid = clonePathGrid(displayGrid);
         const startNode = algorithmGrid[START_NODE_ROW][START_NODE_COL];
         const finishNode = algorithmGrid[FINISH_NODE_ROW][FINISH_NODE_COL];
-        const visitedNodesInOrder = getAStarAnimations(
+        const searchSteps = getAStarSearchSteps(
             algorithmGrid,
             startNode,
             finishNode,
@@ -177,22 +178,22 @@ export class SortingVisualizer extends React.Component {
             pathGrid: displayGrid,
             isPathAnimating: true,
         }, () => {
-            this.animateVisitedNodes(visitedNodesInOrder, nodesInShortestPathOrder);
+            this.animateSearchSteps(searchSteps, nodesInShortestPathOrder);
         });
     }
 
-    animateVisitedNodes(visitedNodesInOrder, nodesInShortestPathOrder) {
+    animateSearchSteps(searchSteps, nodesInShortestPathOrder) {
         const { pathAnimationSpeed } = this.state;
 
-        for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+        for (let i = 0; i <= searchSteps.length; i++) {
             const timeoutId = window.setTimeout(() => {
-                if (i === visitedNodesInOrder.length) {
+                if (i === searchSteps.length) {
                     this.animateShortestPath(nodesInShortestPathOrder);
                     return;
                 }
 
-                const node = visitedNodesInOrder[i];
-                this.updatePathNodeStatus(node.row, node.col, 'visited');
+                const { node, status } = searchSteps[i];
+                this.updatePathNodeStatus(node.row, node.col, status);
             }, pathAnimationSpeed * i);
 
             this.pathAnimationTimeouts.push(timeoutId);
@@ -603,6 +604,7 @@ radixSort() {
                                 <span><i className="path-swatch start"></i>Start</span>
                                 <span><i className="path-swatch finish"></i>Finish</span>
                                 <span><i className="path-swatch wall"></i>Wall</span>
+                                <span><i className="path-swatch frontier"></i>Open</span>
                                 <span><i className="path-swatch visited"></i>Visited</span>
                                 <span><i className="path-swatch shortest-path"></i>Path</span>
                             </div>
@@ -842,6 +844,9 @@ function getPathNodeLabel(node) {
     if (node.isWall) return `Wall at row ${node.row + 1}, column ${node.col + 1}`;
     if (node.status === 'shortest-path') {
         return `Shortest path node at row ${node.row + 1}, column ${node.col + 1}`;
+    }
+    if (node.status === 'frontier') {
+        return `Open frontier node at row ${node.row + 1}, column ${node.col + 1}`;
     }
     if (node.status === 'visited') {
         return `Visited node at row ${node.row + 1}, column ${node.col + 1}`;

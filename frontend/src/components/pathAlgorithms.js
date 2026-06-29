@@ -36,6 +36,51 @@ export function getAStarAnimations(grid, startNode, finishNode) {
   return visitedNodesInOrder;
 }
 
+export function getAStarSearchSteps(grid, startNode, finishNode) {
+  const searchSteps = [];
+
+  if (!grid?.length || !startNode || !finishNode) {
+    return searchSteps;
+  }
+
+  initializeNodes(grid, finishNode);
+
+  startNode.distance = 0;
+  startNode.heuristic = getManhattanDistance(startNode, finishNode);
+  startNode.totalDistance = startNode.heuristic;
+
+  const openSet = [startNode];
+  const openSetIds = new Set([getNodeId(startNode)]);
+
+  while (openSet.length > 0) {
+    sortNodesByBestScore(openSet);
+    const currentNode = openSet.shift();
+    openSetIds.delete(getNodeId(currentNode));
+
+    if (currentNode.isWall || currentNode.isVisited) {
+      continue;
+    }
+
+    currentNode.isVisited = true;
+    searchSteps.push({ node: currentNode, status: 'visited' });
+
+    if (isSameNode(currentNode, finishNode)) {
+      return searchSteps;
+    }
+
+    updateUnvisitedNeighbors(
+      currentNode,
+      grid,
+      finishNode,
+      openSet,
+      openSetIds,
+      searchSteps,
+    );
+  }
+
+  return searchSteps;
+}
+
 export function aStar(grid, startNode, finishNode) {
   return getAStarAnimations(grid, startNode, finishNode);
 }
@@ -82,6 +127,7 @@ function updateUnvisitedNeighbors(
   finishNode,
   openSet,
   openSetIds,
+  searchSteps,
 ) {
   const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
 
@@ -105,6 +151,7 @@ function updateUnvisitedNeighbors(
     if (!openSetIds.has(neighborId)) {
       openSet.push(neighbor);
       openSetIds.add(neighborId);
+      searchSteps?.push({ node: neighbor, status: 'frontier' });
     }
   }
 }
