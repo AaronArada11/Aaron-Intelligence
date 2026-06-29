@@ -15,6 +15,52 @@
 .div2 { grid-area: 5 / 1 / 6 / 6; }
 .div3 { grid-area: 2 / 1 / 5 / 6; }
 
+.algo-tabs {
+    display: inline-flex;
+    align-self: center;
+    overflow: hidden;
+    padding: 3px;
+    background: var(--ctp-base);
+    border: 1px solid var(--ctp-surface0);
+    border-radius: 8px;
+}
+
+.algo-tabs button {
+    min-height: 38px;
+    padding: 0.55rem 0.9rem;
+    background: transparent;
+    color: var(--ctp-subtext0);
+    border: 0;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.algo-tabs button:hover,
+.algo-tabs button:focus-visible {
+    color: var(--ctp-text);
+    outline: 2px solid color-mix(in srgb, var(--ctp-accent) 55%, transparent);
+    outline-offset: 2px;
+}
+
+.algo-tabs button.active {
+    background: var(--ctp-mantle);
+    color: var(--ctp-accent);
+    box-shadow: inset 0 0 0 1px var(--ctp-surface0);
+}
+
+.algo-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
 .div1 {
     display: flex;
     flex-wrap: wrap;
@@ -58,6 +104,12 @@
 
 .div1 button:active {
     transform: translateY(0);
+}
+
+.div1 button:disabled,
+.slider-container input:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
 }
 
 .div2 {
@@ -151,8 +203,119 @@
     flex: 0 0 auto;
 }
 
+.path-grid {
+    display: grid;
+    gap: 3px;
+    width: 100%;
+    min-height: 320px;
+    padding: 10px;
+    overflow: hidden;
+    background: var(--ctp-base);
+    border: 1px solid var(--ctp-surface0);
+    border-radius: 8px;
+}
+
+.path-node {
+    min-width: 0;
+    aspect-ratio: 1;
+    background: var(--ctp-surface0);
+    border: 1px solid color-mix(in srgb, var(--ctp-overlay0) 35%, transparent);
+    border-radius: 3px;
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.path-node.start {
+    background: var(--ctp-green);
+    border-color: var(--ctp-green);
+}
+
+.path-node.finish {
+    background: var(--ctp-red);
+    border-color: var(--ctp-red);
+}
+
+.path-node.wall {
+    background: var(--ctp-crust);
+    border-color: var(--ctp-surface0);
+}
+
+.path-node.visited {
+    background: var(--ctp-sky);
+    border-color: var(--ctp-sapphire);
+}
+
+.path-node.shortest-path {
+    background: var(--ctp-yellow);
+    border-color: var(--ctp-peach);
+    transform: scale(1.06);
+}
+
+.path-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 14px;
+    color: var(--ctp-subtext0);
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+.path-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.path-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    border: 1px solid var(--ctp-surface1);
+}
+
+.path-swatch.start {
+    background: var(--ctp-green);
+}
+
+.path-swatch.finish {
+    background: var(--ctp-red);
+}
+
+.path-swatch.wall {
+    background: var(--ctp-crust);
+}
+
+.path-swatch.visited {
+    background: var(--ctp-sky);
+}
+
+.path-swatch.shortest-path {
+    background: var(--ctp-yellow);
+}
+
 @media (max-width: 640px) {
     .parent {
+        gap: 14px;
+    }
+
+    .algo-tabs {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 1fr;
+    }
+
+    .algo-tabs button {
+        min-height: 40px;
+        padding: 0.55rem 0.7rem;
+        font-size: 0.8rem;
+    }
+
+    .algo-panel {
         gap: 14px;
     }
 
@@ -195,5 +358,20 @@
 
     .array-bar {
         width: 4px;
+    }
+
+    .path-grid {
+        gap: 2px;
+        min-height: 260px;
+        padding: 6px;
+    }
+
+    .path-node {
+        border-radius: 2px;
+    }
+
+    .path-legend {
+        justify-content: flex-start;
+        font-size: 0.72rem;
     }
 }
