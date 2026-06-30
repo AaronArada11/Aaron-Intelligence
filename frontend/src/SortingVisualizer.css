@@ -226,7 +226,6 @@
         border-color 0.18s ease,
         transform 0.18s ease;
 }
-
 .path-node.start {
     background: var(--ctp-yellow);
     border-color: var(--ctp-peach);
