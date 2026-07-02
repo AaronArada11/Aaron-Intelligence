@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Send, Bot, User, Sparkles, X } from 'lucide-react'
-import { useTheme } from './ThemeContext'
 
 const API_URL = '/chat'
 const RATE_LIMIT_MESSAGE = 'Aaron Intelligence is temporarily rate limited. Please wait a moment and try again.'
@@ -21,7 +20,6 @@ const isRateLimitDetail = (value) => {
 }
 
 function Chat({ onClose }) {
-  useTheme()
   const [messages, setMessages] = useState([
     {
       role: 'assistant',

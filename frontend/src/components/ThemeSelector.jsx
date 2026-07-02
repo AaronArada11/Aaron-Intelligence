@@ -1,4 +1,5 @@
-import { useTheme, flavors, accentList } from "./ThemeContext";
+import { useTheme } from "./useTheme";
+import { flavors, accentList } from "../themeTokens";
 
 const flavourLabels = [
   { key: "nimbus", label: "Horizon" },

@@ -12,9 +12,9 @@ from backend.langfuse_tracing import (
 from backend.retriever import (
     EMBEDDING_MODEL,
     RETRIEVAL_MATCH_COUNT,
-    _get_client,
     retrieve,
 )
+from backend.gemini_client import get_gemini_client
 from pathlib import Path
 import os
 import requests
@@ -383,7 +383,11 @@ def _get_recent_commits(username: str, limit: int):
 @fastapi_app.get("/api/github_commits")
 def github_commits():
     username = os.getenv("GITHUB_USERNAME", os.getenv("GITHUB_OWNER", "AaronArada11"))
-    limit = int(os.getenv("GITHUB_COMMITS_LIMIT", "5"))
+    try:
+        limit = int(os.getenv("GITHUB_COMMITS_LIMIT", "5"))
+    except ValueError:
+        limit = 5
+    limit = max(1, min(limit, 20))
     repo_key = ",".join(_configured_repositories(username))
     cache_key = f"{username}:{limit}:{repo_key}:{bool(os.getenv('GITHUB_TOKEN'))}"
     now = time.time()
@@ -550,7 +554,7 @@ def chat(request: ChatRequest):
 
             generation = None
             try:
-                client = _get_client()
+                client = get_gemini_client()
 
                 prompt = f"""
 You are Aaron Intelligence.

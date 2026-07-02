@@ -9,7 +9,7 @@ import {
 } from './pathAlgorithms';
 
 const PRIMARY_COLOR = 'var(--ctp-accent)';
-let SECONDARY_COLOR = "#dc143c";
+const SECONDARY_COLOR = "#dc143c";
 const BAR_HEADROOM = 18;
 const MIN_BAR_HEIGHT = 8;
 const PATH_ROWS = 13;
@@ -32,9 +32,11 @@ export class SortingVisualizer extends React.Component {
             pathGrid: createInitialPathGrid(),
             pathAnimationSpeed: 18,
             isPathAnimating: false,
+            isSortAnimating: false,
         };
         this.arrayContainerRef = React.createRef();
         this.resizeObserver = null;
+        this.sortingAnimationTimeouts = [];
         this.pathAnimationTimeouts = [];
     }
 
@@ -50,6 +52,7 @@ export class SortingVisualizer extends React.Component {
 
     componentWillUnmount() {
         this.resizeObserver?.disconnect();
+        this.clearSortingAnimationTimeouts();
         this.clearPathAnimationTimeouts();
     }
 
@@ -70,20 +73,23 @@ export class SortingVisualizer extends React.Component {
     }
 
     resetArray() {
+        this.clearSortingAnimationTimeouts();
         const array = [];
         const { numberOfArrayBars } = this.state;
         const maxBarHeight = this.getMaxBarHeight();
         for (let i = 0; i < numberOfArrayBars; i++) {
             array.push(randomIntFromInterval(MIN_BAR_HEIGHT, maxBarHeight));
         }
-        this.setState({array});
+        this.setState({ array, isSortAnimating: false });
     }
 
     handleSpeedChange = (event) => {
+        if (this.state.isSortAnimating) return;
         this.setState({ animationSpeed: parseFloat(event.target.value) });
     }
 
     handleBarsChange = (event) => {
+        if (this.state.isSortAnimating) return;
         this.setState({ numberOfArrayBars: parseInt(event.target.value) }, () => {
             this.resetArray();
         });
@@ -94,6 +100,7 @@ export class SortingVisualizer extends React.Component {
     }
 
     setActiveTab = (activeTab) => {
+        this.clearSortingAnimationTimeouts();
         this.setState({ activeTab }, () => {
             if (activeTab === 'sorting') {
                 this.observeArrayContainer();
@@ -125,6 +132,13 @@ export class SortingVisualizer extends React.Component {
             event.preventDefault();
             this.setActiveTab(tabs[tabs.length - 1]);
         }
+    }
+
+    clearSortingAnimationTimeouts() {
+        for (const timeoutId of this.sortingAnimationTimeouts) {
+            window.clearTimeout(timeoutId);
+        }
+        this.sortingAnimationTimeouts = [];
     }
 
     clearPathAnimationTimeouts() {
@@ -239,210 +253,90 @@ export class SortingVisualizer extends React.Component {
         }));
     }
 
-    mergeSort() {
-        const auxiliaryArray = this.state.array.slice();
-        const animations = sortingAlgorithms.getMergeSortAnimations(auxiliaryArray);
-        const speed = this.state.animationSpeed;
-        for (let i = 0; i < animations.length; i++) {
-            const arrayBars = document.getElementsByClassName('array-bar');
-            const isColorChange = i % 3 !== 2;
-            if (isColorChange) {
-                const [barOneIdx, barTwoIdx] = animations[i];
-                const barOneStyle = arrayBars[barOneIdx].style;
-                const barTwoStyle = arrayBars[barTwoIdx].style;
-                const color = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
-                setTimeout(() => {
-                    barOneStyle.backgroundColor = color;
-                    barTwoStyle.backgroundColor = color;
-                }, i * speed);
-            } else {
-                setTimeout(() => {
-                    const [barOneIdx, newHeight] = animations[i];
-                    const barOneStyle = arrayBars[barOneIdx].style;
-                    barOneStyle.height = `${newHeight}px`;
-                }, i * speed);
-            }
-        }
-    }
-quickSort() {
-        const auxiliaryArray = this.state.array.slice();
-        const animations =
-            sortingAlgorithms.getQuickSortAnimations(auxiliaryArray);
-        const speed = this.state.animationSpeed;
-
-        for (let i = 0; i < animations.length; i++) {
-            const arrayBars = document.getElementsByClassName('array-bar');
-            const groupPos = i % 4;
-
-            if (groupPos === 0 || groupPos === 1) {
-                const [barOneIdx, barTwoIdx] = animations[i];
-
-                if (barOneIdx === -1 || barTwoIdx === -1) continue;
-
-                const barOneStyle = arrayBars[barOneIdx].style;
-                const barTwoStyle = arrayBars[barTwoIdx].style;
-
-                const color =
-                    groupPos === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
-
-                setTimeout(() => {
-                    barOneStyle.backgroundColor = color;
-                    barTwoStyle.backgroundColor = color;
-                }, i * speed);
-            } else {
-                const [barIdx, newHeight] = animations[i];
-
-                if (barIdx === -1) continue;
-
-                const barStyle = arrayBars[barIdx].style;
-
-                setTimeout(() => {
-                    barStyle.height = `${newHeight}px`;
-                }, i * speed);
-            }
-        }
+    getArrayBars() {
+        return Array.from(
+            this.arrayContainerRef.current?.getElementsByClassName('array-bar') ?? []
+        );
     }
 
-    heapSort() {
-        const auxiliaryArray = this.state.array.slice();
-        const animations = sortingAlgorithms.getHeapSortAnimations(auxiliaryArray);
-        const speed = this.state.animationSpeed;
-        for (let i = 0; i < animations.length; i++) {
-            const arrayBars = document.getElementsByClassName('array-bar');
-            const groupPos = i % 4;
+    applySortingAnimationStep(animation, index, groupSize) {
+        const arrayBars = this.getArrayBars();
+        const groupPos = index % groupSize;
+        const isColorChange = groupSize === 3
+            ? groupPos !== 2
+            : groupPos === 0 || groupPos === 1;
 
-            if (groupPos === 0 || groupPos === 1) {
-                const [barOneIdx, barTwoIdx] = animations[i];
-                const barOneStyle = arrayBars[barOneIdx].style;
-                const barTwoStyle = arrayBars[barTwoIdx].style;
-                const color = groupPos === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+        if (isColorChange) {
+            const [barOneIdx, barTwoIdx] = animation;
+            const barOne = arrayBars[barOneIdx];
+            const barTwo = arrayBars[barTwoIdx];
 
-                setTimeout(() => {
-                    barOneStyle.backgroundColor = color;
-                    barTwoStyle.backgroundColor = color;
-                }, i * speed);
-            } else {
-                const [barIdx, newHeight] = animations[i];
-                const barStyle = arrayBars[barIdx].style;
-                setTimeout(() => {
-                    barStyle.height = `${newHeight}px`;
-                }, i * speed);
-            }
+            if (!barOne || !barTwo) return;
+
+            const color = groupPos === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+            barOne.style.backgroundColor = color;
+            barTwo.style.backgroundColor = color;
+            return;
         }
+
+        const [barIdx, newHeight] = animation;
+        const bar = arrayBars[barIdx];
+        if (!bar) return;
+
+        bar.style.height = `${newHeight}px`;
     }
 
-    bubbleSort() {
-        const auxiliaryArray = this.state.array.slice();
-        const animations = sortingAlgorithms.getBubbleSortAnimations(auxiliaryArray);
-        const speed = this.state.animationSpeed;
-        for (let i = 0; i < animations.length; i++) {
-            const arrayBars = document.getElementsByClassName('array-bar');
-            const groupPos = i % 4;
+    runSortingAnimation(getAnimations, groupSize = 4) {
+        if (this.state.isSortAnimating) return;
 
-            if (groupPos === 0 || groupPos === 1) {
-                const [barOneIdx, barTwoIdx] = animations[i];
-                const barOneStyle = arrayBars[barOneIdx].style;
-                const barTwoStyle = arrayBars[barTwoIdx].style;
-                const color = groupPos === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+        const animations = getAnimations(this.state.array.slice());
+        if (animations.length === 0) return;
 
-                setTimeout(() => {
-                    barOneStyle.backgroundColor = color;
-                    barTwoStyle.backgroundColor = color;
-                }, i * speed);
-            } else {
-                const [barIdx, newHeight] = animations[i];
-                if (barIdx === -1) continue;
-                const barStyle = arrayBars[barIdx].style;
-                setTimeout(() => {
-                    barStyle.height = `${newHeight}px`;
-                }, i * speed);
+        this.clearSortingAnimationTimeouts();
+        this.setState({ isSortAnimating: true }, () => {
+            const { animationSpeed } = this.state;
+
+            for (let i = 0; i < animations.length; i++) {
+                const timeoutId = window.setTimeout(() => {
+                    this.applySortingAnimationStep(animations[i], i, groupSize);
+
+                    if (i === animations.length - 1) {
+                        this.sortingAnimationTimeouts = [];
+                        this.setState({ isSortAnimating: false });
+                    }
+                }, i * animationSpeed);
+
+                this.sortingAnimationTimeouts.push(timeoutId);
             }
-        }
-    }
-    selectionSort() {
-        const animations = sortingAlgorithms.getSelectionSortAnimations(this.state.array.slice());
-        const speed = this.state.animationSpeed;
-        for (let i = 0; i < animations.length; i++) {
-            const arrayBars = document.getElementsByClassName('array-bar');
-            const groupPos = i % 4;
-
-            if (groupPos === 0 || groupPos === 1) {
-                const [barOneIdx, barTwoIdx] = animations[i];
-                if (barOneIdx === -1 || barTwoIdx === -1) continue;
-                const barOneStyle = arrayBars[barOneIdx].style;
-                const barTwoStyle = arrayBars[barTwoIdx].style;
-                const color = groupPos === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
-                setTimeout(() => {
-                    barOneStyle.backgroundColor = color;
-                    barTwoStyle.backgroundColor = color;
-                }, i * speed);
-            } else {
-                const [barIdx, newHeight] = animations[i];
-                if (barIdx === -1) continue;
-                const barStyle = arrayBars[barIdx].style;
-                setTimeout(() => {
-                    barStyle.height = `${newHeight}px`;
-                }, i * speed);
-            }
-        }
-    }
-radixSort() {
-        const auxiliaryArray = this.state.array.slice();
-        const animations = sortingAlgorithms.getRadixSortAnimations(auxiliaryArray);
-        const speed = this.state.animationSpeed;
-        for (let i = 0; i < animations.length; i++) {
-            const arrayBars = document.getElementsByClassName('array-bar');
-            const groupPos = i % 4;
-
-            if (groupPos === 0 || groupPos === 1) {
-                const [barOneIdx, barTwoIdx] = animations[i];
-                const barOneStyle = arrayBars[barOneIdx].style;
-                const barTwoStyle = arrayBars[barTwoIdx].style;
-                const color = groupPos === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
-
-                setTimeout(() => {
-                    barOneStyle.backgroundColor = color;
-                    barTwoStyle.backgroundColor = color;
-                }, i * speed);
-            } else {
-                const [barIdx, newHeight] = animations[i];
-                const barStyle = arrayBars[barIdx].style;
-                setTimeout(() => {
-                    barStyle.height = `${newHeight}px`;
-                }, i * speed);
-            }
-        }
+        });
     }
 
-    insertionSort() {
-        const animations = sortingAlgorithms.getInsertionSortAnimations(this.state.array.slice());
-        const speed = this.state.animationSpeed;
-        for (let i = 0; i < animations.length; i++) {
-            const arrayBars = document.getElementsByClassName('array-bar');
-            const groupPos = i % 4;
+    mergeSort = () => {
+        this.runSortingAnimation(sortingAlgorithms.getMergeSortAnimations, 3);
+    }
 
-            if (groupPos === 0 || groupPos === 1) {
-                const [barOneIdx, barTwoIdx] = animations[i];
+    quickSort = () => {
+        this.runSortingAnimation(sortingAlgorithms.getQuickSortAnimations);
+    }
 
-                if (!arrayBars[barOneIdx] || !arrayBars[barTwoIdx]) continue;
+    heapSort = () => {
+        this.runSortingAnimation(sortingAlgorithms.getHeapSortAnimations);
+    }
 
-                const barOneStyle = arrayBars[barOneIdx].style;
-                const barTwoStyle = arrayBars[barTwoIdx].style;
-                const color = groupPos === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+    bubbleSort = () => {
+        this.runSortingAnimation(sortingAlgorithms.getBubbleSortAnimations);
+    }
 
-                setTimeout(() => {
-                    barOneStyle.backgroundColor = color;
-                    barTwoStyle.backgroundColor = color;
-                }, i * speed);
-            } else {
-                const [barIdx, newHeight] = animations[i];
-                if (barIdx === -1) continue;
-                const barStyle = arrayBars[barIdx].style;
-                setTimeout(() => {
-                    barStyle.height = `${newHeight}px`;
-                }, i * speed);
-            }
-        }
+    selectionSort = () => {
+        this.runSortingAnimation(sortingAlgorithms.getSelectionSortAnimations);
+    }
+
+    radixSort = () => {
+        this.runSortingAnimation(sortingAlgorithms.getRadixSortAnimations);
+    }
+
+    insertionSort = () => {
+        this.runSortingAnimation(sortingAlgorithms.getInsertionSortAnimations);
     }
 
     render() {
@@ -454,6 +348,7 @@ radixSort() {
             pathGrid,
             pathAnimationSpeed,
             isPathAnimating,
+            isSortAnimating,
         } = this.state;
         const isSortingActive = activeTab === 'sorting';
         const isPathfindingActive = activeTab === 'pathfinding';
@@ -501,13 +396,13 @@ radixSort() {
                     >
                         <div className="div1">
                             <button onClick={() => this.resetArray()}>Generate New Array</button>
-                            <button onClick={() => this.mergeSort()}>Merge Sort</button>
-                            <button onClick={() => this.quickSort()}>Quick Sort</button>
-                            <button onClick={() => this.heapSort()}>Heap Sort</button>
-                            <button onClick={() => this.bubbleSort()}>Bubble Sort</button>
-                            <button onClick={() => this.selectionSort()}>Selection Sort</button>
-                            <button onClick={() => this.radixSort()}>Radix Sort</button>
-                            <button onClick={() => this.insertionSort()}>Insertion Sort</button>
+                            <button onClick={this.mergeSort} disabled={isSortAnimating}>Merge Sort</button>
+                            <button onClick={this.quickSort} disabled={isSortAnimating}>Quick Sort</button>
+                            <button onClick={this.heapSort} disabled={isSortAnimating}>Heap Sort</button>
+                            <button onClick={this.bubbleSort} disabled={isSortAnimating}>Bubble Sort</button>
+                            <button onClick={this.selectionSort} disabled={isSortAnimating}>Selection Sort</button>
+                            <button onClick={this.radixSort} disabled={isSortAnimating}>Radix Sort</button>
+                            <button onClick={this.insertionSort} disabled={isSortAnimating}>Insertion Sort</button>
                         </div>
                         <div className="div2">
                             <div className="slider-container">
@@ -520,6 +415,7 @@ radixSort() {
                                     step={1}
                                     value={animationSpeed}
                                     onChange={this.handleSpeedChange}
+                                    disabled={isSortAnimating}
                                 />
                             </div>
                             <div className="slider-container">
@@ -532,6 +428,7 @@ radixSort() {
                                     step={1}
                                     value={numberOfArrayBars}
                                     onChange={this.handleBarsChange}
+                                    disabled={isSortAnimating}
                                 />
                             </div>
                         </div>
@@ -634,7 +531,7 @@ radixSort() {
         );
     }
 }
-//galing stackoverflow lmao
+
 function randomIntFromInterval(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -854,5 +751,3 @@ function getPathNodeLabel(node) {
 
     return `Open node at row ${node.row + 1}, column ${node.col + 1}`;
 }
-
-export default SortingVisualizer;

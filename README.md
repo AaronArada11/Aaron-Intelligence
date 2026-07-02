@@ -1,180 +1,75 @@
 # Aaron Intelligence (AI)
 
-Aaron Intelligence is a personalized AI-powered portfolio chatbot designed to act as an interactive digital representation of Aaron Randolph S.D. Arada.
+Aaron Intelligence is a personal portfolio and chatbot for Aaron Randolph S.D. Arada. Visitors can browse projects, contact links, live dashboard widgets, and ask an AI assistant questions about Aaron's background.
 
-Instead of navigating through multiple portfolio pages or reading a static resume, visitors can ask questions about Aaron's projects, skills, education, experience, and achievements through natural conversation.
+## Architecture
 
-The chatbot uses Google's Gemini model and a custom knowledge base built from structured Markdown files containing information about Aaron's professional and academic journey.
+```text
+React/Vite frontend
+  -> /chat and /github-commits
+FastAPI backend
+  -> Gemini + Supabase-backed retrieval
+  -> GitHub REST API commit feed
+Markdown knowledge base
+  -> backend/ingest.py embeds content into Supabase
+```
 
----
+Main entry points:
 
-## Features
-
-* AI-powered conversational interface
-* Personalized responses based on Aaron's knowledge base
-* Answers questions about:
-
-  * Projects
-  * Skills
-  * Education
-  * Experience
-  * Leadership roles
-  * Achievements
-* FastAPI backend
-* React frontend
-* Gemini AI integration
-* Easily maintainable Markdown-based knowledge system
-
----
-
-## Tech Stack
-
-### Frontend
-
-* React
-* Vite
-* JavaScript
-* CSS
-
-### Backend
-
-* FastAPI
-* Python
-* Uvicorn
-
-### AI
-
-* Google Gemini
-
-### Knowledge Base
-
-* Markdown Documents
-
----
+- Frontend app: `frontend/src/main.jsx`
+- FastAPI app: `backend/main.py`
+- Vercel route shims: `api/chat.py`, `api/github_commits.py`
+- Knowledge ingestion: `python3 -m backend.ingest`
 
 ## Project Structure
 
-```
-Aaron Intelligence (AI)
-├──backend
-│   ├──knowledge
-│   │   ├──about.md
-│   │   ├──achievements.md
-│   │   ├──education.md
-│   │   ├──experience.md
-│   │   ├──faq.md
-│   │   ├──projects.md
-│   │   └──skills.md
-│   ├──knowledge_loader.py
-│   └──main.py
-├──frontend
-│   ├──public
-│   ├──src
-│   │   ├──assets
-│   │   ├──components
-│   │   │   ├──ChatInput.jsx
-│   │   │   ├──ChatWindow.jsx
-│   │   │   └──MessageBubble.jsx
-│   │   ├──App.css
-│   │   ├──App.jsx
-│   │   ├──index.css
-│   │   └──main.jsx
-│   ├──eslint.config.js
-│   ├──index.html
-│   ├──package-lock.json
-│   ├──package.json
-│   ├──README.md
-│   ├──vite.config.js
-│   └──.gitignore
-├──README.md
-├──requirements.txt
-└──.gitignore
-```
-
----
-
-## How It Works
-
-1. A user submits a question through the React frontend.
-2. FastAPI receives the request.
-3. Aaron Intelligence loads the knowledge base from Markdown files.
-4. The knowledge base and user question are sent to Gemini.
-5. Gemini generates a response using only the provided information.
-6. The response is returned to the user.
-
-### Current Architecture (Version 1)
-
 ```text
-User
- ↓
-React Frontend
- ↓
-FastAPI Backend
- ↓
-Knowledge Base (.md files)
- ↓
-Gemini
- ↓
-Response
+api/
+  chat.py
+  github_commits.py
+backend/
+  gemini_client.py
+  ingest.py
+  langfuse_tracing.py
+  main.py
+  retriever.py
+  supabase_client.py
+  knowledge/*.md
+frontend/
+  public/
+  src/
+    components/
+    profileLinks.js
+    themeTokens.js
+    App.jsx
+    main.jsx
 ```
-
----
-
-## Knowledge Base
-
-Aaron Intelligence currently uses a file-based knowledge system.
-
-Knowledge is organized into the following documents:
-
-* about.md
-* projects.md
-* skills.md
-* education.md
-* experience.md
-* achievements.md
-* faq.md
-
-Updating the chatbot's knowledge only requires editing these files.
-
----
 
 ## Setup
 
-### Clone Repository
-
-```bash
-git clone <repository-url>
-cd "Aaron Intelligence (AI)"
-```
-
-### Create Virtual Environment
+Install backend dependencies:
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-```
-
-### Install Dependencies
-
-```bash
 pip install -r requirements.txt
 ```
 
-### Configure Environment Variables
+Install frontend dependencies:
 
-Create:
-
-```text
-backend/.env
+```bash
+npm --prefix frontend install
 ```
 
-Add:
+Create `backend/.env`:
 
 ```env
 GEMINI_API_KEY=YOUR_API_KEY_HERE
+SUPABASE_URL=YOUR_SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY=YOUR_SERVICE_ROLE_KEY
 ```
 
-Optional Langfuse tracing:
+Optional tracing:
 
 ```env
 LANGFUSE_PUBLIC_KEY=YOUR_LANGFUSE_PUBLIC_KEY
@@ -182,97 +77,41 @@ LANGFUSE_SECRET_KEY=YOUR_LANGFUSE_SECRET_KEY
 LANGFUSE_BASE_URL=https://jp.cloud.langfuse.com
 ```
 
-Langfuse tracing is server-side only. If these variables are missing, the
-chatbot still runs without sending traces.
+Optional GitHub dashboard configuration:
 
----
+```env
+GITHUB_TOKEN=YOUR_GITHUB_TOKEN
+GITHUB_USERNAME=AaronArada11
+GITHUB_REPOS=owner/repo,owner/another-repo
+GITHUB_COMMITS_LIMIT=5
+```
 
-## Run Backend
+## Run
 
-From the project root:
+Backend:
 
 ```bash
 uvicorn backend.main:app --reload
 ```
 
-Backend URL:
-
-```text
-http://127.0.0.1:8000
-```
-
-Swagger Documentation:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
----
-
-## Run Frontend
+Frontend:
 
 ```bash
-cd frontend
-npm install
-npm run dev
+npm --prefix frontend run dev
 ```
 
-Frontend URL:
+Production frontend build:
 
-```text
-http://localhost:5173
+```bash
+npm --prefix frontend run build
 ```
 
----
+## Knowledge Updates
 
-## Example Questions
+Edit Markdown files in `backend/knowledge`, then run:
 
-* Who is Aaron Randolph S.D. Arada?
-* What projects has Aaron built?
-* Tell me about Mirror Mentor.
-* What technologies does Aaron use?
-* What leadership experience does Aaron have?
-* What makes Aaron Intelligence different from other chatbot projects?
-* What is Aaron currently studying?
+```bash
+python3 -m backend.ingest
+```
 
----
-
-## Future Improvements
-
-### Version 2
-
-* Conversation memory
-* Improved prompt engineering
-* Better chat UI
-* Typing indicators
-* Message streaming
-
-### Version 3
-
-* Retrieval-Augmented Generation (RAG)
-* Embeddings
-* Vector search
-* Supabase integration
-* Source citations
-* Analytics dashboard
-
----
-
-## Author
-
-**Aaron Randolph S.D. Arada**
-
-Computer Science Student
-
-Interested in:
-
-* Artificial Intelligence
-* Software Engineering
-* Full-Stack Development
-* Cloud Computing
-
----
-
-## License
-
-This project is intended for educational, portfolio, and professional showcase purposes.
+The ingestion script deletes and recreates Supabase `documents` rows for each source file.

@@ -1,60 +1,56 @@
-import os
 import re
 from pathlib import Path
 
 from dotenv import load_dotenv
-from google import genai
+from backend.gemini_client import get_gemini_client
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
-
-_client = None
-
-
-def _get_client():
-    global _client
-    if _client is None:
-        api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-        if not api_key:
-            raise RuntimeError("Missing GEMINI_API_KEY environment variable")
-        _client = genai.Client(api_key=api_key)
-    return _client
-
 
 try:
     from backend.supabase_client import get_supabase
 except ImportError:
     from supabase_client import get_supabase
 
-supabase = get_supabase()
-knowledge_dir = Path(__file__).parent / "knowledge"
 
-for file in sorted(knowledge_dir.glob("*.md")):
-    text = file.read_text(encoding="utf-8")
+def ingest_knowledge():
+    supabase = get_supabase()
+    knowledge_dir = Path(__file__).parent / "knowledge"
 
-    supabase.table("documents").delete().eq("source", file.name).execute()
+    for file in sorted(knowledge_dir.glob("*.md")):
+        text = file.read_text(encoding="utf-8")
 
-    chunks = re.split(r"\n(?=#+ )", text)
+        supabase.table("documents").delete().eq("source", file.name).execute()
 
-    for index, chunk in enumerate(chunks):
-        chunk = chunk.strip()
+        chunks = re.split(r"\n(?=#+ )", text)
 
-        if len(chunk) < 20:
-            continue
+        for index, chunk in enumerate(chunks):
+            chunk = chunk.strip()
 
-        result = _get_client().models.embed_content(
-            model="gemini-embedding-001",
-            contents=chunk,
-            config={"task_type": "RETRIEVAL_DOCUMENT"},
-        )
-        embedding = result.embeddings[0].values
+            if len(chunk) < 20:
+                continue
 
-        supabase.table("documents").insert(
-            {
-                "source": file.name,
-                "chunk_id": index,
-                "content": chunk,
-                "embedding": embedding,
-            }
-        ).execute()
+            result = get_gemini_client().models.embed_content(
+                model="gemini-embedding-001",
+                contents=chunk,
+                config={"task_type": "RETRIEVAL_DOCUMENT"},
+            )
+            embedding = result.embeddings[0].values
 
-        print(f"Inserted {file.name} | Chunk {index}")
+            supabase.table("documents").insert(
+                {
+                    "source": file.name,
+                    "chunk_id": index,
+                    "content": chunk,
+                    "embedding": embedding,
+                }
+            ).execute()
+
+            print(f"Inserted {file.name} | Chunk {index}")
+
+
+def main():
+    ingest_knowledge()
+
+
+if __name__ == "__main__":
+    main()

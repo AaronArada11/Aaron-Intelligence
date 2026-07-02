@@ -1,4 +1,5 @@
 import { User, FolderGit2 } from "lucide-react";
+import { profileLinks } from "../profileLinks";
 
 export function Footer() {
   return (
@@ -26,8 +27,8 @@ export function Footer() {
 
         <div className="flex gap-3">
           {[
-             { icon: FolderGit2, href: "https://github.com/AaronArada11", label: "GitHub"   },
-             { icon: User,   href: "https://www.linkedin.com/in/aaronarada/", label: "LinkedIn" },
+             { icon: FolderGit2, ...profileLinks.github },
+             { icon: User, ...profileLinks.linkedin },
           ].map(({ icon: Icon, href, label }) => (
             <a
               key={label}

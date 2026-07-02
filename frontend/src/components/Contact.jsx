@@ -6,25 +6,20 @@ import {
   MessageCircle,
   UserRound,
 } from "lucide-react";
+import { profileLinks } from "../profileLinks";
 
 const contactLinks = [
   {
     icon: Mail,
-    label: "Email",
-    value: "aaronarada011@gmail.com",
-    href: "https://mail.google.com/mail/?view=cm&fs=1&to=aaronarada011%40gmail.com&su=Let%27s%20connect",
+    ...profileLinks.email,
   },
   {
     icon: UserRound,
-    label: "LinkedIn",
-    value: "aaronarada",
-    href: "https://www.linkedin.com/in/aaronarada/",
+    ...profileLinks.linkedin,
   },
   {
     icon: FolderGit2,
-    label: "GitHub",
-    value: "AaronArada11",
-    href: "https://github.com/AaronArada11",
+    ...profileLinks.github,
   },
 ];
 
@@ -92,7 +87,7 @@ export function Contact() {
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <a
-                href="https://mail.google.com/mail/?view=cm&fs=1&to=aaronarada011%40gmail.com&su=Let%27s%20connect"
+                href={profileLinks.email.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2 font-mono text-sm transition-opacity hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
@@ -106,7 +101,7 @@ export function Contact() {
                 <Mail size={15} />
               </a>
               <a
-                href="https://www.linkedin.com/in/aaronarada/"
+                href={profileLinks.linkedin.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2 font-mono text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"

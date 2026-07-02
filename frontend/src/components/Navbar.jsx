@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Menu, X, Terminal } from "lucide-react";
 import { ThemeSelector } from "./ThemeSelector";
-import { TextType } from "./TextType";
 
 
 const navLinks = [
-  { label: "About", href: "/About.jsx" },
+  { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
   { label: "Contact", href: "#contact" },
 ];
@@ -39,16 +38,7 @@ export function Navbar() {
             style={{ color: "var(--ctp-text)" }}
           >
             ~/
-            <TextType
-              texts={[""]}
-              typingSpeed={20}
-              deletingSpeed={15}
-              pauseDuration={1500}
-              showCursor
-              cursorCharacter="▎"
-              cursorBlinkDuration={1}
-              loop
-            />
+            <span className="animate-pulse">▎</span>
           </a>
 
           {/* Desktop Nav */}

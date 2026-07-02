@@ -81,14 +81,6 @@ export function getAStarSearchSteps(grid, startNode, finishNode) {
   return searchSteps;
 }
 
-export function aStar(grid, startNode, finishNode) {
-  return getAStarAnimations(grid, startNode, finishNode);
-}
-
-export function getAStarPathfindingAnimations(grid, startNode, finishNode) {
-  return getAStarAnimations(grid, startNode, finishNode);
-}
-
 export function getNodesInShortestPathOrder(finishNode) {
   const nodesInShortestPathOrder = [];
 
@@ -105,7 +97,7 @@ export function getNodesInShortestPathOrder(finishNode) {
   return nodesInShortestPathOrder;
 }
 
-export function getManhattanDistance(nodeA, nodeB) {
+function getManhattanDistance(nodeA, nodeB) {
   return Math.abs(nodeA.row - nodeB.row) + Math.abs(nodeA.col - nodeB.col);
 }
 

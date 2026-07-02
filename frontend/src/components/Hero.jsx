@@ -1,4 +1,5 @@
 import { User, FolderGit2, Mail, MapPin, FileDown, Terminal } from "lucide-react";
+import { profileLinks } from "../profileLinks";
 
 function GoldLink({ href, children }) {
   return (
@@ -17,7 +18,7 @@ function GoldLink({ href, children }) {
 
 export function Hero() {
   return (
-    <section style={{ background: "var(--ctp-base)" }} className="px-6 pt-20 ">
+    <section id="about" style={{ background: "var(--ctp-base)" }} className="px-6 pt-20 ">
       <div className="max-w-4xl mx-auto">
         {/* Heading */}
         <h1
@@ -60,9 +61,9 @@ export function Hero() {
         {/* Social links */}
         <div className="scroll-parallax scroll-parallax-card mb-12 flex flex-wrap items-center gap-x-3 gap-y-3 font-mono" style={{ fontSize: "0.85rem" }}>
           {[
-            { icon: <FolderGit2 size={14} />, label: "GitHub", href: "https://github.com/AaronArada11" },
-            { icon: <User size={14} />, label: "LinkedIn", href: "https://www.linkedin.com/in/aaronarada/" },
-            {icon: <Mail size={14} />, label: "Email",href: "https://mail.google.com/mail/?view=cm&fs=1&to=aaronarada011%40gmail.com&su=Let%27s%20connect" }
+            { icon: <FolderGit2 size={14} />, ...profileLinks.github },
+            { icon: <User size={14} />, ...profileLinks.linkedin },
+            { icon: <Mail size={14} />, ...profileLinks.email },
           ].map((item, i) => (
             <span key={item.label} className="flex items-center">
               {i > 0 && (

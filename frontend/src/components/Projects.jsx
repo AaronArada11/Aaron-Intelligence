@@ -100,15 +100,17 @@ export function Projects() {
                       >
                         <FolderGit2 size={15} />
                       </a>
-                      <a
-                        href={p.liveDemo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: "var(--ctp-subtext0)" }}
-                        className="hover:opacity-70 transition-opacity"
-                      >
-                        <ExternalLink size={15} />
-                      </a>
+                      {p.liveDemo && (
+                        <a
+                          href={p.liveDemo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: "var(--ctp-subtext0)" }}
+                          className="hover:opacity-70 transition-opacity"
+                        >
+                          <ExternalLink size={15} />
+                        </a>
+                      )}
                     </div>
                   </div>
 
