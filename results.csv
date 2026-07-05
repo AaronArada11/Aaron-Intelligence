@@ -1,0 +1,93 @@
+Run Number,Question,Response,Response Time (ms),Success,Retry Count,Trace ID,Timestamp
+1,Who is Aaron Randolph S.D. Arada?,"Aaron Randolph S.D. Arada is a Filipino Computer Science student specializing in Software Engineering at FEU Institute of Technology. He is driven by a passion for modern technology and problem-solving, focusing on bridging the gap between robust software architecture and intelligent systems.
+
+He builds full-stack, AI-powered, and machine learning applications using technologies such as React, FastAPI, Supabase, PostgreSQL, Gemini API, TensorFlow/Keras, MediaPipe, and cloud deployment platforms. His experience includes frontend development, backend API design, semantic search, vector databases, authentication, deployment, and machine learning model integration.",5444,True,0,,2026-07-03T06:14:56.517424+00:00
+1,What does Aaron currently do?,"Gemini error: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",2020,False,0,,2026-07-03T06:15:03.544310+00:00
+1,Where does Aaron study?,"Aaron studies at FEU Institute of Technology in Manila, Philippines.",1666,True,0,,2026-07-03T06:15:10.216516+00:00
+1,What degree is Aaron taking?,Aaron is pursuing a Bachelor of Science in Computer Science with a specialization in Software Engineering.,2079,True,0,,2026-07-03T06:15:17.302402+00:00
+1,What languages does Aaron speak?,I do not have information on what natural languages Aaron speaks. The provided context only details his programming language knowledge.,2562,True,0,,2026-07-03T06:15:24.870573+00:00
+1,What is Aaron's main area of interest?,"Aaron is especially interested in opportunities where he can apply software engineering, AI integration, backend systems, and full-stack development skills in real-world projects.",2307,True,0,,2026-07-03T06:15:32.184155+00:00
+1,What is Aaron studying at FEU Tech?,Aaron is pursuing a Bachelor of Science in Computer Science with specialization in Software Engineering at FEU Institute of Technology.,2075,True,0,,2026-07-03T06:15:39.267405+00:00
+1,When did Aaron start college?,Aaron started college in August 2024.,2400,True,0,,2026-07-03T06:15:46.672645+00:00
+1,What school did Aaron graduate from before college?,I do not have information about what school Aaron graduated from before college.,15620,True,1,,2026-07-03T06:16:07.300407+00:00
+1,What strand did Aaron take in senior high school?,I do not have that information.,2554,True,0,,2026-07-03T06:16:14.862568+00:00
+1,What organizations is Aaron involved in?,I do not have that information.,2931,True,0,,2026-07-03T06:16:22.799681+00:00
+1,Is Aaron active in any student organizations?,I do not have that information.,2439,True,0,,2026-07-03T06:16:30.247718+00:00
+1,What programming languages does Aaron know?,"Aaron knows Python, TypeScript, JavaScript, Java, SQL, and C++.",2096,True,0,,2026-07-03T06:16:37.350855+00:00
+1,What is Aaron's favorite programming language?,Aaron's favorite programming language is Python.,2001,True,0,,2026-07-03T06:16:44.359554+00:00
+1,What backend technologies does Aaron use?,"Aaron uses FastAPI, Node.js, REST APIs, Supabase, and PostgreSQL for backend technologies.",12906,True,1,,2026-07-03T06:17:02.269664+00:00
+1,What frontend technologies does Aaron use?,"Aaron uses React, Next.js, TailwindCSS, shadcn/ui, HTML, and CSS for frontend development.",1924,True,0,,2026-07-03T06:17:09.201283+00:00
+1,What databases has Aaron worked with?,"Aaron has worked with PostgreSQL, MongoDB, Supabase, and Convex.",2143,True,0,,2026-07-03T06:17:16.350802+00:00
+1,What cloud platforms does Aaron know?,"Aaron is familiar with AWS EC2, AWS S3, Vercel, and Railway.",2414,True,0,,2026-07-03T06:17:23.772812+00:00
+1,What AI or machine learning tools has Aaron used?,Aaron has used Google's Gemini API for AI integration in his projects.,2763,True,0,,2026-07-03T06:17:31.544304+00:00
+1,What projects has Aaron built?,"Aaron has built the following projects:
+
+*   KUMPAS (Filipino Sign Language translator)
+*   Aaron Intelligence (AI-powered portfolio assistant)
+*   Mirror Mentor (AI-powered educational platform)
+*   AlgoVisualizer (interactive algorithm visualization platform)
+*   Scriptorium (an AI project)",2444,True,0,,2026-07-03T06:17:38.996216+00:00
+1,What is Aaron's most recent project?,Aaron's most recent project is KUMPAS.,75629,True,3,,2026-07-03T06:18:59.631214+00:00
+1,Tell me about Aaron Intelligence.,Aaron Intelligence is temporarily rate limited. Please wait a moment and try again.,156245,False,4,,2026-07-03T06:21:40.886636+00:00
+1,What problem does Aaron Intelligence solve?,"Aaron Intelligence solves the problem that traditional portfolio websites require visitors to manually browse multiple pages to learn about a candidate's projects, skills, and experiences. It was built to create a more interactive and conversational way for visitors, recruiters, and collaborators to learn about Aaron through natural conversation.",34521,True,2,,2026-07-03T06:22:20.417334+00:00
+1,What tech stack does Aaron Intelligence use?,"Aaron Intelligence uses the following tech stack:
+
+*   **Frontend:** React, Vite
+*   **Backend:** FastAPI
+*   **Database:** Supabase PostgreSQL
+*   **Vector Search:** pgvector
+*   **Embeddings:** Gemini Embedding 001
+*   **AI Model:** Gemini 2.5 Flash
+*   **Deployment:** Vercel",4550,True,0,,2026-07-03T16:05:44.230289+00:00
+1,Why did Aaron use Supabase for Aaron Intelligence?,"Gemini error: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",2567,False,0,,2026-07-03T16:06:51.804074+00:00
+1,Why did Aaron use Gemini?,"Aaron used Gemini for the following reasons:
+
+*   Gemini provides both embedding generation and response generation capabilities, which simplified the architecture.
+*   Aaron had prior experience integrating Gemini into multiple projects.
+*   Gemini 2.5 Flash offers a strong balance between performance, speed, and cost.",4368,True,0,,2026-07-04T07:24:23.350399+00:00
+1,What is Mirror Mentor?,"Mirror Mentor is an AI-powered educational platform that helps students improve programming skills through guided Socratic questioning instead of direct answers. It was built during ACM Developers Week using FastAPI, Supabase, Gemini API, and Vercel.",2532,True,0,,2026-07-04T07:25:30.889932+00:00
+1,What did Aaron contribute to Mirror Mentor?,"Aaron's contributions to Mirror Mentor include:
+* Built 17 REST API endpoints
+* Implemented authentication and authorization
+* Integrated Gemini API
+* Designed conversation workflows
+* Managed deployment",2617,True,0,,2026-07-04T07:26:38.514329+00:00
+1,What is Scriptorium?,"Scriptorium is an AI-powered collaborative study workspace where students can upload files, create shared workspaces, and collaborate with others. Each workspace acts as a shared knowledge environment where an AI assistant can answer questions, summarize content, and explain concepts based on uploaded materials.",2570,True,0,,2026-07-04T07:27:46.089751+00:00
+1,What is AlgoVisualizer?,AlgoVisualizer is an interactive algorithm visualization platform designed to help students and developers understand fundamental computer science concepts through real-time animations and visual feedback.,2479,True,0,,2026-07-04T07:28:53.577103+00:00
+1,What leadership experience does Aaron have?,"Aaron's leadership experience is detailed in the ""Leadership Experience"" section of the provided context. I do not have access to the specific details of that section, but that is where the information would be found.",1867,True,0,,2026-07-04T07:30:00.459656+00:00
+1,What was Aaron's role in ACM Developers Week?,Aaron's role in ACM Developers Week was Hackathon Project Lead.,2677,True,0,,2026-07-04T07:31:08.145054+00:00
+1,What is Aaron's role in AWS Learning Club - FEU Tech?,Aaron's role in AWS Learning Club - FEU Tech is Founding Co-Lead.,2434,True,0,,2026-07-04T07:32:15.585364+00:00
+1,What responsibilities did Aaron have as a project lead?,"As a Project Lead, Aaron's responsibilities included:
+- Coordinated team development
+- Managed project planning
+- Oversaw backend development
+- Led technical decision making",3304,True,0,,2026-07-04T07:33:23.897245+00:00
+1,What did Aaron learn from leadership roles?,"I do not have information about what Aaron learned from leadership roles. The provided context only indicates that there is a section about ""Leadership Experience"" but does not detail what was learned.",2908,True,0,,2026-07-04T07:34:31.816376+00:00
+1,What kind of roles is Aaron interested in?,"Aaron is interested in the following roles:
+*   Software Engineering
+*   Backend Development
+*   AI Engineering
+*   Full-Stack Development
+*   Software Engineer
+*   AI / Machine Learning Engineer
+*   Python Developer
+*   Software Engineering Intern
+*   Full-Stack Developer Intern
+*   Backend Developer Intern
+*   AI Application Developer Intern
+*   Machine Learning Intern
+*   Web Developer
+*   Technical Project Collaborator",2713,True,0,,2026-07-04T07:35:39.539170+00:00
+1,What is Aaron's long-term career goal?,I do not have information about Aaron's long-term career goal. The provided context states the types of entry-level roles he is currently seeking and the environment he desires for continued learning and growth.,2672,True,0,,2026-07-04T07:36:47.219139+00:00
+1,Why does Aaron want to become an AI Engineer?,I do not have that information.,3681,True,0,,2026-07-04T07:37:55.909583+00:00
+1,Is Aaron open to remote work?,"Yes, Aaron is currently open to Remote or Hybrid Workplaces.",2163,True,0,,2026-07-04T07:39:03.079740+00:00
+1,What type of work environment is Aaron open to?,Aaron is currently open to Remote or Hybrid Workplaces.,2571,True,0,,2026-07-04T07:40:10.660043+00:00
+1,What certifications does Aaron have?,"Aaron has the following certifications:
+
+*   Microsoft Office Specialist: Excel Associate (Microsoft 365 Apps), Microsoft, August 2023",2200,True,0,,2026-07-04T07:41:17.867630+00:00
+1,What is the status of Aaron's AWS Academy Generative AI Foundations certification?,"The status of Aaron's AWS Academy Generative AI Foundations certification is ""In Progress.""",2495,True,0,,2026-07-04T07:42:25.369296+00:00
+1,What skills did Aaron demonstrate in the Microsoft Excel certification?,"Aaron demonstrated the following skills in the Microsoft Office Specialist: Excel Associate certification:
+- Data analysis
+- Spreadsheet management
+- Formula creation
+- Data visualization",2637,True,0,,2026-07-04T07:43:33.013498+00:00
