@@ -81,6 +81,53 @@ export function getAStarSearchSteps(grid, startNode, finishNode) {
   return searchSteps;
 }
 
+export function getDijkstraSearchSteps(grid, startNode, finishNode) {
+  const searchSteps = [];
+
+  if (!grid?.length || !startNode || !finishNode) {
+    return searchSteps;
+  }
+
+  initializeNodes(grid, finishNode);
+
+  startNode.distance = 0;
+  startNode.totalDistance = 0;
+
+  const openSet = [startNode];
+  const openSetIds = new Set([getNodeId(startNode)]);
+
+  while (openSet.length > 0) {
+    sortNodesByDistance(openSet);
+    const currentNode = openSet.shift();
+    openSetIds.delete(getNodeId(currentNode));
+
+    if (currentNode.isWall || currentNode.isVisited) {
+      continue;
+    }
+
+    if (currentNode.distance === Infinity) {
+      return searchSteps;
+    }
+
+    currentNode.isVisited = true;
+    searchSteps.push({ node: currentNode, status: 'visited' });
+
+    if (isSameNode(currentNode, finishNode)) {
+      return searchSteps;
+    }
+
+    updateDijkstraNeighbors(currentNode, grid, openSet, openSetIds, searchSteps);
+  }
+
+  return searchSteps;
+}
+
+export function getDijkstraAnimations(grid, startNode, finishNode) {
+  return getDijkstraSearchSteps(grid, startNode, finishNode)
+    .filter((step) => step.status === 'visited')
+    .map((step) => step.node);
+}
+
 export function getNodesInShortestPathOrder(finishNode) {
   const nodesInShortestPathOrder = [];
 
@@ -148,6 +195,39 @@ function updateUnvisitedNeighbors(
   }
 }
 
+function updateDijkstraNeighbors(
+  node,
+  grid,
+  openSet,
+  openSetIds,
+  searchSteps,
+) {
+  const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
+
+  for (const neighbor of unvisitedNeighbors) {
+    if (neighbor.isWall) {
+      continue;
+    }
+
+    const tentativeDistance = node.distance + getMovementCost(neighbor);
+
+    if (tentativeDistance >= neighbor.distance) {
+      continue;
+    }
+
+    neighbor.distance = tentativeDistance;
+    neighbor.totalDistance = tentativeDistance;
+    neighbor.previousNode = node;
+
+    const neighborId = getNodeId(neighbor);
+    if (!openSetIds.has(neighborId)) {
+      openSet.push(neighbor);
+      openSetIds.add(neighborId);
+      searchSteps.push({ node: neighbor, status: 'frontier' });
+    }
+  }
+}
+
 function getUnvisitedNeighbors(node, grid) {
   const neighbors = [];
   const { row, col } = node;
@@ -173,6 +253,10 @@ function sortNodesByBestScore(nodes) {
 
     return nodeA.totalDistance - nodeB.totalDistance;
   });
+}
+
+function sortNodesByDistance(nodes) {
+  nodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
 }
 
 function isSameNode(nodeA, nodeB) {

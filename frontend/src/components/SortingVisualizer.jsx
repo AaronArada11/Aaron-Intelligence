@@ -5,6 +5,7 @@ import * as sortingAlgorithms from './sortingAlgorithms';
 import {
     getAStarAnimations,
     getAStarSearchSteps,
+    getDijkstraSearchSteps,
     getNodesInShortestPathOrder,
 } from './pathAlgorithms';
 
@@ -173,6 +174,14 @@ export class SortingVisualizer extends React.Component {
     }
 
     visualizeAStar = () => {
+        this.visualizePathAlgorithm(getAStarSearchSteps);
+    }
+
+    visualizeDijkstra = () => {
+        this.visualizePathAlgorithm(getDijkstraSearchSteps);
+    }
+
+    visualizePathAlgorithm(getSearchSteps) {
         if (this.state.isPathAnimating) return;
 
         this.clearPathAnimationTimeouts();
@@ -181,7 +190,7 @@ export class SortingVisualizer extends React.Component {
         const algorithmGrid = clonePathGrid(displayGrid);
         const startNode = algorithmGrid[START_NODE_ROW][START_NODE_COL];
         const finishNode = algorithmGrid[FINISH_NODE_ROW][FINISH_NODE_COL];
-        const searchSteps = getAStarSearchSteps(
+        const searchSteps = getSearchSteps(
             algorithmGrid,
             startNode,
             finishNode,
@@ -462,6 +471,13 @@ export class SortingVisualizer extends React.Component {
                             </button>
                             <button
                                 type="button"
+                                onClick={this.visualizeDijkstra}
+                                disabled={isPathAnimating}
+                            >
+                                Dijkstra
+                            </button>
+                            <button
+                                type="button"
                                 onClick={this.generatePathWalls}
                                 disabled={isPathAnimating}
                             >
@@ -509,7 +525,7 @@ export class SortingVisualizer extends React.Component {
                         <div
                             className="path-grid"
                             role="grid"
-                            aria-label="A star pathfinding grid"
+                            aria-label="Pathfinding grid"
                             style={{
                                 gridTemplateColumns: `repeat(${PATH_COLS}, minmax(0, 1fr))`,
                             }}
