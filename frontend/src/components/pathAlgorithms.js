@@ -128,6 +128,88 @@ export function getDijkstraAnimations(grid, startNode, finishNode) {
     .map((step) => step.node);
 }
 
+export function getDepthFirstSearchSteps(grid, startNode, finishNode) {
+  const searchSteps = [];
+
+  if (!grid?.length || !startNode || !finishNode) {
+    return searchSteps;
+  }
+
+  initializeNodes(grid, finishNode);
+
+  startNode.distance = 0;
+
+  const stack = [startNode];
+  const stackIds = new Set([getNodeId(startNode)]);
+
+  while (stack.length > 0) {
+    const currentNode = stack.pop();
+    stackIds.delete(getNodeId(currentNode));
+
+    if (currentNode.isWall || currentNode.isVisited) {
+      continue;
+    }
+
+    currentNode.isVisited = true;
+    searchSteps.push({ node: currentNode, status: 'visited' });
+
+    if (isSameNode(currentNode, finishNode)) {
+      return searchSteps;
+    }
+
+    updateDepthFirstNeighbors(currentNode, grid, stack, stackIds, searchSteps);
+  }
+
+  return searchSteps;
+}
+
+export function getDepthFirstSearchAnimations(grid, startNode, finishNode) {
+  return getDepthFirstSearchSteps(grid, startNode, finishNode)
+    .filter((step) => step.status === 'visited')
+    .map((step) => step.node);
+}
+
+export function getBreadthFirstSearchSteps(grid, startNode, finishNode) {
+  const searchSteps = [];
+
+  if (!grid?.length || !startNode || !finishNode) {
+    return searchSteps;
+  }
+
+  initializeNodes(grid, finishNode);
+
+  startNode.distance = 0;
+
+  const queue = [startNode];
+  const queueIds = new Set([getNodeId(startNode)]);
+
+  while (queue.length > 0) {
+    const currentNode = queue.shift();
+    queueIds.delete(getNodeId(currentNode));
+
+    if (currentNode.isWall || currentNode.isVisited) {
+      continue;
+    }
+
+    currentNode.isVisited = true;
+    searchSteps.push({ node: currentNode, status: 'visited' });
+
+    if (isSameNode(currentNode, finishNode)) {
+      return searchSteps;
+    }
+
+    updateBreadthFirstNeighbors(currentNode, grid, queue, queueIds, searchSteps);
+  }
+
+  return searchSteps;
+}
+
+export function getBreadthFirstSearchAnimations(grid, startNode, finishNode) {
+  return getBreadthFirstSearchSteps(grid, startNode, finishNode)
+    .filter((step) => step.status === 'visited')
+    .map((step) => step.node);
+}
+
 export function getNodesInShortestPathOrder(finishNode) {
   const nodesInShortestPathOrder = [];
 
@@ -225,6 +307,60 @@ function updateDijkstraNeighbors(
       openSetIds.add(neighborId);
       searchSteps.push({ node: neighbor, status: 'frontier' });
     }
+  }
+}
+
+function updateDepthFirstNeighbors(
+  node,
+  grid,
+  stack,
+  stackIds,
+  searchSteps,
+) {
+  const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
+
+  for (const neighbor of unvisitedNeighbors) {
+    if (neighbor.isWall) {
+      continue;
+    }
+
+    const neighborId = getNodeId(neighbor);
+    if (stackIds.has(neighborId)) {
+      continue;
+    }
+
+    neighbor.distance = node.distance + getMovementCost(neighbor);
+    neighbor.previousNode = node;
+    stack.push(neighbor);
+    stackIds.add(neighborId);
+    searchSteps.push({ node: neighbor, status: 'frontier' });
+  }
+}
+
+function updateBreadthFirstNeighbors(
+  node,
+  grid,
+  queue,
+  queueIds,
+  searchSteps,
+) {
+  const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
+
+  for (const neighbor of unvisitedNeighbors) {
+    if (neighbor.isWall) {
+      continue;
+    }
+
+    const neighborId = getNodeId(neighbor);
+    if (queueIds.has(neighborId)) {
+      continue;
+    }
+
+    neighbor.distance = node.distance + getMovementCost(neighbor);
+    neighbor.previousNode = node;
+    queue.push(neighbor);
+    queueIds.add(neighborId);
+    searchSteps.push({ node: neighbor, status: 'frontier' });
   }
 }
 

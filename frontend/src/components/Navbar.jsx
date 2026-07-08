@@ -38,7 +38,10 @@ export function Navbar() {
             style={{ color: "var(--ctp-text)" }}
           >
             ~/
-            <span className="animate-pulse">▎</span>
+            <span 
+            className="animate-pulse"
+            style={{ animationDuration: "0.1"}}
+            >▎</span>
           </a>
 
           {/* Desktop Nav */}

@@ -5,6 +5,8 @@ import * as sortingAlgorithms from './sortingAlgorithms';
 import {
     getAStarAnimations,
     getAStarSearchSteps,
+    getBreadthFirstSearchSteps,
+    getDepthFirstSearchSteps,
     getDijkstraSearchSteps,
     getNodesInShortestPathOrder,
 } from './pathAlgorithms';
@@ -179,6 +181,14 @@ export class SortingVisualizer extends React.Component {
 
     visualizeDijkstra = () => {
         this.visualizePathAlgorithm(getDijkstraSearchSteps);
+    }
+
+    visualizeDepthFirstSearch = () => {
+        this.visualizePathAlgorithm(getDepthFirstSearchSteps);
+    }
+
+    visualizeBreadthFirstSearch = () => {
+        this.visualizePathAlgorithm(getBreadthFirstSearchSteps);
     }
 
     visualizePathAlgorithm(getSearchSteps) {
@@ -475,6 +485,20 @@ export class SortingVisualizer extends React.Component {
                                 disabled={isPathAnimating}
                             >
                                 Dijkstra
+                            </button>
+                            <button
+                                type="button"
+                                onClick={this.visualizeDepthFirstSearch}
+                                disabled={isPathAnimating}
+                            >
+                                DFS
+                            </button>
+                            <button
+                                type="button"
+                                onClick={this.visualizeBreadthFirstSearch}
+                                disabled={isPathAnimating}
+                            >
+                                BFS
                             </button>
                             <button
                                 type="button"

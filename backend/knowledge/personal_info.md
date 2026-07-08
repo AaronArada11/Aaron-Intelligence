@@ -8,6 +8,8 @@
 - LastName: Arada
 - FullName: Aaron Randolph S.D. Arada
 - Girlfriend: Ella Marie
+- Favorite color: Blue
+- Favorite food: Lasagna
 
 If asked What does Aaron do, answer Aaron is currently a student at FEUTECH
 

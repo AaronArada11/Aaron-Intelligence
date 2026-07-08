@@ -1,7 +1,14 @@
 import re
+import sys
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from backend.gemini_client import get_gemini_client
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
@@ -12,6 +19,38 @@ except ImportError:
     from supabase_client import get_supabase
 
 
+EMBEDDING_MODEL = "gemini-embedding-001"
+MAX_EMBED_RETRIES = 4
+BASE_RETRY_SECONDS = 8
+
+
+def embed_chunk(chunk):
+    for attempt in range(MAX_EMBED_RETRIES):
+        try:
+            result = get_gemini_client().models.embed_content(
+                model=EMBEDDING_MODEL,
+                contents=chunk,
+                config={"task_type": "RETRIEVAL_DOCUMENT"},
+            )
+            return result.embeddings[0].values
+        except Exception as exc:
+            is_rate_limit = (
+                getattr(exc, "status_code", None) == 429
+                or "RESOURCE_EXHAUSTED" in str(exc)
+            )
+            is_final_attempt = attempt == MAX_EMBED_RETRIES - 1
+
+            if not is_rate_limit or is_final_attempt:
+                raise
+
+            sleep_seconds = BASE_RETRY_SECONDS * (2**attempt)
+            print(
+                f"Rate limited by embedding API. Retrying in {sleep_seconds}s...",
+                flush=True,
+            )
+            time.sleep(sleep_seconds)
+
+
 def ingest_knowledge():
     supabase = get_supabase()
     knowledge_dir = Path(__file__).parent / "knowledge"
@@ -19,9 +58,8 @@ def ingest_knowledge():
     for file in sorted(knowledge_dir.glob("*.md")):
         text = file.read_text(encoding="utf-8")
 
-        supabase.table("documents").delete().eq("source", file.name).execute()
-
         chunks = re.split(r"\n(?=#+ )", text)
+        rows = []
 
         for index, chunk in enumerate(chunks):
             chunk = chunk.strip()
@@ -29,23 +67,20 @@ def ingest_knowledge():
             if len(chunk) < 20:
                 continue
 
-            result = get_gemini_client().models.embed_content(
-                model="gemini-embedding-001",
-                contents=chunk,
-                config={"task_type": "RETRIEVAL_DOCUMENT"},
-            )
-            embedding = result.embeddings[0].values
-
-            supabase.table("documents").insert(
+            rows.append(
                 {
                     "source": file.name,
                     "chunk_id": index,
                     "content": chunk,
-                    "embedding": embedding,
+                    "embedding": embed_chunk(chunk),
                 }
-            ).execute()
+            )
 
-            print(f"Inserted {file.name} | Chunk {index}")
+        supabase.table("documents").delete().eq("source", file.name).execute()
+        if rows:
+            supabase.table("documents").insert(rows).execute()
+
+        print(f"Inserted {file.name} | {len(rows)} chunks", flush=True)
 
 
 def main():
