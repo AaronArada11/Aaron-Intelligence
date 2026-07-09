@@ -151,7 +151,7 @@ Type:
 Blockchain and Web3 community meetup
 
 Date:
-Not specified in current notes
+05-21-25
 
 Location:
 Manila
@@ -196,7 +196,7 @@ Type:
 AI and cloud technology event
 
 Date:
-Not specified in current notes
+06-07-26
 
 Time:
 10:00 AM to 5:00 PM

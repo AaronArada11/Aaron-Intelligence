@@ -4,9 +4,9 @@ import { ThemeSelector } from "./ThemeSelector";
 
 
 const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/about" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export function Navbar() {
@@ -33,7 +33,7 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-12">
           {/* Logo */}
           <a
-            href="#"
+            href="/"
             className="flex items-center gap-1.5 font-mono text-sm"
             style={{ color: "var(--ctp-text)" }}
           >
