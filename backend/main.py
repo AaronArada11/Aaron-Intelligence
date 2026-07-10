@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import Response
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -671,16 +671,26 @@ if FRONTEND_ASSETS.exists():
     )
 
 
-# Frontend mount
-if FRONTEND_DIST.exists():
-    fastapi_app.mount(
-        "/",
-        StaticFiles(
-            directory=FRONTEND_DIST,
-            html=True
-        ),
-        name="frontend",
-    )
+@fastapi_app.get("/{full_path:path}")
+def frontend_fallback(full_path: str):
+    if full_path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    if not FRONTEND_DIST.exists():
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    requested_path = (FRONTEND_DIST / full_path).resolve()
+    dist_root = FRONTEND_DIST.resolve()
+
+    try:
+        requested_path.relative_to(dist_root)
+    except ValueError:
+        requested_path = dist_root / "index.html"
+
+    if requested_path.is_file():
+        return FileResponse(requested_path)
+
+    return FileResponse(dist_root / "index.html")
 
 
 # Vercel entrypoint
