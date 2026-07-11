@@ -34,7 +34,7 @@ const education = [
     location: "Antipolo, PH",
     period: "2022 - 2024",
     summary:
-      "Completed the STEM track",
+      "Completed the STEM track, building a strong foundation in mathematics, research, and analytical thinking that prepared me for Computer Science and software engineering.",
     tags: ["STEM", "Research", "Engineering", "Foundations"],
     imageSrc: "/images/education/la-salle-college-antipolo.png",
     imageAlt: "La Salle College Antipolo school photo",
@@ -77,23 +77,23 @@ const eventPhotos = [
 const profilePhotos = [
   {
     label: "Aaron 01",
-    src: "",
+    src: "/images/profile/profile1.jpeg",
     alt: "Aaron Arada portrait photo",
   },
   {
     label: "Aaron 02",
-    src: "",
-    alt: "Aaron Arada candid photo",
+    src: "/images/profile/profile2.jpeg",
+    alt: "Aaron Arada photo",
   },
   {
     label: "Aaron 03",
-    src: "",
-    alt: "Aaron Arada event photo",
+    src: "/images/profile/profile3.jpeg",
+    alt: "Aaron Arada photo",
   },
   {
     label: "Aaron 04",
-    src: "",
-    alt: "Aaron Arada campus photo",
+    src: "/images/profile/profile4.jpeg",
+    alt: "Aaron Arada photo",
   },
 ];
 
@@ -108,12 +108,14 @@ const certifications = [
     name: "IT Specialist - Python",
     issuer: "Certiport",
     date: "Issued July 2026",
+    credentialUrl: "https://www.credly.com/badges/ec1e2018-4ce3-43e6-add2-47db4eb680e8/public_url",
     tags: ["Python", "Programming", "Problem Solving"],
   },
   {
     name: "Microsoft Office Specialist: Excel Associate",
     issuer: "Microsoft",
     date: "Issued August 2023",
+    credentialUrl: "https://www.credly.com/badges/d7302b70-bf16-4c05-989b-aab9a76c1938",
     tags: ["Excel", "Data Analysis", "Spreadsheets"],
   },
 ];
@@ -480,7 +482,10 @@ export function AboutPage({ onOpenChat }) {
                 className="max-w-2xl font-mono text-sm leading-relaxed text-pretty"
                 style={{ color: "var(--ctp-subtext1)", lineHeight: "1.85" }}
               >
-                I'm Aaron Arada, a Computer Science student based in Manila. My work sits around AI, full-stack development, and experiments that make complex ideas easier to understand or use. This page is a template I can keep expanding as my story, projects, and goals evolve.
+               I'm Aaron Arada, a Computer Science student based in Manila. My work revolves around AI, full-stack development, and building tools that make complex ideas easier to understand and use. This portfolio is a living project. It grows alongside my experiences, projects, and goals.
+              <br />
+              <br />
+              Outside of software, you'll usually find me playing Valorant, Counter-Strike 2, or Hogwarts Legacy. When I'm away from my desk, I enjoy playing billiards and photography. Whether I'm solving technical problems or learning something new, I enjoy challenges that push me to improve both as a developer and as a person.
               </p>
             </div>
 
@@ -521,14 +526,28 @@ export function AboutPage({ onOpenChat }) {
           <div className="grid gap-4 md:grid-cols-3">
             {certifications.map((cert) => (
               <TerminalPanel key={cert.name} className="flex flex-col gap-5">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-lg"
-                  style={{
-                    background: "var(--ctp-surface0)",
-                    color: "var(--ctp-accent)",
-                  }}
-                >
-                  <Award size={18} />
+                <div className="flex items-start justify-between gap-3">
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+                    style={{
+                      background: "var(--ctp-surface0)",
+                      color: "var(--ctp-accent)",
+                    }}
+                  >
+                    <Award size={18} />
+                  </div>
+
+                  {cert.credentialUrl && (
+                    <a
+                      href={cert.credentialUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-lg border border-[var(--ctp-surface1)] px-3 py-1.5 font-mono text-xs transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                      style={{ color: "var(--ctp-text)", outlineColor: "var(--ctp-accent)" }}
+                    >
+                      View Credential
+                    </a>
+                  )}
                 </div>
 
                 <div className="space-y-3">
