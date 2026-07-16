@@ -13,4 +13,3 @@ Aaron worked as a hackathon team member and machine-learning developer. He helpe
 The system had 29 gesture classes, processed 30-frame sequences, and used 126 landmark features per frame. Formal final accuracy metrics were not established during the hackathon, so the public chatbot must not invent an accuracy percentage. Testing was more reliable with clear motion, good lighting, and visible hands.
 
 KUMPAS developed Aaron's skills in sequence classification, real-time computer vision, dataset preparation, model training, full-stack ML integration, deployment, accessibility-focused product design, and teamwork under time constraints.
-

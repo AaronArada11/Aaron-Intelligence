@@ -8,4 +8,3 @@ Aaron is pursuing a Bachelor of Science in Computer Science with a specializatio
 ## La Salle College Antipolo
 
 Before college, Aaron attended La Salle College Antipolo. He completed the Science, Technology, Engineering, and Mathematics (STEM) strand and graduated in May 2024.
-

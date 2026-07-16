@@ -62,7 +62,6 @@ def test_exhausted_quota_is_sanitized():
             random_fn=lambda *_: 0,
         )
 
-
 def test_exhausted_temporary_failure_is_sanitized():
     with pytest.raises(ProviderUnavailableError, match="temporarily unavailable"):
         run_with_retry(
@@ -80,4 +79,3 @@ def test_stage_deadline_is_enforced():
             stage="slow",
             deadline_seconds=0.01,
         )
-

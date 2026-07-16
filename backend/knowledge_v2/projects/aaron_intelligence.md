@@ -17,4 +17,3 @@ Aaron chose Supabase because it combines managed PostgreSQL with pgvector, reduc
 The first version loaded all Markdown into each prompt. Aaron moved to Retrieval-Augmented Generation to reduce prompt size, improve scalability and retrieval precision, and reduce hallucinations as the corpus grew. The project developed his skills in semantic and hybrid retrieval, vector databases, chunking, prompt design, FastAPI services, frontend integration, observability, evaluation, and production deployment.
 
 Aaron Intelligence differs from a normal portfolio because it is interactive, conversational, and grounded in a maintainable personal knowledge base.
-

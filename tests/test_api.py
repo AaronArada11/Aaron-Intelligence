@@ -34,7 +34,6 @@ def test_chat_contract_and_validation(monkeypatch):
     assert client.post("/chat", json={"message": "x" * 1001}).status_code == 422
     app.dependency_overrides.clear()
 
-
 def test_evaluation_token_enables_diagnostics(monkeypatch):
     monkeypatch.setenv("APP_ENV", "production")
     monkeypatch.setenv("CHAT_RATE_LIMIT_ENABLED", "true")
@@ -77,4 +76,3 @@ def test_provider_failures_are_sanitized(monkeypatch):
     assert unavailable.headers["retry-after"] == "2"
     assert "raw secret" not in unavailable.text
     app.dependency_overrides.clear()
-

@@ -11,4 +11,3 @@ Aaron earned the Microsoft Office Specialist: Excel Associate certification in A
 ## AWS Academy Generative AI Foundations
 
 Aaron is currently working toward AWS Academy Generative AI Foundations. Its status is in progress. The learning areas include generative AI concepts, prompt engineering, responsible AI, and foundation models; it must not be described as completed until the public corpus is updated.
-

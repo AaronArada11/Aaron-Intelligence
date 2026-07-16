@@ -11,4 +11,3 @@ Roles of interest include software engineering intern, backend developer intern,
 Aaron is available for internships, part-time roles, freelance projects, and technical collaborations that fit around his studies. He is open to remote and hybrid work based in or connected to Manila, Philippines. His general availability is weekends and selected weekdays after classes, typically 10–20 hours per week, subject to class schedules, exams, and academic deadlines. A preferred start date can be discussed.
 
 He is especially interested in AI-powered applications, full-stack products, backend APIs, educational technology, machine learning, computer vision, developer tools, and hackathon projects.
-

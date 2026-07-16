@@ -59,4 +59,3 @@ class ChatResult(BaseModel):
     request_id: str
     sources: list[PublicSource] = Field(default_factory=list)
     diagnostics: dict[str, Any] | None = None
-

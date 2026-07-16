@@ -11,4 +11,3 @@ The planned architecture uses Next.js, Tailwind CSS, and shadcn/ui on the fronte
 The product explores multi-tenant workspaces, owner/editor/viewer permissions, real-time document collaboration, activity and audit history, contextual retrieval, file embeddings, workspace-level question answering, and subscription management.
 
 Aaron designed the product concept, implemented Clerk authentication and Convex infrastructure, built Next.js and shadcn/ui components, and researched AI document-understanding workflows. The project is developing his knowledge of SaaS architecture, real-time systems, identity, component-driven interfaces, permissions, and AI-assisted knowledge management.
-

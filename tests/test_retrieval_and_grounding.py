@@ -102,4 +102,3 @@ def test_only_valid_citations_are_returned():
     )
     assert result.outcome == "answered"
     assert [source.id for source in result.sources] == ["S1"]
-

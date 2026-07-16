@@ -28,4 +28,3 @@ def test_threshold_rejects_all_scope_cases_and_maximizes_recall():
     assert result.out_of_scope_rejected == 10
     assert result.in_scope_source_recall == 0.9
     assert result.v2_eligible
-

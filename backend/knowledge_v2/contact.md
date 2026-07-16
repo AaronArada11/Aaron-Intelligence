@@ -10,4 +10,3 @@ Aaron is open to conversations about software engineering, artificial intelligen
 - LinkedIn: https://www.linkedin.com/in/aaronarada/
 
 Email, LinkedIn, and GitHub are the preferred contact channels. Aaron generally aims to respond within one to three days.
-

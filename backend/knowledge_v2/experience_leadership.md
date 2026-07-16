@@ -7,5 +7,3 @@ Aaron served as Hackathon Project Lead for Mirror Mentor during ACM Developers W
 His technical contributions included designing the backend architecture, developing 17 REST API endpoints, implementing authentication and authorization, integrating Gemini, designing conversation workflows, and assisting with deployment.
 
 The role strengthened Aaron's communication, project management, technical leadership, and ability to coordinate development under time constraints. He learned that clear ownership, practical scope decisions, and regular communication help a team deliver a coherent system.
-
-

@@ -69,7 +69,6 @@ def score_case(
     source_pass = not alternatives or any(
         alternative in source_text for alternative in alternatives
     )
-
     fact_groups = case.get("required_fact_groups", [])
     groups_passed = sum(
         any(re.search(str(pattern), answer, flags=re.IGNORECASE) for pattern in group)
@@ -106,4 +105,3 @@ def _wrong() -> ScoreResult:
         fact_groups_passed=0,
         fact_groups_total=0,
     )
-

@@ -49,4 +49,3 @@ def test_sensitive_personal_data_is_rejected():
         assert "phone number" in str(exc)
     else:
         raise AssertionError("sensitive content should have been rejected")
-

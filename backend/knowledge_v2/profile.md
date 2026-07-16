@@ -11,4 +11,3 @@ Aaron speaks English and Filipino. Python is his favorite programming language.
 ## Working Style
 
 Aaron is a fast learner who values initiative, experimentation, debugging, and continuous improvement. He welcomes feedback and is developing deeper experience in software architecture, testing, and collaborative engineering. He is especially motivated by seeing an abstract idea become a functional application that people can use.
-

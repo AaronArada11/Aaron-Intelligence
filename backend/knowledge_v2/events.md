@@ -15,4 +15,3 @@ Aaron attended this community meetup on May 21, 2025. It introduced practical bl
 ## GDG Cloud Manila – Build with AI: The Future of AI and Research
 
 Aaron attended this event on June 7, 2026 at iACADEMY in Makati City. Topics included Gemini, Vertex AI, multi-agent coordination, AI-assisted research, responsible AI, NotebookLM, Elicit, Connected Papers, Consensus, ChatPDF, Mendeley, and Gemma 3. He learned how specialized agents can coordinate sequentially, in parallel, or hierarchically, and how research workflows benefit from grounded evidence, transparency, privacy, security, and documented limitations.
-

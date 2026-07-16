@@ -15,4 +15,3 @@ Aaron has worked with PostgreSQL, Supabase, MongoDB, Convex, and vector search t
 ## Cloud and Development Tools
 
 Aaron has deployment experience with Vercel and Railway and exposure to AWS services including Lambda, API Gateway, DynamoDB, RDS, S3, CloudFront, EC2, and cloud security concepts. His development tools include Git, GitHub, VS Code, Visual Studio, and DBeaver.
-
