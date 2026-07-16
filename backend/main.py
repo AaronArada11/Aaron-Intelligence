@@ -1,25 +1,19 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from dotenv import load_dotenv
-from backend.langfuse_tracing import (
-    flush_langfuse,
-    get_runtime_environment,
-    safe_update,
-    start_observation,
-)
-from backend.retriever import (
-    EMBEDDING_MODEL,
-    RETRIEVAL_MATCH_COUNT,
-    retrieve,
-)
-from backend.gemini_client import get_gemini_client
+from backend.chat_service import CHAT_MODEL, ChatService, get_chat_service
+from backend.langfuse_tracing import flush_langfuse, get_runtime_environment
+from backend.resilience import ProviderQuotaError, ProviderUnavailableError
 from pathlib import Path
+import hashlib
+import hmac
+import logging
 import os
 import requests
 import time
-import traceback
+import uuid
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
@@ -29,8 +23,6 @@ FRONTEND_DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
 FRONTEND_ASSETS = FRONTEND_DIST / "assets"
 GITHUB_API_URL = "https://api.github.com"
 COMMITS_CACHE_SECONDS = 300
-CHAT_MODEL = "gemini-2.5-flash"
-RETRIEVAL_MIN_SIMILARITY = 0.25
 commits_cache = {
     "key": None,
     "expires_at": 0,
@@ -83,22 +75,98 @@ def favicon():
 class ChatRequest(BaseModel):
     message: str
 
+    @field_validator("message")
+    @classmethod
+    def validate_message(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("message must not be blank")
+        if len(normalized) > 1000:
+            raise ValueError("message must contain at most 1,000 characters")
+        return normalized
 
-def _is_rate_limit_error(exc):
-    status_code = getattr(exc, "status_code", None) or getattr(exc, "code", None)
-    if status_code == 429:
-        return True
 
-    message = str(exc).lower()
-    rate_limit_terms = (
-        "429",
-        "rate limit",
-        "rate_limit",
-        "quota",
-        "resource_exhausted",
-        "too many requests",
-    )
-    return any(term in message for term in rate_limit_terms)
+def _env_bool(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().casefold() in {"1", "true", "yes", "on"}
+
+
+def _evaluation_authenticated(request: Request) -> bool:
+    configured = os.getenv("EVAL_DIAGNOSTICS_TOKEN", "")
+    supplied = request.headers.get("X-Evaluation-Token", "")
+    return bool(configured and supplied and hmac.compare_digest(configured, supplied))
+
+
+def _diagnostics_allowed(request: Request, evaluation_authenticated: bool) -> bool:
+    environment = get_runtime_environment().casefold()
+    return evaluation_authenticated or environment in {
+        "local",
+        "development",
+        "dev",
+        "test",
+    }
+
+
+def _client_ip(request: Request) -> str:
+    forwarded = request.headers.get("x-forwarded-for", "")
+    if forwarded:
+        return forwarded.split(",", 1)[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
+def _hashed_ip(request: Request) -> str:
+    salt = os.getenv("RATE_LIMIT_SALT", "aaron-intelligence-rate-limit")
+    return hmac.new(
+        salt.encode("utf-8"),
+        _client_ip(request).encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+
+
+def _enforce_chat_rate_limit(
+    request: Request,
+    *,
+    evaluation_authenticated: bool,
+) -> None:
+    production_default = get_runtime_environment().casefold() in {"production", "preview"}
+    if evaluation_authenticated or not _env_bool(
+        "CHAT_RATE_LIMIT_ENABLED",
+        production_default,
+    ):
+        return
+
+    from backend.supabase_client import get_supabase
+
+    try:
+        response = get_supabase().rpc(
+            "check_chat_rate_limit",
+            {
+                "p_ip_hash": _hashed_ip(request),
+                "p_limit": 20,
+                "p_window_seconds": 600,
+            },
+        ).execute()
+        data = response.data
+        if isinstance(data, list):
+            data = data[0] if data else {}
+        data = data if isinstance(data, dict) else {}
+    except Exception as exc:
+        logging.getLogger(__name__).exception("Chat rate limiter unavailable")
+        raise HTTPException(
+            status_code=503,
+            detail="Aaron Intelligence is temporarily unavailable. Please try again shortly.",
+            headers={"Retry-After": "2"},
+        ) from exc
+
+    if not data.get("allowed", False):
+        retry_after = max(1, int(data.get("retry_after") or 600))
+        raise HTTPException(
+            status_code=429,
+            detail="Too many chat requests. Please wait a few minutes and try again.",
+            headers={"Retry-After": str(retry_after)},
+        )
 
 
 def _github_headers():
@@ -410,257 +478,64 @@ def github_commits():
 
 @fastapi_app.post("/chat")
 @fastapi_app.post("/api/chat")
-def chat(request: ChatRequest):
-    trace_metadata = {
-        "app": "Aaron Intelligence",
-        "route": "/chat",
-        "model": CHAT_MODEL,
-        "environment": get_runtime_environment(),
-    }
+def chat(
+    request_body: ChatRequest,
+    request: Request,
+    background_tasks: BackgroundTasks,
+    service: ChatService = Depends(get_chat_service),
+):
+    request_id = str(uuid.uuid4())
+    evaluation_authenticated = _evaluation_authenticated(request)
+    _enforce_chat_rate_limit(
+        request,
+        evaluation_authenticated=evaluation_authenticated,
+    )
 
-    with start_observation(
-        as_type="span",
-        name="chat-request",
-        input=request.message,
-        metadata=trace_metadata,
-    ) as trace:
-        try:
-            retrieval_span = None
-            try:
-                with start_observation(
-                    as_type="retriever",
-                    name="retrieve-context",
-                    input=request.message,
-                    metadata={
-                        "embedding_model": EMBEDDING_MODEL,
-                        "match_count": RETRIEVAL_MATCH_COUNT,
-                        "similarity_threshold": RETRIEVAL_MIN_SIMILARITY,
-                    },
-                ) as retrieval_span:
-                    retrieved_docs = retrieve(request.message)
-                    top_similarity = (
-                        retrieved_docs[0].get("similarity")
-                        if retrieved_docs
-                        else None
-                    )
-                    passed_threshold = (
-                        isinstance(top_similarity, (int, float))
-                        and top_similarity >= RETRIEVAL_MIN_SIMILARITY
-                    )
+    try:
+        result = service.answer(
+            request_body.message,
+            request_id=request_id,
+            evaluation_mode=evaluation_authenticated,
+        )
+    except ProviderQuotaError as exc:
+        raise HTTPException(
+            status_code=429,
+            detail=(
+                "Aaron Intelligence is temporarily rate limited. "
+                "Please wait a moment and try again."
+            ),
+            headers={"Retry-After": "2"},
+        ) from exc
+    except ProviderUnavailableError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Aaron Intelligence is temporarily unavailable. "
+                "Please try again shortly."
+            ),
+            headers={"Retry-After": "2"},
+        ) from exc
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logging.getLogger(__name__).exception(
+            "Unhandled chat failure request_id=%s",
+            request_id,
+        )
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Aaron Intelligence is temporarily unavailable. "
+                "Please try again shortly."
+            ),
+            headers={"Retry-After": "2"},
+        ) from exc
 
-                    safe_update(
-                        retrieval_span,
-                        output={
-                            "document_count": len(retrieved_docs or []),
-                            "top_similarity": top_similarity,
-                            "passed_threshold": passed_threshold,
-                        },
-                        metadata={
-                            "embedding_model": EMBEDDING_MODEL,
-                            "match_count": RETRIEVAL_MATCH_COUNT,
-                            "similarity_threshold": RETRIEVAL_MIN_SIMILARITY,
-                        },
-                    )
-            except Exception as exc:
-                safe_update(
-                    retrieval_span,
-                    level="ERROR",
-                    status_message=str(exc),
-                )
-                safe_update(
-                    trace,
-                    level="ERROR",
-                    status_message=f"Retriever error: {str(exc)}",
-                )
-                traceback.print_exc()
-
-                if _is_rate_limit_error(exc):
-                    raise HTTPException(
-                        status_code=429,
-                        detail=(
-                            "Aaron Intelligence is temporarily rate limited. "
-                            "Please wait a moment and try again."
-                        ),
-                    )
-
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"Retriever error: {str(exc)}"
-                )
-
-            if (
-                not retrieved_docs
-                or top_similarity is None
-                or top_similarity < RETRIEVAL_MIN_SIMILARITY
-            ):
-                answer = (
-                    "Sorry, I can't help with that. "
-                    "I'm Aaron Intelligence, a portfolio chatbot focused "
-                    "exclusively on Aaron Randolph S.D. Arada."
-                )
-                safe_update(
-                    trace,
-                    output=answer,
-                    metadata={
-                        **trace_metadata,
-                        "refused": True,
-                        "reason": "low_similarity",
-                        "document_count": len(retrieved_docs or []),
-                        "top_similarity": top_similarity,
-                    },
-                )
-                return {
-                    "answer": answer
-                }
-
-            context_span = None
-            try:
-                with start_observation(
-                    as_type="span",
-                    name="build-context",
-                    metadata={
-                        "document_count": len(retrieved_docs),
-                    },
-                ) as context_span:
-                    context = "\n\n".join(
-                        doc["content"]
-                        for doc in retrieved_docs
-                    )
-                    safe_update(
-                        context_span,
-                        output={
-                            "document_count": len(retrieved_docs),
-                            "context_length": len(context),
-                        },
-                    )
-
-            except Exception as exc:
-                safe_update(
-                    context_span,
-                    level="ERROR",
-                    status_message=str(exc),
-                )
-                safe_update(
-                    trace,
-                    level="ERROR",
-                    status_message=f"Context error: {str(exc)}",
-                )
-                traceback.print_exc()
-
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"Context error: {str(exc)}"
-                )
-
-            generation = None
-            try:
-                client = get_gemini_client()
-
-                prompt = f"""
-You are Aaron Intelligence.
-
-You are the AI representative of Aaron Randolph S.D. Arada.
-
-Your purpose is to help visitors, recruiters, and collaborators
-learn about Aaron through conversation.
-
-You may only answer questions related to:
-
-- Aaron's projects
-- Aaron's skills
-- Aaron's education
-- Aaron's experience
-- Aaron's achievements
-- Aaron's interests
-- Aaron's leadership experience
-- Aaron's career goals
-
-If a user refers to Aaron using pronouns such as he, him, his,
-the student, the developer, the creator, or the candidate,
-treat those references as Aaron Randolph S.D. Arada.
-
-Rules:
-- Use ONLY the provided context.
-- Do not invent facts.
-- Do not make assumptions.
-- If the answer cannot be found in the context, say that you do not have that information.
-- Keep responses professional, concise, and accurate.
-- Do not answer general knowledge questions.
-- Do not answer questions unrelated to Aaron.
-
-Context:
-{context}
-
-Question:
-{request.message}
-"""
-
-                with start_observation(
-                    as_type="generation",
-                    name="gemini-response",
-                    input=prompt,
-                    model=CHAT_MODEL,
-                    metadata={
-                        "provider": "google",
-                        "document_count": len(retrieved_docs),
-                        "context_length": len(context),
-                    },
-                ) as generation:
-                    response = client.models.generate_content(
-                        model=CHAT_MODEL,
-                        contents=prompt,
-                    )
-                    answer = response.text
-                    safe_update(
-                        generation,
-                        output=answer,
-                    )
-
-                safe_update(
-                    trace,
-                    output=answer,
-                    metadata={
-                        **trace_metadata,
-                        "refused": False,
-                        "document_count": len(retrieved_docs),
-                        "top_similarity": retrieved_docs[0].get("similarity"),
-                        "context_length": len(context),
-                    },
-                )
-
-                return {
-                    "answer": answer
-                }
-
-            except Exception as exc:
-                safe_update(
-                    generation,
-                    level="ERROR",
-                    status_message=str(exc),
-                )
-                safe_update(
-                    trace,
-                    level="ERROR",
-                    status_message=f"Gemini error: {str(exc)}",
-                )
-                traceback.print_exc()
-
-                if _is_rate_limit_error(exc):
-                    raise HTTPException(
-                        status_code=429,
-                        detail=(
-                            "Aaron Intelligence is temporarily rate limited. "
-                            "Please wait a moment and try again."
-                        ),
-                    )
-
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"Gemini error: {str(exc)}"
-                )
-        finally:
-            flush_langfuse()
-
+    background_tasks.add_task(flush_langfuse)
+    payload = result.model_dump(exclude_none=True)
+    if not _diagnostics_allowed(request, evaluation_authenticated):
+        payload.pop("diagnostics", None)
+    return payload
 
 # Explicit assets mount
 if FRONTEND_ASSETS.exists():
