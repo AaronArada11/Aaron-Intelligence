@@ -1,145 +1,155 @@
 #!/usr/bin/env python3
-"""Automated evaluation runner for Aaron Intelligence.
-
-The runner sends questions to the existing chatbot API contract:
-POST /chat with {"message": "..."} and reads the "answer" field.
-It does not call Gemini, the retriever, or Langfuse directly.
-"""
+"""Immutable, deterministic evaluation runner for Aaron Intelligence."""
 
 from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import os
 import re
-import shutil
-import sys
+import subprocess
 import time
-import zipfile
-from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+import uuid
+from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from xml.etree import ElementTree as ET
 
 import requests
 
+from backend.calibration import calibrate_evidence_threshold
+from backend.chat_service import CHAT_MODEL, PROMPT_VERSION
+from backend.chunking import corpus_hash
+from backend.ingest import DEFAULT_KNOWLEDGE_DIR, EMBEDDING_MODEL
+from evaluations.scoring import score_case
+
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_WORKBOOK = ROOT / "evaluations" / "aaron_intelligence_chatbot_eval.xlsx"
-DEFAULT_OUTPUT_DIR = ROOT
-DEFAULT_RUNS = 3
-DEFAULT_DELAY_SECONDS = 65.0
-DEFAULT_RUN_DELAY_SECONDS = 900.0
-DEFAULT_BACKOFF_INITIAL_SECONDS = 60.0
-DEFAULT_BACKOFF_MAX_SECONDS = 900.0
-
-CSV_COLUMNS = [
-    "Run Number",
-    "Question",
-    "Response",
-    "Response Time (ms)",
-    "Success",
-    "Retry Count",
-    "Trace ID",
-    "Timestamp",
-]
-
-TRACE_ID_BODY_KEYS = (
-    "trace_id",
-    "traceId",
-    "langfuse_trace_id",
-    "langfuseTraceId",
+DEFAULT_CASES = ROOT / "evaluations" / "cases.json"
+DEFAULT_RUNS_DIR = ROOT / "evaluations" / "runs"
+RETRY_WAITS_SECONDS = (2.0, 5.0)
+RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
+RAW_ERROR_PATTERNS = (
+    r"resource_exhausted",
+    r"google\.api",
+    r"traceback",
+    r"gemini error",
+    r"retriever error",
+    r"api[_ -]?key",
 )
 
-TRACE_ID_HEADER_KEYS = (
-    "x-langfuse-trace-id",
-    "x-trace-id",
-    "trace-id",
-)
 
-LANGFUSE_METRIC_TERMS = (
-    "token",
-    "usage",
-    "cost",
-    "latency",
-    "input",
-    "output",
-)
-
-MAIN_NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
-REL_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-PKG_REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
-
-
-@dataclass
-class Config:
-    workbook: Path
-    output_dir: Path
+@dataclass(frozen=True, slots=True)
+class EvaluationConfig:
+    cases_path: Path
+    output_root: Path
     chat_url: str | None
     runs: int
-    delay_seconds: float
-    run_delay_seconds: float
-    max_retries: int
-    backoff_initial_seconds: float
-    backoff_max_seconds: float
     timeout_seconds: float
-    schedule: bool
-    schedule_time: str
-    fresh_when_complete: bool
+    delay_seconds: float
+    max_retries: int
+    evaluation_token: str
+    resume_run: Path | None
     dry_run: bool
+    stop_on_rate_limit: bool = True
 
 
 class ChatClient:
-    def ask(self, question: str) -> tuple[int, dict[str, Any], dict[str, str]]:
-        raise NotImplementedError
-
     @property
     def mode(self) -> str:
-        return self.__class__.__name__
+        raise NotImplementedError
+
+    def ask(self, question: str) -> tuple[int, dict[str, Any], dict[str, str], float]:
+        raise NotImplementedError
 
 
 class HttpChatClient(ChatClient):
-    def __init__(self, url: str, timeout_seconds: float):
+    def __init__(self, url: str, timeout_seconds: float, token: str):
         self.url = url
         self.timeout_seconds = timeout_seconds
         self.session = requests.Session()
-
-    def ask(self, question: str) -> tuple[int, dict[str, Any], dict[str, str]]:
-        response = self.session.post(
-            self.url,
-            json={"message": question},
-            timeout=self.timeout_seconds,
-        )
-        data = _response_json(response)
-        return response.status_code, data, dict(response.headers)
+        self.headers = {"X-Evaluation-Token": token} if token else {}
 
     @property
     def mode(self) -> str:
         return f"HTTP {self.url}"
 
+    def ask(self, question: str) -> tuple[int, dict[str, Any], dict[str, str], float]:
+        started = time.perf_counter()
+        response = self.session.post(
+            self.url,
+            json={"message": question},
+            headers=self.headers,
+            timeout=self.timeout_seconds,
+        )
+        elapsed_ms = round((time.perf_counter() - started) * 1000, 3)
+        return response.status_code, response_json(response), dict(response.headers), elapsed_ms
+
 
 class InProcessChatClient(ChatClient):
-    def __init__(self):
+    def __init__(self, token: str):
         from fastapi.testclient import TestClient
 
+        if not token:
+            token = f"local-eval-{uuid.uuid4()}"
+            os.environ["EVAL_DIAGNOSTICS_TOKEN"] = token
+        self.token = token
         from backend.main import app
 
         self.client = TestClient(app)
-
-    def ask(self, question: str) -> tuple[int, dict[str, Any], dict[str, str]]:
-        response = self.client.post("/chat", json={"message": question})
-        data = _response_json(response)
-        return response.status_code, data, dict(response.headers)
 
     @property
     def mode(self) -> str:
         return "in-process FastAPI /chat"
 
+    def ask(self, question: str) -> tuple[int, dict[str, Any], dict[str, str], float]:
+        started = time.perf_counter()
+        response = self.client.post(
+            "/chat",
+            json={"message": question},
+            headers={"X-Evaluation-Token": self.token},
+        )
+        elapsed_ms = round((time.perf_counter() - started) * 1000, 3)
+        return response.status_code, response_json(response), dict(response.headers), elapsed_ms
 
-def _response_json(response: Any) -> dict[str, Any]:
+
+def parse_args() -> EvaluationConfig:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--cases", type=Path, default=DEFAULT_CASES)
+    parser.add_argument("--output-root", type=Path, default=DEFAULT_RUNS_DIR)
+    parser.add_argument("--chat-url", default=os.getenv("EVAL_CHAT_URL"))
+    parser.add_argument("--runs", type=int, default=3)
+    parser.add_argument("--smoke", action="store_true", help="Run one attempt per case")
+    parser.add_argument("--timeout-seconds", type=float, default=20.0)
+    parser.add_argument("--delay-seconds", type=float, default=0.0)
+    parser.add_argument("--max-retries", type=int, default=2)
+    parser.add_argument("--resume-run", type=Path)
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--continue-on-rate-limit",
+        action="store_true",
+        help="Continue to later cases after an exhausted HTTP 429 instead of stopping.",
+    )
+    args = parser.parse_args()
+    return EvaluationConfig(
+        cases_path=args.cases.expanduser().resolve(),
+        output_root=args.output_root.expanduser().resolve(),
+        chat_url=args.chat_url,
+        runs=1 if args.smoke else max(1, args.runs),
+        timeout_seconds=max(1.0, args.timeout_seconds),
+        delay_seconds=max(0.0, args.delay_seconds),
+        max_retries=min(2, max(0, args.max_retries)),
+        evaluation_token=os.getenv("EVAL_DIAGNOSTICS_TOKEN", ""),
+        resume_run=args.resume_run.expanduser().resolve() if args.resume_run else None,
+        dry_run=args.dry_run,
+        stop_on_rate_limit=not args.continue_on_rate_limit,
+    )
+
+
+def response_json(response: Any) -> dict[str, Any]:
     try:
         data = response.json()
     except Exception:
@@ -147,830 +157,532 @@ def _response_json(response: Any) -> dict[str, Any]:
     return data if isinstance(data, dict) else {"response": data}
 
 
-def env_float(name: str, default: float) -> float:
-    value = os.getenv(name)
-    if value in (None, ""):
-        return default
-    return float(value)
+def load_cases(path: Path) -> list[dict[str, Any]]:
+    cases = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(cases, list) or len(cases) != 65:
+        raise ValueError("Canonical evaluation corpus must contain exactly 65 cases")
+    ids = [str(case.get("id")) for case in cases]
+    if len(set(ids)) != len(ids):
+        raise ValueError("Evaluation case IDs must be unique")
+    return cases
 
 
-def env_int(name: str, default: int) -> int:
-    value = os.getenv(name)
-    if value in (None, ""):
-        return default
-    return int(value)
-
-
-def env_bool(name: str, default: bool) -> bool:
-    value = os.getenv(name)
-    if value in (None, ""):
-        return default
-    return value.strip().lower() in {"1", "true", "yes", "on"}
-
-
-def parse_args() -> Config:
-    parser = argparse.ArgumentParser(
-        description="Run the Aaron Intelligence chatbot evaluation."
+def git_sha() -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
     )
-    parser.add_argument(
-        "--workbook",
-        default=os.getenv("EVAL_WORKBOOK", str(DEFAULT_WORKBOOK)),
-        help="Excel workbook containing evaluation questions.",
-    )
-    parser.add_argument(
-        "--output-dir",
-        default=os.getenv("EVAL_OUTPUT_DIR", str(DEFAULT_OUTPUT_DIR)),
-        help="Directory for results.csv, results.json, and summary.json.",
-    )
-    parser.add_argument(
-        "--chat-url",
-        default=os.getenv("EVAL_CHAT_URL"),
-        help="Chat endpoint URL. Defaults to local server if reachable, otherwise in-process FastAPI.",
-    )
-    parser.add_argument("--runs", type=int, default=env_int("EVAL_RUNS", DEFAULT_RUNS))
-    parser.add_argument(
-        "--delay-seconds",
-        type=float,
-        default=env_float("EVAL_DELAY_SECONDS", DEFAULT_DELAY_SECONDS),
-        help="Delay between questions.",
-    )
-    parser.add_argument(
-        "--run-delay-seconds",
-        type=float,
-        default=env_float("EVAL_RUN_DELAY_SECONDS", DEFAULT_RUN_DELAY_SECONDS),
-        help="Delay between complete runs.",
-    )
-    parser.add_argument(
-        "--max-retries",
-        type=int,
-        default=env_int("EVAL_MAX_RETRIES", 4),
-        help="Maximum retries after HTTP 429.",
-    )
-    parser.add_argument(
-        "--backoff-initial-seconds",
-        type=float,
-        default=env_float(
-            "EVAL_BACKOFF_INITIAL_SECONDS",
-            DEFAULT_BACKOFF_INITIAL_SECONDS,
-        ),
-        help="Initial exponential backoff delay for HTTP 429.",
-    )
-    parser.add_argument(
-        "--backoff-max-seconds",
-        type=float,
-        default=env_float("EVAL_BACKOFF_MAX_SECONDS", DEFAULT_BACKOFF_MAX_SECONDS),
-        help="Maximum exponential backoff delay for HTTP 429.",
-    )
-    parser.add_argument(
-        "--timeout-seconds",
-        type=float,
-        default=env_float("EVAL_TIMEOUT_SECONDS", 120.0),
-        help="HTTP request timeout.",
-    )
-    parser.add_argument(
-        "--schedule",
-        action="store_true",
-        default=env_bool("EVAL_SCHEDULE", False),
-        help="Run once per day until stopped.",
-    )
-    parser.add_argument(
-        "--schedule-time",
-        default=os.getenv("EVAL_SCHEDULE_TIME", "02:00"),
-        help="Daily scheduler start time in HH:MM local time.",
-    )
-    parser.add_argument(
-        "--fresh-when-complete",
-        action="store_true",
-        default=env_bool("EVAL_FRESH_WHEN_COMPLETE", False),
-        help="Archive complete outputs and start a fresh evaluation.",
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Read questions and write no output without calling the chatbot.",
-    )
-
-    args = parser.parse_args()
-    return Config(
-        workbook=Path(args.workbook).expanduser().resolve(),
-        output_dir=Path(args.output_dir).expanduser().resolve(),
-        chat_url=args.chat_url,
-        runs=max(1, args.runs),
-        delay_seconds=max(0.0, args.delay_seconds),
-        run_delay_seconds=max(0.0, args.run_delay_seconds),
-        max_retries=max(0, args.max_retries),
-        backoff_initial_seconds=max(0.0, args.backoff_initial_seconds),
-        backoff_max_seconds=max(0.0, args.backoff_max_seconds),
-        timeout_seconds=max(1.0, args.timeout_seconds),
-        schedule=args.schedule,
-        schedule_time=args.schedule_time,
-        fresh_when_complete=args.fresh_when_complete,
-        dry_run=args.dry_run,
-    )
+    return result.stdout.strip() or "unknown"
 
 
-def load_questions(workbook: Path) -> list[str]:
-    if not workbook.exists():
-        raise FileNotFoundError(f"Workbook not found: {workbook}")
-
-    sheets = read_xlsx_sheets(workbook)
-    for sheet_name, rows in sheets:
-        questions = questions_from_rows(rows)
-        if questions:
-            print(f"Loaded {len(questions)} questions from sheet '{sheet_name}'.")
-            return questions
-
-    raise ValueError("No question column found in workbook.")
-
-
-def read_xlsx_sheets(path: Path) -> list[tuple[str, list[list[str]]]]:
-    with zipfile.ZipFile(path) as archive:
-        shared_strings = read_shared_strings(archive)
-        workbook = ET.fromstring(archive.read("xl/workbook.xml"))
-        rels = ET.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
-        rel_lookup = {
-            rel.attrib["Id"]: rel.attrib["Target"]
-            for rel in rels.findall(f"{{{PKG_REL_NS}}}Relationship")
-        }
-
-        sheets = []
-        for sheet in workbook.findall(f".//{{{MAIN_NS}}}sheet"):
-            sheet_name = sheet.attrib.get("name", "Sheet")
-            rel_id = sheet.attrib[f"{{{REL_NS}}}id"]
-            target = rel_lookup[rel_id]
-            sheet_path = "xl/" + target.lstrip("/")
-            rows = read_sheet_rows(archive, sheet_path, shared_strings)
-            sheets.append((sheet_name, rows))
-
-    return sheets
-
-
-def read_shared_strings(archive: zipfile.ZipFile) -> list[str]:
-    if "xl/sharedStrings.xml" not in archive.namelist():
-        return []
-
-    root = ET.fromstring(archive.read("xl/sharedStrings.xml"))
-    values = []
-    for item in root.findall(f"{{{MAIN_NS}}}si"):
-        values.append("".join(text.text or "" for text in item.findall(f".//{{{MAIN_NS}}}t")))
-    return values
-
-
-def read_sheet_rows(
-    archive: zipfile.ZipFile,
-    sheet_path: str,
-    shared_strings: list[str],
-) -> list[list[str]]:
-    root = ET.fromstring(archive.read(sheet_path))
-    rows = []
-    for row in root.findall(f".//{{{MAIN_NS}}}sheetData/{{{MAIN_NS}}}row"):
-        values_by_index: dict[int, str] = {}
-        for cell in row.findall(f"{{{MAIN_NS}}}c"):
-            cell_ref = cell.attrib.get("r", "")
-            values_by_index[column_index(cell_ref)] = read_cell_value(cell, shared_strings)
-        if values_by_index:
-            max_index = max(values_by_index)
-            rows.append([values_by_index.get(index, "") for index in range(max_index + 1)])
-    return rows
-
-
-def read_cell_value(cell: ET.Element, shared_strings: list[str]) -> str:
-    cell_type = cell.attrib.get("t")
-    value = cell.find(f"{{{MAIN_NS}}}v")
-
-    if cell_type == "s" and value is not None:
-        try:
-            return shared_strings[int(value.text or "0")]
-        except (IndexError, ValueError):
-            return ""
-
-    if cell_type == "inlineStr":
-        inline = cell.find(f"{{{MAIN_NS}}}is")
-        if inline is None:
-            return ""
-        return "".join(text.text or "" for text in inline.findall(f".//{{{MAIN_NS}}}t"))
-
-    return "" if value is None else str(value.text or "")
-
-
-def column_index(cell_ref: str) -> int:
-    match = re.match(r"([A-Z]+)", cell_ref)
-    if not match:
-        return 0
-
-    index = 0
-    for char in match.group(1):
-        index = index * 26 + (ord(char) - ord("A") + 1)
-    return index - 1
-
-
-def questions_from_rows(rows: list[list[str]]) -> list[str]:
-    for row_index, row in enumerate(rows):
-        header_index = find_question_header(row)
-        if header_index is None:
-            continue
-
-        questions = []
-        for data_row in rows[row_index + 1 :]:
-            if header_index >= len(data_row):
-                continue
-            question = normalize_question(data_row[header_index])
-            if question:
-                questions.append(question)
-
-        if questions:
-            return questions
-
-    return []
-
-
-def find_question_header(row: list[str]) -> int | None:
-    for index, value in enumerate(row):
-        normalized = str(value).strip().lower()
-        if normalized == "question" or normalized.endswith(" question"):
-            return index
-    return None
-
-
-def normalize_question(value: Any) -> str:
-    return str(value or "").strip()
-
-
-def choose_client(config: Config) -> ChatClient:
-    if config.chat_url:
-        return HttpChatClient(config.chat_url, config.timeout_seconds)
-
-    local_url = "http://127.0.0.1:8000/chat"
-    if is_chat_url_reachable(local_url, config.timeout_seconds):
-        return HttpChatClient(local_url, config.timeout_seconds)
-
-    return InProcessChatClient()
-
-
-def is_chat_url_reachable(url: str, timeout_seconds: float) -> bool:
-    try:
-        response = requests.options(url, timeout=min(timeout_seconds, 2.0))
-        return response.status_code < 500
-    except Exception:
-        return False
-
-
-def load_existing_results(path: Path) -> list[dict[str, Any]]:
-    if not path.exists():
-        return []
-
-    with path.open("r", encoding="utf-8") as file:
-        data = json.load(file)
-
-    if isinstance(data, list):
-        return data
-    if isinstance(data, dict) and isinstance(data.get("results"), list):
-        return data["results"]
-    return []
-
-
-def write_outputs(
-    output_dir: Path,
-    results: list[dict[str, Any]],
-    summary: dict[str, Any],
-    config: Config,
-    question_count: int,
-    client_mode: str,
-) -> None:
-    output_dir.mkdir(parents=True, exist_ok=True)
-    write_csv(output_dir / "results.csv", results)
-    write_json(
-        output_dir / "results.json",
-        {
-            "metadata": {
-                "generated_at": utc_now(),
-                "workbook": str(config.workbook),
-                "question_count": question_count,
-                "runs": config.runs,
-                "client_mode": client_mode,
-            },
-            "results": results,
+def build_fingerprint(config: EvaluationConfig) -> dict[str, Any]:
+    knowledge_files = sorted(DEFAULT_KNOWLEDGE_DIR.rglob("*.md"))
+    return {
+        "git_sha": git_sha(),
+        "corpus_hash": corpus_hash(knowledge_files),
+        "index_version": os.getenv("RAG_INDEX_VERSION")
+        or ("active-v2" if env_bool("RAG_RETRIEVAL_V2", False) else "legacy-v1"),
+        "chat_model": CHAT_MODEL,
+        "embedding_model": EMBEDDING_MODEL,
+        "prompt_version": PROMPT_VERSION,
+        "retry_configuration": {
+            "max_retries": config.max_retries,
+            "waits_seconds": list(RETRY_WAITS_SECONDS[: config.max_retries]),
+            "timeout_seconds": config.timeout_seconds,
+            "stop_on_rate_limit": config.stop_on_rate_limit,
         },
-    )
-    write_json(output_dir / "summary.json", summary)
+        "runs": config.runs,
+        "cases_hash": hashlib.sha256(config.cases_path.read_bytes()).hexdigest(),
+    }
 
 
-def write_csv(path: Path, results: list[dict[str, Any]]) -> None:
-    with path.open("w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
-        writer.writeheader()
-        for result in sorted_results(results):
-            writer.writerow(
-                {
-                    "Run Number": result.get("run_number"),
-                    "Question": result.get("question"),
-                    "Response": result.get("response"),
-                    "Response Time (ms)": result.get("response_time_ms"),
-                    "Success": result.get("success"),
-                    "Retry Count": result.get("retry_count"),
-                    "Trace ID": result.get("trace_id"),
-                    "Timestamp": result.get("timestamp"),
-                }
-            )
+def fingerprint_id(fingerprint: dict[str, Any]) -> str:
+    encoded = json.dumps(fingerprint, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()[:16]
 
 
-def write_json(path: Path, data: Any) -> None:
-    tmp_path = path.with_suffix(path.suffix + ".tmp")
-    with tmp_path.open("w", encoding="utf-8") as file:
-        json.dump(data, file, indent=2, ensure_ascii=False)
-        file.write("\n")
-    tmp_path.replace(path)
+def prepare_run_directory(
+    config: EvaluationConfig,
+    fingerprint: dict[str, Any],
+) -> Path:
+    if config.resume_run:
+        stored_path = config.resume_run / "fingerprint.json"
+        if not stored_path.exists():
+            raise ValueError("Resume directory has no fingerprint.json")
+        stored = json.loads(stored_path.read_text(encoding="utf-8"))
+        if stored != fingerprint:
+            raise ValueError("Resume fingerprint does not exactly match this evaluation")
+        return config.resume_run
+
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    run_dir = config.output_root / f"{stamp}-{fingerprint_id(fingerprint)}"
+    run_dir.mkdir(parents=True, exist_ok=False)
+    write_json(run_dir / "fingerprint.json", fingerprint)
+    return run_dir
 
 
-def sorted_results(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return sorted(
-        results,
-        key=lambda item: (
-            int(item.get("run_number") or 0),
-            int(item.get("question_number") or 0),
-        ),
-    )
-
-
-def completed_keys(results: list[dict[str, Any]]) -> set[tuple[int, int]]:
-    keys = set()
-    for result in results:
-        run_number = result.get("run_number")
-        question_number = result.get("question_number")
-        if run_number is None or question_number is None:
-            continue
-        keys.add((int(run_number), int(question_number)))
-    return keys
-
-
-def run_evaluation(config: Config) -> dict[str, Any]:
-    questions = load_questions(config.workbook)
-    expected_count = config.runs * len(questions)
-    results_path = config.output_dir / "results.json"
-
-    if config.fresh_when_complete and outputs_are_complete(results_path, expected_count):
-        archive_outputs(config.output_dir)
-
-    results = load_existing_results(results_path)
-    done = completed_keys(results)
-
-    if config.dry_run:
-        summary = build_summary(results, questions, config, "dry-run", time.time())
-        print(f"Dry run loaded {len(questions)} questions; no chatbot calls were made.")
-        return summary
-
-    client = choose_client(config)
-    print(f"Using chatbot client: {client.mode}")
-    evaluation_start = time.time()
-
-    for run_number in range(1, config.runs + 1):
-        if run_number > 1 and has_remaining_questions(done, run_number, len(questions)):
-            print(
-                f"Waiting {config.run_delay_seconds:.1f}s before run {run_number} "
-                "to reduce rate limiting."
-            )
-            sleep(config.run_delay_seconds)
-
-        for index, question in enumerate(questions, start=1):
-            key = (run_number, index)
-            if key in done:
-                continue
-
-            print(f"Run {run_number}/{config.runs}, question {index}/{len(questions)}")
-            result = ask_with_retries(client, question, run_number, index, config)
-            results.append(result)
-            done.add(key)
-
-            summary = build_summary(
-                results,
-                questions,
-                config,
-                client.mode,
-                evaluation_start,
-            )
-            write_outputs(
-                config.output_dir,
-                results,
-                summary,
-                config,
-                len(questions),
-                client.mode,
-            )
-
-            if index < len(questions) and has_remaining_questions(
-                done,
-                run_number,
-                len(questions),
-            ):
-                sleep(config.delay_seconds)
-
-    summary = build_summary(results, questions, config, client.mode, evaluation_start)
-    write_outputs(
-        config.output_dir,
-        results,
-        summary,
-        config,
-        len(questions),
-        client.mode,
-    )
-    return summary
-
-
-def outputs_are_complete(results_path: Path, expected_count: int) -> bool:
-    return len(load_existing_results(results_path)) >= expected_count
-
-
-def archive_outputs(output_dir: Path) -> None:
-    candidates = ["results.csv", "results.json", "summary.json"]
-    existing = [output_dir / name for name in candidates if (output_dir / name).exists()]
-    if not existing:
-        return
-
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    archive_dir = output_dir / "evaluation_history" / stamp
-    archive_dir.mkdir(parents=True, exist_ok=True)
-    for path in existing:
-        shutil.move(str(path), str(archive_dir / path.name))
-    print(f"Archived previous complete outputs to {archive_dir}")
-
-
-def has_remaining_questions(
-    done: set[tuple[int, int]],
-    run_number: int,
-    question_count: int,
-) -> bool:
-    return any((run_number, index) not in done for index in range(1, question_count + 1))
+def choose_client(config: EvaluationConfig) -> ChatClient:
+    if config.chat_url:
+        return HttpChatClient(
+            config.chat_url,
+            config.timeout_seconds,
+            config.evaluation_token,
+        )
+    return InProcessChatClient(config.evaluation_token)
 
 
 def ask_with_retries(
     client: ChatClient,
-    question: str,
+    case: dict[str, Any],
+    *,
     run_number: int,
-    question_number: int,
-    config: Config,
+    config: EvaluationConfig,
 ) -> dict[str, Any]:
-    started = time.perf_counter()
-    retry_count = 0
-    last_status = None
-    last_data: dict[str, Any] = {}
-    last_headers: dict[str, str] = {}
-    error_message = ""
+    e2e_started = time.perf_counter()
+    retry_sleep_ms = 0.0
+    request_time_ms = 0.0
+    retries = 0
+    status_code: int | None = None
+    data: dict[str, Any] = {}
+    headers: dict[str, str] = {}
+    error = ""
 
     for attempt in range(config.max_retries + 1):
         try:
-            status, data, headers = client.ask(question)
-            last_status = status
-            last_data = data
-            last_headers = headers
+            status_code, data, headers, attempt_request_ms = client.ask(case["question"])
+            request_time_ms += attempt_request_ms
+            should_retry = status_code in RETRYABLE_STATUS_CODES
+        except (requests.Timeout, requests.ConnectionError) as exc:
+            error = str(exc)
+            should_retry = True
+            status_code = None
+            data = {}
+            headers = {}
 
-            if status == 429 and attempt < config.max_retries:
-                retry_count += 1
-                wait_seconds = retry_wait_seconds(
-                    config,
-                    retry_count,
-                    last_data,
-                    last_headers,
-                )
-                print(f"HTTP 429 received; retrying in {wait_seconds:.1f}s.")
-                sleep(wait_seconds)
-                continue
+        if should_retry and attempt < config.max_retries:
+            wait_seconds = RETRY_WAITS_SECONDS[attempt]
+            time.sleep(wait_seconds)
+            retry_sleep_ms += wait_seconds * 1000
+            retries += 1
+            continue
+        break
 
-            break
-        except Exception as exc:
-            error_message = str(exc)
-            last_status = None
-            if attempt < config.max_retries and is_retryable_exception(exc):
-                retry_count += 1
-                wait_seconds = backoff_seconds(config, retry_count)
-                print(f"Request failed; retrying in {wait_seconds:.1f}s: {error_message}")
-                sleep(wait_seconds)
-                continue
-            break
+    response = data if 200 <= (status_code or 0) < 300 else {
+        "answer": str(data.get("detail") or error),
+        "outcome": "",
+        "sources": [],
+    }
+    scored = score_case(case, response, status_code=status_code)
+    diagnostics = data.get("diagnostics") if isinstance(data.get("diagnostics"), dict) else {}
+    provider_time = diagnostics.get("provider_time_ms") or {}
+    timings = diagnostics.get("timings_ms") or {}
+    provider_latency_ms = sum(
+        float(value)
+        for value in provider_time.values()
+        if isinstance(value, (int, float))
+    )
+    e2e_latency_ms = round((time.perf_counter() - e2e_started) * 1000, 3)
 
-    elapsed_ms = round((time.perf_counter() - started) * 1000)
-    success = bool(last_status is not None and 200 <= last_status < 300)
-    response_text = response_text_from_data(last_data, error_message)
+    raw_error = contains_raw_provider_error(data)
+    invalid_citation = any(
+        not re.fullmatch(r"S[1-9]\d*", str(source.get("id") or ""))
+        for source in (data.get("sources") or [])
+        if isinstance(source, dict)
+    )
 
     return {
+        "completion_key": f"{case['id']}:{run_number}",
+        "case_id": case["id"],
         "run_number": run_number,
-        "question_number": question_number,
-        "question": question,
-        "response": response_text,
-        "response_time_ms": elapsed_ms,
-        "success": success,
-        "retry_count": retry_count,
-        "trace_id": extract_trace_id(last_data, last_headers),
+        "group": case["group"],
+        "category": case["category"],
+        "question": case["question"],
+        "expected_outcome": case["expected_outcome"],
+        "status_code": status_code,
+        "available": bool(status_code and 200 <= status_code < 300),
+        "answer": str(data.get("answer") or data.get("detail") or error),
+        "outcome": str(data.get("outcome") or ""),
+        "sources": data.get("sources") or [],
+        "score": scored.label,
+        "score_value": scored.value,
+        "outcome_pass": scored.outcome_pass,
+        "source_pass": scored.source_pass,
+        "fact_groups_passed": scored.fact_groups_passed,
+        "fact_groups_total": scored.fact_groups_total,
+        "forbidden_match": scored.forbidden_match,
+        "request_id": str(data.get("request_id") or ""),
+        "trace_id": str(diagnostics.get("trace_id") or data.get("trace_id") or ""),
+        "retry_count": retries,
+        "retry_sleep_ms": round(retry_sleep_ms, 3),
+        "request_time_ms": round(request_time_ms, 3),
+        "provider_latency_ms": round(provider_latency_ms, 3),
+        "service_latency_ms": optional_float(timings.get("total_service")),
+        "e2e_latency_ms": e2e_latency_ms,
+        "raw_provider_error": raw_error,
+        "invalid_citation": invalid_citation,
+        "diagnostics": diagnostics,
         "timestamp": utc_now(),
-        "status_code": last_status,
-        "error": "" if success else response_text,
-        "langfuse_metrics": extract_langfuse_metrics(last_data),
+        "retry_after": header_value(headers, "retry-after"),
     }
 
 
-def is_retryable_exception(exc: Exception) -> bool:
-    return isinstance(exc, (requests.Timeout, requests.ConnectionError))
+def contains_raw_provider_error(data: dict[str, Any]) -> bool:
+    serialized = json.dumps(data, ensure_ascii=False)
+    return any(re.search(pattern, serialized, flags=re.IGNORECASE) for pattern in RAW_ERROR_PATTERNS)
 
 
-def backoff_seconds(config: Config, retry_count: int) -> float:
-    if retry_count <= 0:
-        return 0.0
-    delay = config.backoff_initial_seconds * (2 ** (retry_count - 1))
-    return min(delay, config.backoff_max_seconds)
+def header_value(headers: dict[str, str], key: str) -> str:
+    lower = {str(name).casefold(): str(value) for name, value in headers.items()}
+    return lower.get(key.casefold(), "")
 
 
-def retry_wait_seconds(
-    config: Config,
-    retry_count: int,
-    data: dict[str, Any],
-    headers: dict[str, str],
-) -> float:
-    retry_after = extract_retry_after_seconds(data, headers)
-    backoff = backoff_seconds(config, retry_count)
-    if retry_after is None:
-        return backoff
-    return min(max(backoff, retry_after), config.backoff_max_seconds)
-
-
-def extract_retry_after_seconds(
-    data: dict[str, Any],
-    headers: dict[str, str],
-) -> float | None:
-    lower_headers = {str(key).lower(): value for key, value in headers.items()}
-    header_value = lower_headers.get("retry-after")
-    parsed_header = parse_retry_after_value(header_value)
-    if parsed_header is not None:
-        return parsed_header
-
-    for value in flatten_strings(data):
-        parsed_text = parse_retry_after_value(value)
-        if parsed_text is not None:
-            return parsed_text
-
-    return None
-
-
-def parse_retry_after_value(value: Any) -> float | None:
-    if value in (None, ""):
+def optional_float(value: Any) -> float | None:
+    try:
+        return None if value is None else round(float(value), 3)
+    except (TypeError, ValueError):
         return None
 
-    text = str(value)
-    if text.strip().isdigit():
-        return float(text.strip())
 
-    retry_patterns = (
-        r"retryDelay['\"]?\s*:\s*['\"]?(\d+(?:\.\d+)?)s",
-        r"retry\s+in\s+(\d+(?:\.\d+)?)\s*s",
-        r"retry\s+after\s+(\d+(?:\.\d+)?)\s*s",
+def run_evaluation(config: EvaluationConfig) -> tuple[Path | None, dict[str, Any]]:
+    cases = load_cases(config.cases_path)
+    fingerprint = build_fingerprint(config)
+    if config.dry_run:
+        summary = {
+            "case_count": len(cases),
+            "attempt_count": len(cases) * config.runs,
+            "fingerprint": fingerprint,
+            "database_writes": 0,
+            "chat_requests": 0,
+        }
+        return None, summary
+
+    run_dir = prepare_run_directory(config, fingerprint)
+    results_path = run_dir / "results.json"
+    results = load_results(results_path)
+    completed = {str(row.get("completion_key")) for row in results}
+    client = choose_client(config)
+
+    for run_number in range(1, config.runs + 1):
+        for case in cases:
+            completion_key = f"{case['id']}:{run_number}"
+            if completion_key in completed:
+                continue
+            result = ask_with_retries(
+                client,
+                case,
+                run_number=run_number,
+                config=config,
+            )
+            if result["status_code"] == 429 and config.stop_on_rate_limit:
+                record_interruption(run_dir, result, fingerprint)
+                summary = build_summary(results, cases, config, fingerprint, client.mode)
+                summary.update(
+                    {
+                        "stopped_early": True,
+                        "stop_reason": "rate_limited",
+                        "stopped_at_completion_key": completion_key,
+                        "retry_after": result.get("retry_after") or "",
+                    }
+                )
+                write_outputs(run_dir, results, summary, fingerprint)
+                print(
+                    f"{completion_key} rate_limited after "
+                    f"{result['retry_count']} retries; evaluation stopped",
+                    flush=True,
+                )
+                return run_dir, summary
+            results.append(result)
+            completed.add(completion_key)
+            summary = build_summary(results, cases, config, fingerprint, client.mode)
+            write_outputs(run_dir, results, summary, fingerprint)
+            print(
+                f"{completion_key} {result['score']} "
+                f"{result['e2e_latency_ms']:.0f}ms",
+                flush=True,
+            )
+            if config.delay_seconds:
+                time.sleep(config.delay_seconds)
+
+    summary = build_summary(results, cases, config, fingerprint, client.mode)
+    write_outputs(run_dir, results, summary, fingerprint)
+    return run_dir, summary
+
+
+def load_results(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return data.get("results", []) if isinstance(data, dict) else []
+
+
+def record_interruption(
+    run_dir: Path,
+    result: dict[str, Any],
+    fingerprint: dict[str, Any],
+) -> None:
+    path = run_dir / "interruptions.json"
+    if path.exists():
+        stored = json.loads(path.read_text(encoding="utf-8"))
+        interruptions = stored.get("interruptions", []) if isinstance(stored, dict) else []
+    else:
+        interruptions = []
+    interruptions.append(
+        {
+            "interruption_id": str(uuid.uuid4()),
+            "recorded_at": utc_now(),
+            "reason": "rate_limited",
+            "result": result,
+        }
     )
-    for pattern in retry_patterns:
-        match = re.search(pattern, text, flags=re.IGNORECASE)
-        if match:
-            return float(match.group(1))
-
-    return None
-
-
-def flatten_strings(value: Any) -> list[str]:
-    if isinstance(value, str):
-        return [value]
-    if isinstance(value, dict):
-        strings = []
-        for child in value.values():
-            strings.extend(flatten_strings(child))
-        return strings
-    if isinstance(value, list):
-        strings = []
-        for child in value:
-            strings.extend(flatten_strings(child))
-        return strings
-    return []
-
-
-def sleep(seconds: float) -> None:
-    if seconds > 0:
-        time.sleep(seconds)
-
-
-def response_text_from_data(data: dict[str, Any], fallback_error: str) -> str:
-    for key in ("answer", "response", "message", "detail", "error"):
-        value = data.get(key)
-        if value not in (None, ""):
-            return str(value)
-    return fallback_error
-
-
-def extract_trace_id(data: dict[str, Any], headers: dict[str, str]) -> str:
-    for key in TRACE_ID_BODY_KEYS:
-        value = data.get(key)
-        if value:
-            return str(value)
-
-    lower_headers = {str(key).lower(): value for key, value in headers.items()}
-    for key in TRACE_ID_HEADER_KEYS:
-        value = lower_headers.get(key)
-        if value:
-            return str(value)
-
-    return ""
-
-
-def extract_langfuse_metrics(data: dict[str, Any]) -> dict[str, Any]:
-    metrics = {}
-    for key, value in data.items():
-        lower_key = str(key).lower()
-        if any(term in lower_key for term in LANGFUSE_METRIC_TERMS):
-            metrics[key] = value
-    return metrics
+    write_json(
+        path,
+        {
+            "fingerprint": fingerprint,
+            "interruptions": interruptions,
+        },
+    )
 
 
 def build_summary(
     results: list[dict[str, Any]],
-    questions: list[str],
-    config: Config,
+    cases: list[dict[str, Any]],
+    config: EvaluationConfig,
+    fingerprint: dict[str, Any],
     client_mode: str,
-    evaluation_start: float,
 ) -> dict[str, Any]:
     completed = len(results)
-    successes = [row for row in results if row.get("success")]
-    failures = completed - len(successes)
-    response_times = [
-        float(row["response_time_ms"])
-        for row in results
-        if row.get("response_time_ms") is not None
-    ]
-    answer_lengths = [
-        len(str(row.get("response") or ""))
-        for row in successes
-    ]
+    available = sum(bool(row.get("available")) for row in results)
+    answered_rows = [row for row in results if row.get("expected_outcome") == "answered"]
+    scope_rows = [row for row in results if row.get("expected_outcome") == "out_of_scope"]
+    unknown_rows = [row for row in results if row.get("expected_outcome") == "unknown"]
+    latencies = [float(row["e2e_latency_ms"]) for row in results if row.get("available")]
+    request_latencies = [float(row["request_time_ms"]) for row in results if row.get("available")]
+    provider_latencies = [float(row["provider_latency_ms"]) for row in results if row.get("available")]
+    retry_sleeps = [float(row["retry_sleep_ms"]) for row in results]
 
-    total_runtime_ms = round((time.time() - evaluation_start) * 1000)
-    expected = config.runs * len(questions)
-
-    summary = {
-        "generated_at": utc_now(),
-        "workbook": str(config.workbook),
-        "client_mode": client_mode,
-        "configured_runs": config.runs,
-        "questions_per_run": len(questions),
-        "expected_questions": expected,
-        "completed_questions": completed,
-        "remaining_questions": max(0, expected - completed),
-        "success_count": len(successes),
-        "failure_count": failures,
-        "success_rate": rate(len(successes), completed),
-        "failure_rate": rate(failures, completed),
-        "retry_count": sum(int(row.get("retry_count") or 0) for row in results),
-        "average_response_time_ms": average(response_times),
-        "median_response_time_ms": percentile(response_times, 50),
-        "p95_response_time_ms": percentile(response_times, 95),
-        "average_answer_length": average(answer_lengths),
-        "total_runtime_ms": total_runtime_ms,
-        "total_runtime_seconds": round(total_runtime_ms / 1000, 3),
-        "langfuse_metrics": summarize_langfuse_metrics(results),
-        "configuration": {
-            "delay_seconds": config.delay_seconds,
-            "run_delay_seconds": config.run_delay_seconds,
-            "max_retries": config.max_retries,
-            "backoff_initial_seconds": config.backoff_initial_seconds,
-            "backoff_max_seconds": config.backoff_max_seconds,
-            "timeout_seconds": config.timeout_seconds,
-        },
+    availability = ratio(available, completed)
+    answer_score = ratio(sum(float(row.get("score_value") or 0) for row in results), completed)
+    source_recall = ratio(sum(bool(row.get("source_pass")) for row in answered_rows), len(answered_rows))
+    scope_accuracy = ratio(
+        sum(row.get("outcome_pass") and not row.get("sources") for row in scope_rows),
+        len(scope_rows),
+    )
+    unknown_accuracy = ratio(
+        sum(row.get("outcome_pass") and not row.get("sources") for row in unknown_rows),
+        len(unknown_rows),
+    )
+    per_case_passes = {
+        case["id"]: sum(
+            row.get("case_id") == case["id"] and row.get("score") != "wrong"
+            for row in results
+        )
+        for case in cases
     }
-    return summary
+    every_question_two_of_three = (
+        all(value >= 2 for value in per_case_passes.values())
+        if config.runs >= 3 and completed == len(cases) * config.runs
+        else True
+    )
+
+    calibration = build_calibration(results, cases)
+    is_v2 = fingerprint["index_version"] != "legacy-v1"
+    gates = {
+        "request_availability": availability >= 0.98,
+        "partial_credit_answer_score": answer_score >= 0.90,
+        "in_scope_source_recall": source_recall >= 0.90,
+        "out_of_scope_accuracy": scope_accuracy == 1.0,
+        "unknown_accuracy": unknown_accuracy == 1.0,
+        "median_latency": bool(latencies) and percentile(latencies, 50) < 3500,
+        "p95_latency": bool(latencies) and percentile(latencies, 95) < 8000,
+        "maximum_latency": bool(latencies) and max(latencies) <= 20000,
+        "sanitized_errors": not any(row.get("raw_provider_error") for row in results),
+        "valid_citations": not any(row.get("invalid_citation") for row in results),
+        "every_question_two_of_three": every_question_two_of_three,
+        "v2_calibration": (not is_v2) or bool(calibration and calibration.get("v2_eligible")),
+    }
+    expected_attempts = len(cases) * config.runs
+    gates["complete"] = completed == expected_attempts
+    gates["passed"] = all(value for key, value in gates.items() if key != "passed")
+
+    return {
+        "generated_at": utc_now(),
+        "client_mode": client_mode,
+        "fingerprint": fingerprint,
+        "configured_runs": config.runs,
+        "case_count": len(cases),
+        "expected_attempts": expected_attempts,
+        "completed_attempts": completed,
+        "request_availability": availability,
+        "partial_credit_answer_score": answer_score,
+        "retrieval_source_recall": source_recall,
+        "scope_accuracy": scope_accuracy,
+        "unknown_accuracy": unknown_accuracy,
+        "score_counts": {
+            label: sum(row.get("score") == label for row in results)
+            for label in ("correct", "partial", "wrong")
+        },
+        "latency_ms": {
+            "request_average": average(request_latencies),
+            "provider_average": average(provider_latencies),
+            "retry_sleep_total": round(sum(retry_sleeps), 3),
+            "end_to_end_median": percentile(latencies, 50),
+            "end_to_end_p95": percentile(latencies, 95),
+            "end_to_end_max": max(latencies) if latencies else None,
+        },
+        "calibration": calibration,
+        "per_case_passes": per_case_passes,
+        "release_gates": gates,
+    }
+
+
+def build_calibration(
+    results: list[dict[str, Any]],
+    cases: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+    first_by_case = {}
+    for row in results:
+        first_by_case.setdefault(row.get("case_id"), row)
+    records = []
+    for case in cases:
+        if case["expected_outcome"] not in {"answered", "out_of_scope"}:
+            continue
+        result = first_by_case.get(case["id"])
+        if result is None:
+            return None
+        diagnostics = result.get("diagnostics") or {}
+        candidates = diagnostics.get("retrieval")
+        if not isinstance(candidates, list):
+            return None
+        records.append(
+            {
+                "expected_outcome": case["expected_outcome"],
+                "required_source_alternatives": case["required_source_alternatives"],
+                "candidates": candidates,
+            }
+        )
+    try:
+        return asdict(calibrate_evidence_threshold(records))
+    except ValueError:
+        return None
+
+
+def write_outputs(
+    run_dir: Path,
+    results: list[dict[str, Any]],
+    summary: dict[str, Any],
+    fingerprint: dict[str, Any],
+) -> None:
+    ordered = sorted(results, key=lambda row: (row["run_number"], row["case_id"]))
+    write_json(
+        run_dir / "results.json",
+        {"fingerprint": fingerprint, "results": ordered},
+    )
+    write_json(run_dir / "summary.json", summary)
+    write_csv(run_dir / "results.csv", ordered)
+
+
+def write_json(path: Path, data: Any) -> None:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(
+        json.dumps(data, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(path)
+
+
+def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
+    columns = [
+        "completion_key",
+        "case_id",
+        "run_number",
+        "group",
+        "category",
+        "question",
+        "expected_outcome",
+        "outcome",
+        "score",
+        "score_value",
+        "source_pass",
+        "status_code",
+        "retry_count",
+        "retry_sleep_ms",
+        "request_time_ms",
+        "provider_latency_ms",
+        "service_latency_ms",
+        "e2e_latency_ms",
+        "request_id",
+        "trace_id",
+        "answer",
+        "timestamp",
+    ]
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    with temporary.open("w", encoding="utf-8", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=columns, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(rows)
+    temporary.replace(path)
+
+
+def env_bool(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().casefold() in {"1", "true", "yes", "on"}
+
+
+def ratio(part: float, total: int) -> float:
+    return round(part / total, 6) if total else 0.0
 
 
 def average(values: list[float]) -> float | None:
-    if not values:
-        return None
-    return round(sum(values) / len(values), 3)
+    return round(sum(values) / len(values), 3) if values else None
 
 
-def rate(part: int, total: int) -> float:
-    if total == 0:
-        return 0.0
-    return round(part / total, 6)
-
-
-def percentile(values: list[float], p: float) -> float | None:
+def percentile(values: list[float], value: float) -> float | None:
     if not values:
         return None
     ordered = sorted(values)
     if len(ordered) == 1:
         return round(ordered[0], 3)
-
-    rank = (len(ordered) - 1) * (p / 100.0)
+    rank = (len(ordered) - 1) * value / 100
     lower = math.floor(rank)
     upper = math.ceil(rank)
     if lower == upper:
-        return round(ordered[int(rank)], 3)
-
+        return round(ordered[lower], 3)
     weight = rank - lower
-    value = ordered[lower] * (1 - weight) + ordered[upper] * weight
-    return round(value, 3)
-
-
-def summarize_langfuse_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
-    totals: dict[str, float] = {}
-    counts: dict[str, int] = {}
-
-    for row in results:
-        metrics = row.get("langfuse_metrics") or {}
-        if not isinstance(metrics, dict):
-            continue
-        for key, value in flatten_metrics(metrics).items():
-            if isinstance(value, (int, float)):
-                totals[key] = totals.get(key, 0.0) + float(value)
-                counts[key] = counts.get(key, 0) + 1
-
-    summary = {}
-    for key in sorted(totals):
-        summary[key] = {
-            "total": round(totals[key], 6),
-            "average": round(totals[key] / counts[key], 6),
-            "count": counts[key],
-        }
-    return summary
-
-
-def flatten_metrics(data: dict[str, Any], prefix: str = "") -> dict[str, Any]:
-    flattened = {}
-    for key, value in data.items():
-        name = f"{prefix}.{key}" if prefix else str(key)
-        if isinstance(value, dict):
-            flattened.update(flatten_metrics(value, name))
-        else:
-            flattened[name] = value
-    return flattened
+    return round(ordered[lower] * (1 - weight) + ordered[upper] * weight, 3)
 
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def scheduler_loop(config: Config) -> None:
-    print(
-        "Scheduler enabled. Daily evaluations will run at "
-        f"{config.schedule_time} local time."
-    )
-    while True:
-        wait_until_next_schedule(config.schedule_time)
-        daily_config = Config(**{**config.__dict__, "fresh_when_complete": True})
-        summary = run_evaluation(daily_config)
-        print_summary(summary)
-        sleep(60)
-
-
-def wait_until_next_schedule(schedule_time: str) -> None:
-    hour, minute = parse_schedule_time(schedule_time)
-    now = datetime.now()
-    next_run = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
-    if next_run <= now:
-        next_run = next_run + timedelta(days=1)
-    seconds = (next_run - now).total_seconds()
-    print(f"Next scheduled evaluation: {next_run.isoformat(timespec='seconds')}")
-    sleep(seconds)
-
-
-def parse_schedule_time(value: str) -> tuple[int, int]:
-    match = re.match(r"^(\d{1,2}):(\d{2})$", value.strip())
-    if not match:
-        raise ValueError("Schedule time must use HH:MM format.")
-    hour = int(match.group(1))
-    minute = int(match.group(2))
-    if hour > 23 or minute > 59:
-        raise ValueError("Schedule time must use HH:MM format.")
-    return hour, minute
-
-
-def print_summary(summary: dict[str, Any]) -> None:
-    print("Evaluation summary")
-    print(f"Completed: {summary['completed_questions']}/{summary['expected_questions']}")
-    print(f"Success rate: {summary['success_rate']:.2%}")
-    print(f"Failure rate: {summary['failure_rate']:.2%}")
-    print(f"Average response time: {summary['average_response_time_ms']} ms")
-    print(f"Median response time: {summary['median_response_time_ms']} ms")
-    print(f"P95 response time: {summary['p95_response_time_ms']} ms")
-    print(f"Retry count: {summary['retry_count']}")
-    print(f"Total runtime: {summary['total_runtime_seconds']} s")
-
-
 def main() -> int:
     config = parse_args()
     try:
-        if config.schedule:
-            scheduler_loop(config)
-            return 0
-
-        summary = run_evaluation(config)
-        print_summary(summary)
-        print(f"Saved results to {config.output_dir}")
-        return 0
+        run_dir, summary = run_evaluation(config)
     except KeyboardInterrupt:
-        print("Interrupted. Progress already saved after the last completed question.")
+        print("Interrupted; the last completed immutable result is saved.")
         return 130
     except Exception as exc:
-        print(f"Evaluation failed before a question could be completed: {exc}", file=sys.stderr)
+        print(f"Evaluation failed: {exc}")
         return 1
+
+    if run_dir:
+        print(f"Evaluation run: {run_dir}")
+        print(f"Release gates passed: {summary['release_gates']['passed']}")
+        if summary.get("stopped_early"):
+            print(
+                "Evaluation stopped because the chat remained rate limited after retries. "
+                "Resume the same run after the limit resets."
+            )
+            return 75
+    else:
+        print(json.dumps(summary, indent=2))
+    return 0
 
 
 if __name__ == "__main__":
