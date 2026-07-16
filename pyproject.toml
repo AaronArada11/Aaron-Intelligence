@@ -31,6 +31,9 @@ dev = [
 [tool.vercel]
 entrypoint = "api.chat:app"
 
+[tool.setuptools]
+py-modules = ["evaluate"]
+
 [tool.setuptools.packages.find]
 include = ["api*", "backend*", "evaluations*"]
 exclude = ["frontend*", "graphify-out*", "supabase*", "tests*"]
