@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useId } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Send, Bot, User, Sparkles, X } from 'lucide-react'
 
 const API_URL = '/chat'
 const RATE_LIMIT_MESSAGE = 'Aaron Intelligence is temporarily rate limited. Please wait a moment and try again.'
+const SERVICE_UNAVAILABLE_MESSAGE = 'Aaron Intelligence is temporarily unavailable. Please try again shortly.'
 const GENERIC_ERROR_MESSAGE = 'Sorry, I encountered an error while generating a response. Please try again in a moment.'
 
 const isRateLimitDetail = (value) => {
@@ -16,6 +17,55 @@ const isRateLimitDetail = (value) => {
     message.includes('quota') ||
     message.includes('resource_exhausted') ||
     message.includes('too many requests')
+  )
+}
+
+const normalizeSources = (sources) => {
+  if (!Array.isArray(sources)) return []
+  return sources.filter(source => (
+    source &&
+    typeof source.id === 'string' &&
+    /^S[1-9]\d*$/.test(source.id) &&
+    typeof source.title === 'string' &&
+    typeof source.section === 'string'
+  ))
+}
+
+function SourceDisclosure({ sources }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const sourceListId = useId()
+  const toggleSources = () => setIsExpanded(expanded => !expanded)
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      toggleSources()
+    }
+  }
+
+  return (
+    <div className="mt-2 border-t border-gray-700 pt-2 text-xs">
+      <button
+        type="button"
+        aria-expanded={isExpanded}
+        aria-controls={sourceListId}
+        onClick={toggleSources}
+        onKeyDown={handleKeyDown}
+        className="text-gray-300 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ctp-accent)]"
+      >
+        Sources ({sources.length})
+      </button>
+      {isExpanded ? (
+        <ul id={sourceListId} className="mt-2 space-y-1.5 text-gray-300">
+          {sources.map(source => (
+            <li key={source.id}>
+              <span className="font-medium text-gray-100">{source.title}</span>
+              {source.section !== source.title ? ` — ${source.section}` : ''}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
   )
 }
 
@@ -32,13 +82,19 @@ function Chat({ onClose }) {
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  useEffect(() => {
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    messagesEndRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
+  }, [messages])
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    inputRef.current?.focus()
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose?.()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -75,16 +131,21 @@ function Chat({ onClose }) {
       }
 
       const data = await response.json()
-      setMessages(prev => [...prev, { role: 'assistant', content: data.answer }])
-    } catch (err) {
-      const isRateLimited = err.status === 429 || isRateLimitDetail(err.detail || err.message)
-      const message = isRateLimited ? RATE_LIMIT_MESSAGE : GENERIC_ERROR_MESSAGE
-
-      setError(message)
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: message
+        content: data.answer,
+        sources: normalizeSources(data.sources),
       }])
+    } catch (err) {
+      const isRateLimited = err.status === 429 || isRateLimitDetail(err.detail || err.message)
+      const isUnavailable = err.status === 503
+      const message = isRateLimited
+        ? RATE_LIMIT_MESSAGE
+        : isUnavailable
+          ? SERVICE_UNAVAILABLE_MESSAGE
+          : GENERIC_ERROR_MESSAGE
+
+      setError(message)
     } finally {
       setIsLoading(false)
       inputRef.current?.focus()
@@ -92,24 +153,29 @@ function Chat({ onClose }) {
   }
 
   return (
-    <div className="fixed bottom-24 right-6 z-50 w-[320px] h-[400px] flex flex-col rounded-2xl overflow-hidden bg-gray-950 text-gray-100 shadow-2xl shadow-black/50 border border-[var(--ctp-accent)]">
+    <section
+      aria-labelledby="aaron-chat-title"
+      className="fixed bottom-24 right-6 z-50 w-[320px] h-[400px] flex flex-col rounded-2xl overflow-hidden bg-gray-950 text-gray-100 shadow-2xl shadow-black/50 border border-[var(--ctp-accent)]"
+    >
       <header className="flex items-center gap-3 px-4 py-3 border-b border-[var(--ctp-surface0)] bg-gray-900/80">
         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--ctp-base)] shadow-lg">
-          <Sparkles className="w-4 h-4 text-[var(--ctp-accent)]" />
+          <Sparkles aria-hidden="true" className="w-4 h-4 text-[var(--ctp-accent)]" />
         </div>
         <div className="flex-1">
-          <h1 className="text-sm font-semibold tracking-tight text-white">Aaron Intelligence "AI"</h1>
+          <h1 id="aaron-chat-title" className="text-sm font-semibold tracking-tight text-white">Aaron Intelligence "AI"</h1>
           <p className="text-[10px] text-gray-400">AI representative</p>
         </div>
         <button
+          type="button"
           onClick={onClose}
-          className="p-1.5 rounded-md hover:bg-gray-800 text-gray-400 hover:text-white transition-colors"
+          aria-label="Close chat"
+          className="p-1.5 rounded-md hover:bg-gray-800 text-gray-400 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ctp-accent)]"
         >
-          <X className="w-4 h-4" />
+          <X aria-hidden="true" className="w-4 h-4" />
         </button>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 py-4">
+      <main aria-busy={isLoading} className="flex-1 overflow-y-auto px-4 py-4">
         <div className="space-y-4">
           {messages.map((msg, idx) => (
             <div
@@ -118,7 +184,7 @@ function Chat({ onClose }) {
             >
               {msg.role === 'assistant' && (
                 <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-base)] flex items-center justify-center shadow-lg">
-                  <Bot className="w-3.5 h-3.5 text-[var(--ctp-accent)]" />
+                  <Bot aria-hidden="true" className="w-3.5 h-3.5 text-[var(--ctp-accent)]" />
                 </div>
               )}
 
@@ -142,6 +208,9 @@ function Chat({ onClose }) {
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {msg.content}
                     </ReactMarkdown>
+                    {msg.sources?.length > 0 ? (
+                      <SourceDisclosure sources={msg.sources} />
+                    ) : null}
                   </div>
                 ) : (
                   <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{msg.content}</p>
@@ -150,16 +219,17 @@ function Chat({ onClose }) {
 
               {msg.role === 'user' && (
                 <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-700 border border-gray-600 flex items-center justify-center">
-                  <User className="w-3.5 h-3.5 text-gray-300" />
+                  <User aria-hidden="true" className="w-3.5 h-3.5 text-gray-300" />
                 </div>
               )}
             </div>
           ))}
 
           {isLoading && (
-            <div className="flex gap-2.5 justify-start">
+            <div role="status" aria-live="polite" className="flex gap-2.5 justify-start">
+              <span className="sr-only">Aaron Intelligence is preparing a response.</span>
               <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-base)] flex items-center justify-center shadow-lg">
-                <Bot className="w-3.5 h-3.5 text-[var(--ctp-accent)]" />
+                <Bot aria-hidden="true" className="w-3.5 h-3.5 text-[var(--ctp-accent)]" />
               </div>
               <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-gray-800 border border-[var(--ctp-accent)]">
                 <div className="flex gap-1.5 items-center">
@@ -177,31 +247,37 @@ function Chat({ onClose }) {
 
       <footer className="border-t border-[var(--ctp-surface0)] bg-gray-900/80 px-4 py-3">
         {error && (
-          <div className="mb-2 px-3 py-2 rounded-lg bg-red-900/30 border border-red-700/50 text-red-300 text-xs">
+          <div id="chat-error" role="alert" aria-live="assertive" className="mb-2 px-3 py-2 rounded-lg bg-red-900/30 border border-red-700/50 text-red-300 text-xs">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="relative flex items-center gap-2">
+          <label htmlFor="chat-message" className="sr-only">Message Aaron Intelligence</label>
           <input
+            id="chat-message"
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={isLoading}
-            className="flex-1 bg-gray-800 border border-[var(--ctp-surface0)] rounded-xl px-3 py-2.5 pr-12 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            maxLength={1000}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? 'chat-error' : undefined}
+            className="flex-1 bg-gray-800 border border-[var(--ctp-surface0)] rounded-xl px-3 py-2.5 pr-12 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             type="submit"
+            aria-label="Send message"
             disabled={isLoading || !input.trim()}
-            className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-[var(--ctp-accent)] transition-colors disabled:shadow-none ${
+            className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-[var(--ctp-accent)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ctp-accent)] disabled:shadow-none ${
               input.trim()
                 ? 'bg-[var(--ctp-base)] text-white shadow-lg'
                 : 'bg-gray-700 text-gray-500'
             }`}
           >
-            <Send className="w-4 h-4 text-[var(--ctp-accent)]" />
+            <Send aria-hidden="true" className="w-4 h-4 text-[var(--ctp-accent)]" />
           </button>
         </form>
 
@@ -209,7 +285,7 @@ function Chat({ onClose }) {
           Responses are generated from a knowledge base.
         </p>
       </footer>
-    </div>
+    </section>
   )
 }
 
