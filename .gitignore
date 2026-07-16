@@ -31,6 +31,10 @@ dist/
 .coverage
 htmlcov/
 
+# Generated evaluation artifacts
+
+evaluations/runs/
+
 # IDE
 
 .vscode/
@@ -80,6 +84,7 @@ frontend/.vite/
 *.db
 *.sqlite
 *.sqlite3
+supabase/.temp/
 
 # =========================
 
