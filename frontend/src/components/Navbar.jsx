@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X, Terminal } from "lucide-react";
 import { ThemeSelector } from "./ThemeSelector";
 
@@ -12,6 +12,18 @@ const navLinks = [
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentPath, setCurrentPath] = useState(() => window.location.pathname);
+  const promptPath = currentPath === "/about" ? "~/About/" : "~/";
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname);
+    };
+
+    window.addEventListener("popstate", handleLocationChange);
+
+    return () => window.removeEventListener("popstate", handleLocationChange);
+  }, []);
 
   const toggleMobileMenu = () => {
     if (mobileOpen) {
@@ -37,10 +49,10 @@ export function Navbar() {
             className="flex items-center gap-1.5 font-mono text-sm"
             style={{ color: "var(--ctp-text)" }}
           >
-            ~/
+            {promptPath}
             <span 
             className="animate-pulse"
-            style={{ animationDuration: "0.1"}}
+            style={{ animationDuration: "0.8s"}}
             >▎</span>
           </a>
 

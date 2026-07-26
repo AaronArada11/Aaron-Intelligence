@@ -315,31 +315,23 @@ function EventsSection() {
           A single interactive stack for conferences, meetups, and learning events. Hover a photo to reveal the event details.
         </SectionIntro>
 
-        <div
-          className="overflow-hidden rounded-lg px-5 py-8 sm:px-6 sm:py-10 lg:px-8"
-          style={{
-            background: "var(--ctp-mantle)",
-            border: "1px solid var(--ctp-surface0)",
-          }}
-        >
-          <div className="flex min-h-[19rem] items-center justify-center overflow-visible sm:min-h-[23rem] lg:min-h-[26rem]">
-            <BounceCards
-              images={images}
-              imageAlts={eventPhotos.map((event) => event.imageAlt)}
-              cardTitles={eventPhotos.map((event) => event.title)}
-              cardDescriptions={eventPhotos.map((event) => event.meta)}
-              cardKickers={eventPhotos.map((event) => event.date)}
-              containerWidth={isCompact ? 300 : 880}
-              containerHeight={isCompact ? 270 : 360}
-              cardSize={isCompact ? 128 : 230}
-              cardAspectRatio="4 / 5"
-              animationDelay={0.15}
-              animationStagger={0.06}
-              easeType="elastic.out(1, 0.55)"
-              transformStyles={transformStyles}
-              enableHover
-            />
-          </div>
+        <div className="flex min-h-[19rem] items-center justify-center overflow-visible py-6 sm:min-h-[23rem] sm:py-8 lg:min-h-[26rem]">
+          <BounceCards
+            images={images}
+            imageAlts={eventPhotos.map((event) => event.imageAlt)}
+            cardTitles={eventPhotos.map((event) => event.title)}
+            cardDescriptions={eventPhotos.map((event) => event.meta)}
+            cardKickers={eventPhotos.map((event) => event.date)}
+            containerWidth={isCompact ? 300 : 880}
+            containerHeight={isCompact ? 270 : 360}
+            cardSize={isCompact ? 128 : 230}
+            cardAspectRatio="4 / 5"
+            animationDelay={0.15}
+            animationStagger={0.06}
+            easeType="elastic.out(1, 0.55)"
+            transformStyles={transformStyles}
+            enableHover
+          />
         </div>
       </div>
     </section>
