@@ -67,6 +67,7 @@ frontend/.vite/
 
 # =========================
 
+graphify-out/
 *.swp
 *.swo
 *.tmp
