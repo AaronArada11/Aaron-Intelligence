@@ -5,7 +5,7 @@ import { ThemeSelector } from "./ThemeSelector";
 
 const navLinks = [
   { label: "About", href: "/about" },
-  { label: "Projects", href: "/#projects" },
+  { label: "Projects", href: "/projects" },
   { label: "Contact", href: "/#contact" },
 ];
 
@@ -13,7 +13,12 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState(() => window.location.pathname);
-  const promptPath = currentPath === "/about" ? "~/About/" : "~/";
+  const promptPath =
+    currentPath === "/about"
+      ? "~/about/"
+      : currentPath === "/projects"
+        ? "~/projects/"
+        : "~/";
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -63,12 +68,21 @@ export function Navbar() {
                 key={link.label}
                 href={link.href}
                 className="font-mono text-sm transition-colors"
-                style={{ color: "var(--ctp-subtext0)" }}
+                aria-current={currentPath === link.href ? "page" : undefined}
+                style={{
+                  color:
+                    currentPath === link.href
+                      ? "var(--ctp-accent)"
+                      : "var(--ctp-subtext0)",
+                }}
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.color = "var(--ctp-text)")
                 }
                 onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = "var(--ctp-subtext0)")
+                  (e.currentTarget.style.color =
+                    currentPath === link.href
+                      ? "var(--ctp-accent)"
+                      : "var(--ctp-subtext0)")
                 }
               >
                 {link.label}
@@ -109,7 +123,13 @@ export function Navbar() {
                   key={link.label}
                   href={link.href}
                   className="font-mono text-sm py-1"
-                  style={{ color: "var(--ctp-subtext1)" }}
+                  aria-current={currentPath === link.href ? "page" : undefined}
+                  style={{
+                    color:
+                      currentPath === link.href
+                        ? "var(--ctp-accent)"
+                        : "var(--ctp-subtext1)",
+                  }}
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}

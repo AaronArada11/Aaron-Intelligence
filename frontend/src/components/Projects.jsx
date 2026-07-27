@@ -1,44 +1,5 @@
-import { ExternalLink, FolderGit2, Bot, BarChart2, MirrorRectangular, Languages } from "lucide-react";
-
-const projects = [
-    {
-    name: "KUMPAS",
-    description:
-      "Machine learning-powered Filipino Sign Language recognition and translation system that uses webcam input to recognize FSL gestures and translate them into readable text across multiple Philippine languages. Built during ACM TechSprint: Asteria 2026.",
-    tags: ["React", "Vite", "TensorFlow", "MediaPipe", "OpenCV", "Railway", "Vercel"],
-    accentColor: "var(--ctp-accent)",
-    icon: Languages,
-    github: "https://github.com/Praybeyt-Benjamin-Techsprint/Kumpas",
-    liveDemo: "https://kumpas-translator.vercel.app/",
-  },
-  {
-    name: "Aaron Intelligence",
-    description:
-      "Personalized AI portfolio chatbot that answers questions about my projects, skills, education, and experience using a RAG-powered knowledge base.",
-    tags: ["Gemini", "React", "Supabase", "FastAPI"],
-    accentColor: "var(--ctp-accent)",
-    icon: Bot,
-    github: "https://github.com/AaronArada11/Aaron-Intelligence",
-  },
-  {
-    name: "AlgoVisualizer",
-    description:
-      "Interactive algorithm visualization platform designed to help students and developers understand fundamental computer science concepts through real-time animations and visual feedback.",
-    tags: ["JavaScript", "TypeScript", "React"],
-    accentColor: "var(--ctp-accent)",
-    icon: BarChart2,
-    github: "https://github.com/AaronArada11/AlgoVisualizer",
-  },
-  {
-    name: "Mirror Mentor",
-    description:
-      "AI-powered educational platform that helps students improve programming skills through guided Socratic questioning instead of direct answers. Built during ACM Developers Week",
-    tags: ["Gemini", "Supabase", "FastAPI", "Vercel"],
-    accentColor: "var(--ctp-accent)",
-    icon: MirrorRectangular,
-    github: "https://github.com/Goodness-Gracious-GG/demo",
-  },
-];
+import { ExternalLink, FolderGit2 } from "lucide-react";
+import { projects } from "../projectsData";
 
 export function Projects() {
   return (
@@ -54,7 +15,7 @@ export function Projects() {
         >
           <span>$ ls ~/projects</span>
           <a
-            href="#projects"
+            href="/projects"
             className="transition-opacity hover:opacity-70"
             style={{ color: "var(--ctp-subtext1)" }}
           >

@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar'
 import { Hero } from './components/Hero'
 import { AboutPage } from './components/AboutPage'
 import { Projects } from './components/Projects'
+import { ProjectsPage } from './components/ProjectsPage'
 import { Dashboard } from './components/Dashboard'
 import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
@@ -28,6 +29,7 @@ function App() {
   }, [])
 
   const isAboutPage = currentPath === '/about'
+  const isProjectsPage = currentPath === '/projects'
 
   return (
     <div className="relative">
@@ -35,6 +37,8 @@ function App() {
         <Navbar />
         {isAboutPage ? (
           <AboutPage onOpenChat={() => setIsChatOpen(true)} />
+        ) : isProjectsPage ? (
+          <ProjectsPage />
         ) : (
           <main>
             <Hero />

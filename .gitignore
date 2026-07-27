@@ -7,6 +7,8 @@
 **pycache**/
 *.py[cod]
 *$py.class
+evaluations/__pycache__/
+evaluations/runs/
 
 # Virtual Environments
 
