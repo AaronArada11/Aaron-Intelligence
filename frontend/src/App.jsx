@@ -10,6 +10,7 @@ import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
 import Chat from './components/Chat'
 import ChatButton from './components/ChatButton'
+import { PortfolioPreloader } from './components/preloader/PortfolioPreloader'
 
 function getCurrentPath() {
   return window.location.pathname
@@ -33,24 +34,29 @@ function App() {
 
   return (
     <div className="relative">
-      <ThemeProvider>
-        <Navbar />
-        {isAboutPage ? (
-          <AboutPage onOpenChat={() => setIsChatOpen(true)} />
-        ) : isProjectsPage ? (
-          <ProjectsPage />
-        ) : (
-          <main>
-            <Hero />
-            <Projects />
-            <Dashboard />
-            <Contact />
-          </main>
-        )}
-        {isChatOpen && <Chat onClose={() => setIsChatOpen(false)} />}
-        <ChatButton onClick={() => setIsChatOpen(!isChatOpen)} isOpen={isChatOpen} />
-        <Footer />
-      </ThemeProvider>
+      <PortfolioPreloader
+        disabled={import.meta.env.VITE_DISABLE_PRELOADER === 'true'}
+      />
+      <div id="portfolio-content">
+        <ThemeProvider>
+          <Navbar />
+          {isAboutPage ? (
+            <AboutPage onOpenChat={() => setIsChatOpen(true)} />
+          ) : isProjectsPage ? (
+            <ProjectsPage />
+          ) : (
+            <main>
+              <Hero />
+              <Projects />
+              <Dashboard />
+              <Contact />
+            </main>
+          )}
+          {isChatOpen && <Chat onClose={() => setIsChatOpen(false)} />}
+          <ChatButton onClick={() => setIsChatOpen(!isChatOpen)} isOpen={isChatOpen} />
+          <Footer />
+        </ThemeProvider>
+      </div>
     </div>
   )
 }

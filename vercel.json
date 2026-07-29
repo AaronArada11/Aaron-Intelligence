@@ -50,8 +50,12 @@
       "destination": "/api/github_commits"
     },
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "source": "/about",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/projects",
+      "destination": "/index.html"
     }
   ]
 }
