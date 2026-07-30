@@ -1,48 +1,150 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
-  ArrowRight,
+  ArrowUpRight,
   ExternalLink,
   FolderGit2,
 } from "lucide-react";
 import { projects } from "../projectsData";
 
-function ProjectIndex({ activeProject, onSelect }) {
+const previewContent = {
+  gesture: {
+    status: "Camera ready",
+    title: "Sign to speech",
+    primary: "Magandang araw",
+    secondary: "Good day",
+  },
+  assistant: {
+    status: "Knowledge base online",
+    title: "Ask Aaron Intelligence",
+    primary: "What has Aaron built with AI?",
+    secondary: "Here are the projects most relevant to that question…",
+  },
+  visualizer: {
+    status: "Merge sort · running",
+    title: "See the algorithm",
+    primary: "Comparisons",
+    secondary: "42",
+  },
+  mentor: {
+    status: "Review in progress",
+    title: "Think before the answer",
+    primary: "What assumption does this loop make?",
+    secondary: "Trace the value of index when the list is empty.",
+  },
+};
+
+function ProjectPreview({ project }) {
+  const Icon = project.icon;
+  const content = previewContent[project.preview];
+
   return (
     <div
-      aria-label="Project index"
-      className="border-b md:border-b-0 md:border-r"
-      style={{ borderColor: "var(--ctp-surface0)" }}
+      className="project-preview"
+      style={{ "--project-accent": project.previewColor }}
+      aria-hidden="true"
     >
-      {projects.map((project) => {
-        const isActive = project.name === activeProject.name;
+      <div className={`project-preview__window project-preview__window--${project.preview}`}>
+        <div className="project-preview__chrome">
+          <span className="project-preview__dots">
+            <i />
+            <i />
+            <i />
+          </span>
+          <span>{project.name.toLowerCase().replaceAll(" ", "-")}.app</span>
+          <span className="project-preview__status">{content.status}</span>
+        </div>
 
-        return (
-          <button
-            key={project.name}
-            type="button"
-            onClick={() => onSelect(project)}
-            aria-pressed={isActive}
-            className="group flex min-h-16 w-full items-center justify-between gap-4 border-b px-4 py-3 text-left font-mono transition-colors last:border-b-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
-            style={{
-              borderColor: "var(--ctp-surface0)",
-              background: isActive ? "var(--ctp-mantle)" : "transparent",
-              color: isActive ? "var(--ctp-text)" : "var(--ctp-subtext1)",
-              outlineColor: "var(--ctp-accent)",
-              boxShadow: isActive ? "inset 3px 0 0 var(--ctp-accent)" : "none",
-            }}
-          >
-            <span className="flex min-w-0 items-center gap-3">
-              <span className="truncate text-sm">{project.name}</span>
+        <div className="project-preview__canvas">
+          <div className="project-preview__brand">
+            <span className="project-preview__mark">
+              <Icon size={18} strokeWidth={1.7} />
             </span>
-            <ArrowRight
-              aria-hidden="true"
-              size={15}
-              className="shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
-              style={{ color: isActive ? "var(--ctp-accent)" : "var(--ctp-overlay1)" }}
-            />
-          </button>
-        );
-      })}
+            <span>{project.name}</span>
+          </div>
+
+          {project.preview === "gesture" && (
+            <div className="gesture-preview">
+              <div className="gesture-preview__camera">
+                <span className="gesture-preview__scan" />
+                <Icon size={58} strokeWidth={1.1} />
+                <small>gesture detected</small>
+              </div>
+              <div className="gesture-preview__translation">
+                <p>{content.title}</p>
+                <strong>{content.primary}</strong>
+                <span>{content.secondary}</span>
+                <div className="gesture-preview__languages">
+                  <span>FSL</span>
+                  <b>→</b>
+                  <span>FIL</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {project.preview === "assistant" && (
+            <div className="assistant-preview">
+              <p className="assistant-preview__question">{content.primary}</p>
+              <div className="assistant-preview__answer">
+                <span className="assistant-preview__avatar">AI</span>
+                <div>
+                  <p>{content.secondary}</p>
+                  <span className="assistant-preview__line assistant-preview__line--long" />
+                  <span className="assistant-preview__line" />
+                  <span className="assistant-preview__line assistant-preview__line--short" />
+                </div>
+              </div>
+              <div className="assistant-preview__input">
+                <span>Ask about Aaron’s work…</span>
+                <ArrowUpRight size={15} />
+              </div>
+            </div>
+          )}
+
+          {project.preview === "visualizer" && (
+            <div className="visualizer-preview">
+              <div className="visualizer-preview__toolbar">
+                <span>{content.title}</span>
+                <span>{content.status}</span>
+              </div>
+              <div className="visualizer-preview__bars">
+                {[42, 66, 31, 82, 52, 92, 61, 74, 37, 86, 48, 69].map((height, index) => (
+                  <i
+                    key={`${height}-${index}`}
+                    style={{
+                      "--bar-height": `${height}%`,
+                      "--bar-delay": `${index * 45}ms`,
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="visualizer-preview__footer">
+                <span>{content.primary}</span>
+                <strong>{content.secondary}</strong>
+              </div>
+            </div>
+          )}
+
+          {project.preview === "mentor" && (
+            <div className="mentor-preview">
+              <div className="mentor-preview__code">
+                <span><b>01</b> function findMax(values) &#123;</span>
+                <span><b>02</b>&nbsp;&nbsp; let max = values[0];</span>
+                <span className="mentor-preview__active"><b>03</b>&nbsp;&nbsp; for (let i = 1; i &lt; values.length; i++) &#123;</span>
+                <span><b>04</b>&nbsp;&nbsp;&nbsp;&nbsp; if (values[i] &gt; max) max = values[i];</span>
+                <span><b>05</b>&nbsp;&nbsp; &#125;</span>
+                <span><b>06</b>&nbsp;&nbsp; return max;</span>
+                <span><b>07</b> &#125;</span>
+              </div>
+              <div className="mentor-preview__prompt">
+                <small>{content.title}</small>
+                <strong>{content.primary}</strong>
+                <p>{content.secondary}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -51,153 +153,66 @@ function ProjectActions({ project }) {
   const isExternalDemo = project.liveDemo?.startsWith("http");
 
   return (
-    <div className="flex flex-wrap gap-3">
-      <a
-        href={project.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-4 py-2 font-mono text-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-[var(--ctp-surface0)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-        style={{
-          borderColor: "var(--ctp-surface1)",
-          color: "var(--ctp-accent)",
-          outlineColor: "var(--ctp-accent)",
-        }}
-      >
-        <FolderGit2 size={15} aria-hidden="true" />
-        View source
-      </a>
+    <div className="project-actions">
       {project.liveDemo && (
         <a
           href={project.liveDemo}
           target={isExternalDemo ? "_blank" : undefined}
           rel={isExternalDemo ? "noopener noreferrer" : undefined}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-4 py-2 font-mono text-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-[var(--ctp-surface0)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-          style={{
-            borderColor: "var(--ctp-surface1)",
-            color: "var(--ctp-text)",
-            outlineColor: "var(--ctp-accent)",
-          }}
         >
+          Open project
           <ExternalLink size={15} aria-hidden="true" />
-          Open live demo
         </a>
       )}
+      <a href={project.github} target="_blank" rel="noopener noreferrer">
+        View source
+        <FolderGit2 size={15} aria-hidden="true" />
+      </a>
     </div>
   );
 }
 
-function ProjectDetail({ project }) {
+function ProjectShowcase({ project, index }) {
   return (
     <article
-      key={project.name}
-      className="projects-detail-enter flex min-h-96 flex-col p-5 sm:p-7 lg:p-9"
-      aria-live="polite"
+      className="project-showcase"
+      style={{ "--project-index": index }}
     >
-      <h2
-        className="mb-7 text-balance font-mono leading-tight"
-        style={{
-          color: "var(--ctp-text)",
-          fontSize: "clamp(1.55rem, 3vw, 2.2rem)",
-        }}
-      >
-        {project.name}
-      </h2>
+      <div className="project-showcase__copy">
+        <header className="project-showcase__header">
+          <div>
+            <h2>{project.name}</h2>
+            <p>{project.tags.join(", ")}</p>
+          </div>
+          <time>{project.year}</time>
+        </header>
 
-      <p
-        className="mb-8 max-w-3xl text-pretty font-mono text-sm leading-7"
-        style={{ color: "var(--ctp-subtext1)" }}
-      >
-        {project.description}
-      </p>
-
-      <dl className="mb-8 grid gap-x-6 gap-y-3 text-sm sm:grid-cols-[7rem_1fr]">
-        <dt className="font-mono" style={{ color: "var(--ctp-overlay2)" }}>
-          Role
-        </dt>
-        <dd className="font-mono" style={{ color: "var(--ctp-text)" }}>
-          {project.role}
-        </dd>
-        <dt className="font-mono" style={{ color: "var(--ctp-overlay2)" }}>
-          Context
-        </dt>
-        <dd className="font-mono" style={{ color: "var(--ctp-text)" }}>
-          {project.context}
-        </dd>
-        <dt className="font-mono" style={{ color: "var(--ctp-overlay2)" }}>
-          Stack
-        </dt>
-        <dd className="flex flex-wrap gap-x-3 gap-y-1 font-mono">
-          {project.tags.map((tag) => (
-            <span key={tag} style={{ color: "var(--ctp-subtext1)" }}>
-              {tag}
-            </span>
+        <ul className="project-showcase__highlights">
+          {project.highlights.map((highlight) => (
+            <li key={highlight}>{highlight}</li>
           ))}
-        </dd>
-      </dl>
+        </ul>
 
-      <div className="mt-auto">
+        <dl className="project-showcase__meta">
+          <div>
+            <dt>Role</dt>
+            <dd>{project.role}</dd>
+          </div>
+          <div>
+            <dt>Context</dt>
+            <dd>{project.context}</dd>
+          </div>
+        </dl>
+
         <ProjectActions project={project} />
       </div>
+
+      <ProjectPreview project={project} />
     </article>
   );
 }
 
-function ProjectTable({ onSelect }) {
-  return (
-    <div
-      className="mt-10 border-t"
-      style={{ borderColor: "var(--ctp-surface0)" }}
-    >
-      <div
-        className="hidden grid-cols-[1.1fr_2fr_1.4fr_auto] gap-6 border-b px-4 py-3 font-mono text-xs md:grid"
-        style={{ borderColor: "var(--ctp-surface0)", color: "var(--ctp-overlay2)" }}
-      >
-        <span>Project</span>
-        <span>What it does</span>
-        <span>Focus</span>
-        <span className="sr-only">Action</span>
-      </div>
-      {projects.map((project) => (
-        <button
-          key={project.name}
-          type="button"
-          onClick={() => {
-            onSelect(project);
-            document.getElementById("project-browser")?.scrollIntoView({
-              behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-              block: "center",
-            });
-          }}
-          className="group grid w-full gap-2 border-b px-4 py-4 text-left font-mono transition-colors hover:bg-[var(--ctp-mantle)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] md:grid-cols-[1.1fr_2fr_1.4fr_auto] md:items-center md:gap-6"
-          style={{
-            borderColor: "var(--ctp-surface0)",
-            outlineColor: "var(--ctp-accent)",
-          }}
-        >
-          <span className="text-sm" style={{ color: "var(--ctp-text)" }}>
-            {project.name}
-          </span>
-          <span className="text-xs leading-5 md:text-sm" style={{ color: "var(--ctp-subtext1)" }}>
-            {project.shortDescription}
-          </span>
-          <span className="text-xs md:text-sm" style={{ color: "var(--ctp-overlay2)" }}>
-            {project.category}
-          </span>
-          <ArrowRight
-            aria-hidden="true"
-            size={16}
-            className="hidden transition-transform duration-200 group-hover:translate-x-1 md:block"
-            style={{ color: "var(--ctp-accent)" }}
-          />
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export function ProjectsPage() {
-  const [activeProject, setActiveProject] = useState(projects[0]);
-
   useEffect(() => {
     const previousTitle = document.title;
     document.title = "Projects — Aaron Arada";
@@ -208,45 +223,25 @@ export function ProjectsPage() {
   }, []);
 
   return (
-    <main style={{ background: "var(--ctp-base)" }}>
-      <section className="px-6 pb-16 pt-10 sm:px-8 sm:pb-20 sm:pt-12">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-8 border-b pb-8" style={{ borderColor: "var(--ctp-surface0)" }}>
-            <h1
-              className="mb-4 text-balance font-mono leading-none"
-              style={{
-                color: "var(--ctp-text)",
-                fontSize: "clamp(2.4rem, 6vw, 3.6rem)",
-                letterSpacing: "-0.035em",
-              }}
-            >
-              Projects
-            </h1>
-            <p
-              className="max-w-3xl text-pretty font-mono text-sm leading-7 sm:text-base"
-              style={{ color: "var(--ctp-subtext1)" }}
-            >
-              Selected builds across AI, machine learning, education, and interactive systems.
-            </p>
-            <p className="mt-5 font-mono text-sm" style={{ color: "var(--ctp-overlay2)" }}>
-              4 projects <span aria-hidden="true">·</span>{" "}
-              <span style={{ color: "var(--ctp-accent)" }}>source available</span>
-            </p>
+    <main className="projects-page">
+      <section className="projects-page__inner">
+        <header className="projects-hero">
+          <h1>My Projects</h1>
+          <div className="projects-hero__rule">
+            <span>
+              <FolderGit2 size={30} strokeWidth={1.5} aria-hidden="true" />
+            </span>
           </div>
+        </header>
 
-          <div
-            id="project-browser"
-            className="overflow-hidden rounded-lg border md:grid md:grid-cols-[18rem_1fr]"
-            style={{
-              background: "var(--ctp-base)",
-              borderColor: "var(--ctp-surface0)",
-            }}
-          >
-            <ProjectIndex activeProject={activeProject} onSelect={setActiveProject} />
-            <ProjectDetail project={activeProject} />
-          </div>
-
-          <ProjectTable onSelect={setActiveProject} />
+        <div className="project-showcase-list">
+          {projects.map((project, index) => (
+            <ProjectShowcase
+              key={project.name}
+              project={project}
+              index={index}
+            />
+          ))}
         </div>
       </section>
     </main>
