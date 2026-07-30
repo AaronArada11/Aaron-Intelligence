@@ -24,7 +24,7 @@ export function Projects() {
         </p>
 
         <div className="grid items-stretch gap-4 md:grid-cols-2 md:auto-rows-fr">
-          {projects.map((p, index) => {
+          {projects.slice(0, 4).map((p, index) => {
             const Icon = p.icon;
             return (
               <div
