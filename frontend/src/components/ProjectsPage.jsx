@@ -2,8 +2,29 @@ import { useEffect } from "react";
 import {
   ExternalLink,
   FolderGit2,
+  Terminal,
 } from "lucide-react";
 import { projects } from "../projectsData";
+
+const NON_PATH_CHARACTERS = /[^a-z0-9]+/g;
+const EDGE_DASHES = /(^-|-$)/g;
+
+function getProjectDirectory(name) {
+  return name
+    .toLowerCase()
+    .replace(NON_PATH_CHARACTERS, "-")
+    .replace(EDGE_DASHES, "");
+}
+
+function ProjectCommand({ children, className = "", status }) {
+  return (
+    <div className={`projects-command ${className}`}>
+      <span className="projects-command__prompt" aria-hidden="true">$</span>
+      <code>{children}</code>
+      {status && <span className="projects-command__status">{status}</span>}
+    </div>
+  );
+}
 
 function ProjectPreview({ project, priority }) {
   return (
@@ -11,6 +32,9 @@ function ProjectPreview({ project, priority }) {
       className="project-preview"
       style={{ "--project-accent": project.previewColor }}
     >
+      <ProjectCommand className="project-preview__command">
+        open ./screenshots/preview.png
+      </ProjectCommand>
       <div className="project-preview__window">
         <img
           src={project.image}
@@ -33,15 +57,23 @@ function ProjectActions({ project }) {
       {project.liveDemo && (
         <a
           href={project.liveDemo}
+          aria-label={`Open ${project.name} project`}
           target={isExternalDemo ? "_blank" : undefined}
           rel={isExternalDemo ? "noopener noreferrer" : undefined}
         >
-          Open project
+          <span className="project-actions__prompt" aria-hidden="true">$</span>
+          open ./demo
           <ExternalLink size={15} aria-hidden="true" />
         </a>
       )}
-      <a href={project.github} target="_blank" rel="noopener noreferrer">
-        View source
+      <a
+        href={project.github}
+        aria-label={`View ${project.name} source code`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span className="project-actions__prompt" aria-hidden="true">$</span>
+        git remote -v
         <FolderGit2 size={15} aria-hidden="true" />
       </a>
     </div>
@@ -49,11 +81,20 @@ function ProjectActions({ project }) {
 }
 
 function ProjectShowcase({ project, index }) {
+  const projectDirectory = getProjectDirectory(project.name);
+
   return (
     <article
       className="project-showcase"
       style={{ "--project-index": index }}
     >
+      <ProjectCommand
+        className="project-showcase__command"
+        status="exit 0"
+      >
+        {`cat ~/projects/${projectDirectory}/README.md`}
+      </ProjectCommand>
+
       <div className="project-showcase__copy">
         <header className="project-showcase__header">
           <div>
@@ -102,10 +143,16 @@ export function ProjectsPage() {
     <main className="projects-page">
       <section className="projects-page__inner">
         <header className="projects-hero">
+          <ProjectCommand className="projects-hero__command">
+            ls -la ~/projects
+          </ProjectCommand>
           <h1>My Projects</h1>
+          <p className="projects-hero__output">
+            total {projects.length} · drwxr-xr-x · updated 2026
+          </p>
           <div className="projects-hero__rule">
             <span>
-              <FolderGit2 size={30} strokeWidth={1.5} aria-hidden="true" />
+              <Terminal size={30} strokeWidth={1.5} aria-hidden="true" />
             </span>
           </div>
         </header>
