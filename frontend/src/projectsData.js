@@ -1,6 +1,30 @@
-import { BarChart2, Bot, Languages, MirrorRectangular } from "lucide-react";
+import { BarChart2, Bot, Languages, MirrorRectangular, Wrench } from "lucide-react";
 
 export const projects = [
+  {
+    name: "Aaron Toolkit",
+    year: "2026",
+    shortDescription:
+      "Registry-driven web utility catalog for media, document, image, and QR workflows.",
+    description:
+      "Extensible public web app for focused utilities, including QR generation, permitted-media downloads, image conversion, and PDF-to-DOCX conversion.",
+    tags: ["Vite", "Python", "FastAPI", "FFmpeg", "Redis", "S3"],
+    role: "Full-stack Developer",
+    context: "Personal project",
+    category: "Developer utilities",
+    accentColor: "var(--ctp-accent)",
+    previewColor: "var(--ctp-green)",
+    image: "/images/projects/aaron-toolkit.png",
+    imageAlt:
+      "Aaron Toolkit interface showing its searchable catalog of four active utilities.",
+    highlights: [
+      "Built an extensible utility catalog where adding a tool manifest and feature module automatically updates search, navigation, and routing.",
+      "Ships four initial tools: a link QR generator, permitted YouTube downloader, image format converter, and PDF-to-Word converter.",
+      "Designed a production architecture with a Vite frontend, Python API and worker processes, Redis-backed queues, and S3-compatible artifact storage.",
+    ],
+    icon: Wrench,
+    github: "https://github.com/AaronArada11/aaron-toolkit",
+  },
   {
     name: "KUMPAS",
     year: "2026",
@@ -14,7 +38,9 @@ export const projects = [
     category: "Machine learning",
     accentColor: "var(--ctp-accent)",
     previewColor: "var(--ctp-yellow)",
-    preview: "gesture",
+    image: "/images/projects/kumpas.png",
+    imageAlt:
+      "KUMPAS homepage presenting its Filipino Sign Language translator and six-step workflow.",
     highlights: [
       "Recognizes Filipino Sign Language gestures from a live webcam feed using a custom machine learning pipeline.",
       "Translates recognized signs into readable Filipino and multiple Philippine languages in real time.",
@@ -37,7 +63,10 @@ export const projects = [
     category: "AI engineering",
     accentColor: "var(--ctp-accent)",
     previewColor: "var(--ctp-green)",
-    preview: "assistant",
+    image: "/images/projects/aaron-intelligence.png",
+    imageAlt:
+      "Aaron Intelligence chat interface introducing the AI portfolio representative.",
+    imageFit: "contain",
     highlights: [
       "Built a retrieval-augmented assistant that answers questions about my projects, skills, education, and experience.",
       "Grounds Gemini responses in a Supabase and pgvector knowledge base instead of relying on generic model memory.",
@@ -60,7 +89,9 @@ export const projects = [
     category: "Interactive systems",
     accentColor: "var(--ctp-accent)",
     previewColor: "var(--ctp-mauve)",
-    preview: "visualizer",
+    image: "/images/projects/algo-visualizer.png",
+    imageAlt:
+      "AlgoVisualizer sorting interface with algorithm controls and an array of green bars.",
     highlights: [
       "Turns sorting and pathfinding algorithms into step-by-step animations that expose comparisons, swaps, and traversal order.",
       "Lets learners change algorithms and visualization parameters to understand how each approach behaves.",
@@ -82,7 +113,9 @@ export const projects = [
     category: "AI education",
     accentColor: "var(--ctp-accent)",
     previewColor: "var(--ctp-blue)",
-    preview: "mentor",
+    image: "/images/projects/mirror-mentor.png",
+    imageAlt:
+      "Mirror Mentor interface with side-by-side code editor and AI Professor panels.",
     highlights: [
       "Guides students through code problems with Socratic questions rather than giving away direct answers.",
       "Combines Gemini analysis with persistent Supabase conversations and secure authentication workflows.",
