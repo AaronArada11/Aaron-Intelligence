@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Send, Bot, User, Sparkles, X } from 'lucide-react'
+import { Send, Bot, User } from 'lucide-react'
+import ChatButton from './ChatButton'
 
 const API_URL = '/chat'
 const RATE_LIMIT_MESSAGE = 'Aaron Intelligence is temporarily rate limited. Please wait a moment and try again.'
@@ -92,21 +93,12 @@ function Chat({ onClose }) {
   }
 
   return (
-    <div className="fixed bottom-24 right-6 z-50 w-[320px] h-[400px] flex flex-col rounded-2xl overflow-hidden bg-gray-950 text-gray-100 shadow-2xl shadow-black/50 border border-[var(--ctp-accent)]">
-      <header className="flex items-center gap-3 px-4 py-3 border-b border-[var(--ctp-surface0)] bg-gray-900/80">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--ctp-base)] shadow-lg">
-          <Sparkles className="w-4 h-4 text-[var(--ctp-accent)]" />
-        </div>
-        <div className="flex-1">
-          <h1 className="text-sm font-semibold tracking-tight text-white">Aaron Intelligence "AI"</h1>
-          <p className="text-[10px] text-gray-400">AI representative</p>
-        </div>
-        <button
-          onClick={onClose}
-          className="p-1.5 rounded-md hover:bg-gray-800 text-gray-400 hover:text-white transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
+    <div
+      id="aaron-intelligence-chat"
+      className="fixed bottom-4 right-4 z-50 flex h-[400px] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-[var(--ctp-accent)] bg-gray-950 text-gray-100 shadow-2xl shadow-black/50 sm:bottom-6 sm:right-6 sm:w-[420px]"
+    >
+      <header className="bg-gray-900/80">
+        <ChatButton onClick={onClose} isOpen embedded />
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 py-4">

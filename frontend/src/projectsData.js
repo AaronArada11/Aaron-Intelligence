@@ -83,7 +83,7 @@ export const projects = [
       "Interactive visual lessons for sorting and pathfinding algorithms.",
     description:
       "Interactive algorithm visualization platform designed to help students and developers understand fundamental computer science concepts through real-time animations and visual feedback.",
-    tags: ["React", "JavaScript", "CSS", "Vercel"],
+    tags: ["React", "JavaScript", "CSS"],
     role: "Frontend Developer",
     context: "Educational project",
     category: "Interactive systems",

@@ -52,8 +52,11 @@ function App() {
               <Contact />
             </main>
           )}
-          {isChatOpen && <Chat onClose={() => setIsChatOpen(false)} />}
-          <ChatButton onClick={() => setIsChatOpen(!isChatOpen)} isOpen={isChatOpen} />
+          {isChatOpen ? (
+            <Chat onClose={() => setIsChatOpen(false)} />
+          ) : (
+            <ChatButton onClick={() => setIsChatOpen(true)} />
+          )}
           <Footer />
         </ThemeProvider>
       </div>
