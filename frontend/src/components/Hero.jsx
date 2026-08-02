@@ -83,9 +83,9 @@ export function Hero() {
             { icon: <User size={14} />, ...profileLinks.linkedin },
             { icon: <Mail size={14} />, ...profileLinks.email },
           ].map((item, i) => (
-            <span key={item.label} className="flex items-center">
+            <span key={item.label} className="flex items-center gap-3">
               {i > 0 && (
-                <span className="mx-1 hidden sm:inline-block" style={{ color: "var(--ctp-surface2)" }}>|</span>
+                <span className="hidden sm:inline-block" style={{ color: "var(--ctp-surface2)" }}>|</span>
               )}
               <a
                 href={item.href}

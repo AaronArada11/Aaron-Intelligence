@@ -1,6 +1,6 @@
 export const flavors = {
   nimbus: {
-    base: "#eff1f5", mantle: "#e6e9ef", crust: "#dce0e8",
+    base: "#e7eaf0", mantle: "#dfe3eb", crust: "#d6dbe5",
     text: "#4c4f69", subtext1: "#5c5f77", subtext0: "#6c6f85",
     overlay2: "#7c7f93", overlay1: "#8c8fa1", overlay0: "#9ca0b0",
     surface2: "#acb0be", surface1: "#bcc0cc", surface0: "#ccd0da",
@@ -33,15 +33,15 @@ export const flavors = {
     blue: "#89b4fa", lavender: "#b4befe",
   },
   abyss: {
-    base: "#141414", mantle: "#0D0D0D", crust: "#050505",
-    text: "#cad3f5", subtext1: "#b8c0e0", subtext0: "#a5adcb",
-    overlay2: "#939ab7", overlay1: "#8087a2", overlay0: "#6e738d",
-    surface2: "#5b6078", surface1: "#494d64", surface0: "#363a4f",
-    rosewater: "#f4dbd6", flamingo: "#f0c6c6", pink: "#f5bde6",
-    mauve: "#c6a0f6", red: "#ed8796", maroon: "#ee99a0",
-    peach: "#f5a97f", yellow: "#eed49f", green: "#a6da95",
-    teal: "#8bd5ca", sky: "#91d7e3", sapphire: "#7dc4e4",
-    blue: "#8aadf4", lavender: "#b7bdf8",
+    base: "#101010", mantle: "#0A0A0A", crust: "#050505",
+    text: "#F5F5F5", subtext1: "#D4D4D4", subtext0: "#B8B8B8",
+    overlay2: "#A3A3A3", overlay1: "#8A8A8A", overlay0: "#737373",
+    surface2: "#595959", surface1: "#404040", surface0: "#282828",
+    rosewater: "#FAFAFA", flamingo: "#F0F0F0", pink: "#F5F5F5",
+    mauve: "#E5E5E5", red: "#D6D6D6", maroon: "#C8C8C8",
+    peach: "#C7C7C7", yellow: "#B8B8B8", green: "#F0F0F0",
+    teal: "#DEDEDE", sky: "#CECECE", sapphire: "#BEBEBE",
+    blue: "#A8A8A8", lavender: "#FAFAFA",
   },
 };
 

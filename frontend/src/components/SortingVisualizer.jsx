@@ -12,7 +12,7 @@ import {
 } from './pathAlgorithms';
 
 const PRIMARY_COLOR = 'var(--ctp-accent)';
-const SECONDARY_COLOR = "#dc143c";
+const SECONDARY_COLOR = 'var(--ctp-red)';
 const BAR_HEADROOM = 18;
 const MIN_BAR_HEIGHT = 8;
 const PATH_ROWS = 13;
@@ -104,7 +104,14 @@ export class SortingVisualizer extends React.Component {
 
     setActiveTab = (activeTab) => {
         this.clearSortingAnimationTimeouts();
-        this.setState({ activeTab }, () => {
+        this.clearPathAnimationTimeouts();
+        this.setState((previousState) => ({
+            activeTab,
+            isPathAnimating: false,
+            ...(activeTab === 'pathfinding' && previousState.activeTab !== 'pathfinding'
+                ? { pathGrid: createRandomMazeGrid() }
+                : {}),
+        }), () => {
             if (activeTab === 'sorting') {
                 this.observeArrayContainer();
                 this.resetArray();

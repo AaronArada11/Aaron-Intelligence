@@ -10,7 +10,7 @@ export default function ChatButton({ onClick, isOpen = false, embedded = false }
       style={{
         backgroundColor: "var(--ctp-base)",
       }}
-      className={`flex items-center justify-between border border-[var(--ctp-surface0)] px-5 py-4 text-left text-white transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-mantle)] ${
+      className={`flex items-center justify-between border border-[var(--ctp-surface0)] px-5 py-4 text-left text-[var(--ctp-text)] transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-mantle)] ${
         embedded
           ? "w-full border-x-0 border-t-0"
           : "fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] max-w-80 rounded-xl shadow-2xl sm:bottom-6 sm:right-6"
@@ -22,7 +22,8 @@ export default function ChatButton({ onClick, isOpen = false, embedded = false }
         </span>
         <span className="flex min-w-0 items-center gap-2 font-sans text-base font-medium">
           <span
-            className="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-[var(--ctp-green)]"
+            className="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-[var(--ctp-green)] animate-pulse"
+            style={{ animationDuration: "1s"}}
             aria-hidden="true"
           />
           <span className="truncate">Aaron Intelligence</span>

@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Send, Bot, User } from 'lucide-react'
 import ChatButton from './ChatButton'
+import '../Chat.css'
 
 const API_URL = '/chat'
 const RATE_LIMIT_MESSAGE = 'Aaron Intelligence is temporarily rate limited. Please wait a moment and try again.'
@@ -95,9 +96,9 @@ function Chat({ onClose }) {
   return (
     <div
       id="aaron-intelligence-chat"
-      className="fixed bottom-4 right-4 z-50 flex h-[400px] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-[var(--ctp-accent)] bg-gray-950 text-gray-100 shadow-2xl shadow-black/50 sm:bottom-6 sm:right-6 sm:w-[420px]"
+      className="fixed bottom-4 right-4 z-50 flex h-[400px] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-[var(--ctp-accent)] bg-[var(--ctp-base)] text-[var(--ctp-text)] shadow-2xl shadow-black/50 sm:bottom-6 sm:right-6 sm:w-[420px]"
     >
-      <header className="bg-gray-900/80">
+      <header className="bg-[var(--ctp-base)]">
         <ChatButton onClick={onClose} isOpen embedded />
       </header>
 
@@ -109,7 +110,7 @@ function Chat({ onClose }) {
               className={`flex gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role === 'assistant' && (
-                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-base)] flex items-center justify-center shadow-lg">
+                <div className="flex-shrink-0 w-7 h-7 rounded-full border border-[var(--ctp-surface0)] bg-[var(--ctp-mantle)] flex items-center justify-center shadow-lg">
                   <Bot className="w-3.5 h-3.5 text-[var(--ctp-accent)]" />
                 </div>
               )}
@@ -117,20 +118,12 @@ function Chat({ onClose }) {
               <div
                 className={`min-w-0 max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-words [overflow-wrap:anywhere] ${
                   msg.role === 'user'
-                    ? 'bg-blue-600 text-white rounded-br-sm'
-                    : 'bg-gray-800 border border-[var(--ctp-surface0)] text-gray-100 rounded-bl-sm'
+                    ? 'border border-[var(--ctp-accent)] bg-[var(--ctp-surface0)] text-[var(--ctp-text)] rounded-br-sm'
+                    : 'bg-[var(--ctp-mantle)] border border-[var(--ctp-surface0)] text-[var(--ctp-text)] rounded-bl-sm'
                 }`}
               >
                 {msg.role === 'assistant' ? (
-                  <div className="prose prose-invert prose-sm max-w-none break-words [overflow-wrap:anywhere]
-                    prose-p:leading-relaxed prose-p:mb-1 prose-p:mt-0
-                    prose-headings:mt-2 prose-headings:mb-1
-                    prose-ul:my-1 prose-ol:my-1
-                    prose-li:my-0.5
-                    prose-code:text-blue-300 prose-code:bg-gray-700 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-[11px] prose-code:before:content-none prose-code:after:content-none
-                    prose-pre:bg-gray-900 prose-pre:border prose-pre:border-[var(--ctp-surface0)] prose-pre:rounded-lg prose-pre:p-3 prose-pre:text-xs
-                    prose-blockquote:border-l-[var(--ctp-surface0)] prose-blockquote:text-gray-300
-                    prose-a:break-words prose-a:overflow-wrap-anywhere">
+                  <div className="chat-markdown max-w-none break-words [overflow-wrap:anywhere]">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {msg.content}
                     </ReactMarkdown>
@@ -141,8 +134,8 @@ function Chat({ onClose }) {
               </div>
 
               {msg.role === 'user' && (
-                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-700 border border-gray-600 flex items-center justify-center">
-                  <User className="w-3.5 h-3.5 text-gray-300" />
+                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-surface1)] border border-[var(--ctp-surface2)] flex items-center justify-center">
+                  <User className="w-3.5 h-3.5 text-[var(--ctp-text)]" />
                 </div>
               )}
             </div>
@@ -150,14 +143,14 @@ function Chat({ onClose }) {
 
           {isLoading && (
             <div className="flex gap-2.5 justify-start">
-              <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-base)] flex items-center justify-center shadow-lg">
+              <div className="flex-shrink-0 w-7 h-7 rounded-full border border-[var(--ctp-surface0)] bg-[var(--ctp-mantle)] flex items-center justify-center shadow-lg">
                 <Bot className="w-3.5 h-3.5 text-[var(--ctp-accent)]" />
               </div>
-              <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-gray-800 border border-[var(--ctp-accent)]">
+              <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-[var(--ctp-mantle)] border border-[var(--ctp-accent)]">
                 <div className="flex gap-1.5 items-center">
-                  <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce [animation-delay:-0.3s]" />
-                  <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce [animation-delay:-0.15s]" />
-                  <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce" />
+                  <span className="w-2 h-2 rounded-full bg-[var(--ctp-overlay2)] animate-bounce [animation-delay:-0.3s]" />
+                  <span className="w-2 h-2 rounded-full bg-[var(--ctp-overlay2)] animate-bounce [animation-delay:-0.15s]" />
+                  <span className="w-2 h-2 rounded-full bg-[var(--ctp-overlay2)] animate-bounce" />
                 </div>
               </div>
             </div>
@@ -167,9 +160,9 @@ function Chat({ onClose }) {
         </div>
       </main>
 
-      <footer className="border-t border-[var(--ctp-surface0)] bg-gray-900/80 px-4 py-3">
+      <footer className="border-t border-[var(--ctp-surface0)] bg-[var(--ctp-mantle)] px-4 py-3">
         {error && (
-          <div className="mb-2 px-3 py-2 rounded-lg bg-red-900/30 border border-red-700/50 text-red-300 text-xs">
+          <div className="mb-2 px-3 py-2 rounded-lg bg-[var(--ctp-base)] border border-[var(--ctp-red)] text-[var(--ctp-red)] text-xs">
             {error}
           </div>
         )}
@@ -182,22 +175,22 @@ function Chat({ onClose }) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={isLoading}
-            className="flex-1 bg-gray-800 border border-[var(--ctp-surface0)] rounded-xl px-3 py-2.5 pr-12 text-base text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed sm:text-sm"
+            className="flex-1 bg-[var(--ctp-base)] border border-[var(--ctp-surface1)] rounded-xl px-3 py-2.5 pr-12 text-base text-[var(--ctp-text)] placeholder:text-[var(--ctp-subtext1)] caret-[var(--ctp-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed sm:text-sm"
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
             className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-[var(--ctp-accent)] transition-colors disabled:shadow-none ${
               input.trim()
-                ? 'bg-[var(--ctp-base)] text-white shadow-lg'
-                : 'bg-gray-700 text-gray-500'
+                ? 'bg-[var(--ctp-base)] text-[var(--ctp-accent)] shadow-lg'
+                : 'bg-[var(--ctp-mantle)] text-[var(--ctp-overlay0)]'
             }`}
           >
-            <Send className="w-4 h-4 text-[var(--ctp-accent)]" />
+            <Send className="w-4 h-4" />
           </button>
         </form>
 
-        <p className="mt-2 text-xs text-gray-400 text-center">
+        <p className="mt-2 text-xs text-[var(--ctp-subtext1)] text-center">
           Responses are generated from a knowledge base.
         </p>
       </footer>

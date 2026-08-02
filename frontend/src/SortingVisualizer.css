@@ -232,8 +232,8 @@
 }
 
 .path-node.finish {
-    background: #dc143c;
-    border-color: #dc143c;
+    background: var(--ctp-red);
+    border-color: var(--ctp-red);
 }
 
 .path-node.wall {
@@ -287,7 +287,7 @@
 }
 
 .path-swatch.finish {
-    background: #dc143c;
+    background: var(--ctp-red);
 }
 
 .path-swatch.wall {
