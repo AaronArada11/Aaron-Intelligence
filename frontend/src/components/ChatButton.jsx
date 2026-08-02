@@ -13,7 +13,7 @@ export default function ChatButton({ onClick, isOpen = false, embedded = false }
       className={`flex items-center justify-between border border-[var(--ctp-surface0)] px-5 py-4 text-left text-white transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-mantle)] ${
         embedded
           ? "w-full border-x-0 border-t-0"
-          : "fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] rounded-xl shadow-2xl sm:bottom-6 sm:right-6 sm:w-[420px]"
+          : "fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] max-w-80 rounded-xl shadow-2xl sm:bottom-6 sm:right-6"
       }`}
     >
       <span className="flex min-w-0 flex-col gap-1">
