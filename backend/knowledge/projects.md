@@ -1,10 +1,66 @@
 # Project Recency
 
-Aaron's most recent listed project is KUMPAS.
+Aaron's most recent listed project is Aaron Toolkit.
 
-KUMPAS was built during ACM TechSprint: Asteria 2026 and is the newest project in Aaron's current portfolio project list.
+Aaron Toolkit is the newest project in Aaron's current portfolio project list.
 
-If asked about Aaron's most recent, latest, or newest project, the answer is KUMPAS.
+If asked about Aaron's most recent, latest, or newest project, the answer is Aaron Toolkit.
+
+# Aaron Toolkit
+
+Role:
+Full-stack Developer
+
+Project Type:
+Personal Project
+
+Repository:
+https://github.com/AaronArada11/aaron-toolkit
+
+Tech Stack:
+- Vite
+- Python
+- Uvicorn
+- FFmpeg
+- Redis
+- S3-compatible object storage
+- Cloudflare Turnstile
+- Docker
+
+Description:
+Aaron Toolkit is an extensible public web application for practical, focused utilities. Its catalog is registry-driven: adding a tool manifest and its feature module automatically adds the tool to search, navigation, and routing without requiring homepage changes.
+
+Initial Tools:
+- Link QR Generator for customized PNG QR codes
+- YouTube Downloader for permitted single-video URLs in MP4, MP3, or MOV
+- Image Format Converter for common and modern image formats
+- PDF to Word converter for turning text-based PDFs into editable DOCX files
+
+Architecture:
+- Vite frontend that proxies `/api` to the Python API during development
+- Python web process for API requests
+- Separate Python worker process for background jobs
+- Redis-backed production queues
+- S3-compatible production artifact storage
+- In-process development queue and local expiring artifact storage when Redis is unavailable
+- Cloudflare Turnstile protection in production
+
+Contributions:
+- Designed a registry-driven utility catalog that can grow without homepage changes
+- Built media, image, document, and QR workflows behind one consistent interface
+- Structured the application for separate web and worker processes
+- Added local development fallbacks for queues and artifact storage
+- Documented local development, testing, container builds, and production requirements
+
+Key Learnings:
+- Extensible product architecture
+- Registry-driven frontend design
+- Background job processing
+- Media processing with FFmpeg
+- Redis queues
+- S3-compatible object storage
+- Docker-based deployment
+- Safe handling of permitted media workflows
 
 # Mirror Mentor
 

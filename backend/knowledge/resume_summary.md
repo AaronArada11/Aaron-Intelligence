@@ -28,6 +28,10 @@ Aaron's strongest project areas include:
 
 # Resume Project Highlights
 
+Aaron Toolkit is an extensible public utility application built with Vite, Python, FFmpeg, Redis, S3-compatible object storage, and Docker.
+
+Aaron Toolkit uses a registry-driven catalog where adding a tool manifest and feature module automatically updates search, navigation, and routing. Its initial utilities include a link QR generator, permitted YouTube downloader, image format converter, and PDF-to-Word converter. The production architecture separates web and worker processes and uses Redis-backed queues with S3-compatible artifact storage.
+
 KUMPAS is a Filipino Sign Language translator built with React, Python, TensorFlow, and MediaPipe.
 
 KUMPAS was built during ACM TechSprint: Asteria in June 2026. It recognizes Filipino Sign Language gestures using webcam input and MediaPipe hand landmarks. The system supports 29 gesture classes, uses 30-frame gesture sequences, and processes 126 hand-landmark features per frame. Aaron helped deploy the full-stack translator with a Vercel frontend and Railway Python inference backend, supporting translation output across 6 Philippine languages.

@@ -25,6 +25,16 @@ These projects involve AI integration using Google's Gemini API.
 
 ---
 
+## What is Aaron's newest project?
+
+Aaron's newest listed project is Aaron Toolkit, an extensible public web application for practical utilities.
+
+It uses a registry-driven catalog so adding a tool manifest and feature module automatically adds the tool to search, navigation, and routing. Its initial tools include a link QR generator, permitted YouTube downloader, image format converter, and PDF-to-Word converter.
+
+The source code is available at https://github.com/AaronArada11/aaron-toolkit.
+
+---
+
 ## What type of roles is Aaron interested in?
 
 Aaron is interested in:

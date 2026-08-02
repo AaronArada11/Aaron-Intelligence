@@ -1,3 +1,111 @@
+# Aaron Toolkit
+
+Problem:
+
+Small online utilities are often scattered across unrelated websites with inconsistent interfaces, unclear data handling, and duplicated implementation. Aaron Toolkit was built as one extensible application where focused tools can share a catalog, interface, API, job infrastructure, and deployment model.
+
+Repository:
+
+https://github.com/AaronArada11/aaron-toolkit
+
+Role:
+
+Personal Project / Full-stack Developer
+
+Architecture:
+
+* Frontend: Vite
+* Backend: Python ASGI application served with Uvicorn
+* Media Processing: FFmpeg
+* Background Jobs: Separate Python worker process
+* Production Queue: Redis
+* Production Artifact Storage: S3-compatible object storage
+* Abuse Protection: Cloudflare Turnstile
+* Packaging and Deployment: Docker / OCI image
+
+Core Tools:
+
+1. Link QR Generator
+   * Accepts an HTTP or HTTPS link.
+   * Generates a customized PNG QR code.
+
+2. YouTube Downloader
+   * Processes permitted single-video URLs.
+   * Supports MP4, MP3, and MOV output.
+   * Includes an explicit requirement to follow platform terms, copyright law, and permission requirements.
+
+3. Image Format Converter
+   * Accepts JPG, PNG, WebP, GIF, BMP, TIFF, HEIC, and AVIF.
+   * Converts supported images to JPG, PNG, or WebP.
+
+4. PDF to Word
+   * Converts text-based PDF files into editable DOCX files.
+
+Registry-Driven Catalog:
+
+Aaron Toolkit is designed so a tool can be added through a manifest and feature module. The catalog then exposes that tool through search, navigation, and routing without requiring a manual homepage update.
+
+This design keeps the homepage independent from individual tool implementations and makes the application easier to extend as more utilities are added.
+
+Development Architecture:
+
+* Requires Node.js 22 or newer, Python 3.11 or newer, and FFmpeg.
+* The Vite frontend proxies `/api` requests to the local Python API.
+* Without Redis, development uses an in-process queue.
+* Without production object storage, development uses local expiring artifact storage.
+
+Production Architecture:
+
+The same container image supports two process types:
+
+* Web process: serves the Python application through Uvicorn.
+* Worker process: executes background jobs.
+
+Production deployments require Redis, S3-compatible object storage, and Cloudflare Turnstile.
+
+Testing:
+
+* Python tests run with pytest.
+* Frontend tests run through the web workspace.
+* The frontend includes a production build check.
+* Optional real-media and local PDF conversion smoke tests are disabled by default and enabled explicitly.
+
+Technical Decisions:
+
+Why a registry-driven catalog?
+
+* New tools can join search, navigation, and routing through a consistent contract.
+* Individual features remain modular.
+* The homepage does not need to know about every tool implementation.
+
+Why separate web and worker processes?
+
+* Long-running media and document tasks do not need to block API request handling.
+* The same application image can be deployed in different process roles.
+* Redis provides a shared queue for production workloads.
+
+Why S3-compatible storage?
+
+* Generated artifacts can be shared between web and worker processes.
+* Artifact storage can scale independently from the application containers.
+* The architecture is portable across S3-compatible providers.
+
+Key Learnings:
+
+* Designing extensible, registry-driven applications
+* Separating request handling from background processing
+* Media conversion with FFmpeg
+* Redis-backed job queues
+* S3-compatible artifact storage
+* Docker and multi-process production deployment
+* Development fallbacks that reduce local infrastructure requirements
+* Safety and permission boundaries for media-processing tools
+
+Impact:
+
+Aaron Toolkit demonstrates Aaron's ability to turn several practical utilities into a coherent product rather than a collection of disconnected scripts. It highlights full-stack architecture, modular feature design, background processing, media and document workflows, testing, and production infrastructure.
+
+
 # Aaron Intelligence
 
 Problem:
