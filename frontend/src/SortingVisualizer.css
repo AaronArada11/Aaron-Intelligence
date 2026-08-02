@@ -242,8 +242,8 @@
 }
 
 .path-node.frontier {
-    background: var(--ctp-red);
-    border-color: var(--ctp-red);
+    background: var(--ctp-mauve);
+    border-color: var(--ctp-mauve);
 }
 
 .path-node.visited {
@@ -295,7 +295,7 @@
 }
 
 .path-swatch.frontier {
-    background: var(--ctp-red);
+    background: var(--ctp-mauve);
 }
 
 .path-swatch.visited {
