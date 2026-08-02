@@ -49,7 +49,7 @@ export function Projects() {
                       >
                         <Icon size={16} />
                       </div>
-                      <span className="font-mono" style={{ color: "var(--ctp-text)" }}>{p.name}</span>
+                      <span className="font-sans font-semibold" style={{ color: "var(--ctp-text)" }}>{p.name}</span>
                     </div>
                     <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <a
@@ -76,7 +76,7 @@ export function Projects() {
                   </div>
 
                   <p
-                    className="mb-4 flex-1 font-mono text-sm leading-relaxed"
+                    className="mb-4 flex-1 font-sans text-sm leading-relaxed"
                     style={{ color: "var(--ctp-subtext1)" }}
                   >
                     {p.description}
@@ -86,7 +86,7 @@ export function Projects() {
                     {p.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="font-mono rounded px-2 py-0.5"
+                        className="font-sans rounded px-2 py-0.5 font-medium"
                         style={{
                           fontSize: "0.7rem",
                           background: "var(--ctp-surface0)",

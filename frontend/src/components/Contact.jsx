@@ -57,7 +57,7 @@ export function Contact() {
               <div className="mb-4 flex items-center gap-2">
                 <MessageCircle size={14} style={{ color: "var(--ctp-accent)"}}/>
                 <span
-                  className="font-mono text-xs uppercase tracking-widest"
+                  className="font-sans text-xs font-semibold uppercase tracking-widest"
                   style={{ color: "var(--ctp-subtext0)" }}
                 >
                   Open to connect
@@ -65,7 +65,7 @@ export function Contact() {
               </div>
 
               <h2
-                className="mb-4 max-w-2xl font-mono leading-tight text-balance"
+                className="mb-4 max-w-2xl font-sans font-bold leading-tight text-balance"
                 style={{
                   color: "var(--ctp-text)",
                   fontSize: "clamp(1.45rem, 3vw, 2.15rem)",
@@ -75,7 +75,7 @@ export function Contact() {
               </h2>
 
               <p
-                className="max-w-2xl font-mono text-sm leading-relaxed"
+                className="max-w-2xl font-sans text-base leading-relaxed"
                 style={{ color: "var(--ctp-subtext1)" }}
               >
                 I'm always open to discussing software engineering, AI,
@@ -90,7 +90,7 @@ export function Contact() {
                 href={profileLinks.email.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2 font-mono text-sm transition-opacity hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2 font-sans text-sm font-semibold transition-opacity hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 style={{
                   background: "var(--ctp-accent)",
                   color: "#0d1310",
@@ -104,7 +104,7 @@ export function Contact() {
                 href={profileLinks.linkedin.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2 font-mono text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2 font-sans text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 style={{
                   border: "1px solid var(--ctp-surface1)",
                   color: "var(--ctp-text)",
@@ -127,7 +127,7 @@ export function Contact() {
             >
               <div className="mb-4 flex items-center gap-2">
                 <MapPin size={14} style={{ color: "var(--ctp-accent)" }} />
-                <p className="font-mono text-sm" style={{ color: "var(--ctp-text)" }}>
+                <p className="font-sans text-sm font-medium" style={{ color: "var(--ctp-text)" }}>
                   Philippines
                 </p>
               </div>
@@ -153,10 +153,10 @@ export function Contact() {
                         <Icon size={15} />
                       </span>
                       <span className="min-w-0">
-                        <span className="block font-mono text-xs" style={{ color: "var(--ctp-subtext0)" }}>
+                        <span className="block font-sans text-xs" style={{ color: "var(--ctp-subtext0)" }}>
                           {label}
                         </span>
-                        <span className="block truncate font-mono text-sm" style={{ color: "var(--ctp-text)" }}>
+                        <span className="block truncate font-sans text-sm font-medium" style={{ color: "var(--ctp-text)" }}>
                           {value}
                         </span>
                       </span>
@@ -174,7 +174,7 @@ export function Contact() {
               {topics.map((topic) => (
                 <span
                   key={topic}
-                  className="rounded px-2 py-1 font-mono"
+                  className="rounded px-2 py-1 font-sans font-medium"
                   style={{
                     background: "var(--ctp-surface0)",
                     color: "var(--ctp-accent)",

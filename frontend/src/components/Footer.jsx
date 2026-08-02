@@ -11,7 +11,7 @@ export function Footer() {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span className="font-mono text-sm" style={{ color: "var(--ctp-subtext0)" }}>~/</span>
-            <span className="font-mono text-sm" style={{ color: "var(--ctp-subtext0)" }}>© 2026 Aaron Arada</span>
+            <span className="font-sans text-sm" style={{ color: "var(--ctp-subtext0)" }}>© 2026 Aaron Arada</span>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">

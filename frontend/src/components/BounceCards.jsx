@@ -172,17 +172,17 @@ export default function BounceCards({
           {(cardTitles[idx] || cardDescriptions[idx]) && (
             <div className="card-caption pointer-events-none absolute inset-x-0 bottom-0 translate-y-3 space-y-1 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-3 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus:translate-y-0 group-focus:opacity-100">
               {cardKickers[idx] && (
-                <p className="font-mono text-[0.62rem] uppercase tracking-wider text-[var(--ctp-green)]">
+                <p className="font-sans text-[0.62rem] font-semibold uppercase tracking-wider text-[var(--ctp-green)]">
                   {cardKickers[idx]}
                 </p>
               )}
               {cardTitles[idx] && (
-                <p className="font-mono text-xs font-semibold leading-snug text-white">
+                <p className="font-sans text-xs font-semibold leading-snug text-white">
                   {cardTitles[idx]}
                 </p>
               )}
               {cardDescriptions[idx] && (
-                <p className="line-clamp-3 font-mono text-[0.68rem] leading-snug text-white/80">
+                <p className="line-clamp-3 font-sans text-[0.68rem] leading-snug text-white/80">
                   {cardDescriptions[idx]}
                 </p>
               )}

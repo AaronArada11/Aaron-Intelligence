@@ -182,7 +182,7 @@ function Chat({ onClose }) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={isLoading}
-            className="flex-1 bg-gray-800 border border-[var(--ctp-surface0)] rounded-xl px-3 py-2.5 pr-12 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-gray-800 border border-[var(--ctp-surface0)] rounded-xl px-3 py-2.5 pr-12 text-base text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed sm:text-sm"
           />
           <button
             type="submit"
@@ -197,7 +197,7 @@ function Chat({ onClose }) {
           </button>
         </form>
 
-        <p className="mt-2 text-[10px] text-gray-500 text-center">
+        <p className="mt-2 text-xs text-gray-400 text-center">
           Responses are generated from a knowledge base.
         </p>
       </footer>

@@ -27,7 +27,7 @@ export function ThemeSelector() {
                 boxShadow: flavor === key ? "inset 0 0 0 1px var(--ctp-accent)" : "none",
                 color: flavor === key ? "var(--ctp-text)" : "var(--ctp-subtext1)",
               }}
-              className="min-h-10 min-w-0 rounded-md px-3 py-2 font-mono text-sm transition-colors hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-text)]"
+              className="min-h-10 min-w-0 rounded-md px-3 py-2 font-sans text-sm font-medium transition-colors hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-text)]"
             >
               {label}
             </button>

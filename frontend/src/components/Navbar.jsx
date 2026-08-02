@@ -35,7 +35,7 @@ export function Navbar() {
       setSidebarOpen(false);
     }
 
-    setMobileOpen(!mobileOpen);
+    setMobileOpen((isOpen) => !isOpen);
   };
 
   return (
@@ -67,7 +67,7 @@ export function Navbar() {
               <a
                 key={link.label}
                 href={link.href}
-                className="font-mono text-sm transition-colors"
+                className="font-sans text-sm font-medium transition-colors"
                 aria-current={currentPath === link.href ? "page" : undefined}
                 style={{
                   color:
@@ -91,7 +91,7 @@ export function Navbar() {
 
             <button
               onClick={() => setSidebarOpen(true)}
-              className="font-mono text-sm transition-colors"
+              className="font-sans text-sm font-medium transition-colors"
               style={{ color: "var(--ctp-subtext0)" }}
             >
               More...
@@ -103,6 +103,9 @@ export function Navbar() {
             className="md:hidden"
             style={{ color: "var(--ctp-subtext0)" }}
             onClick={toggleMobileMenu}
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -111,6 +114,7 @@ export function Navbar() {
         {/* Mobile Menu */}
         {mobileOpen && (
           <div
+            id="mobile-navigation"
             className="md:hidden border-t"
             style={{
               background: "var(--ctp-base)",
@@ -122,7 +126,7 @@ export function Navbar() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="font-mono text-sm py-1"
+                  className="font-sans text-sm font-medium py-1"
                   aria-current={currentPath === link.href ? "page" : undefined}
                   style={{
                     color:
@@ -141,7 +145,7 @@ export function Navbar() {
                   setSidebarOpen(true);
                   setMobileOpen(false);
                 }}
-                className="font-mono text-sm py-1 text-left"
+                className="font-sans text-sm font-medium py-1 text-left"
                 style={{ color: "var(--ctp-accent)" }}
               >
                 More...
@@ -155,14 +159,19 @@ export function Navbar() {
       {sidebarOpen && (
         <>
           {/* Overlay */}
-          <div
-            className="fixed inset-0 bg-black/40 z-40"
+          <button
+            type="button"
+            className="fixed inset-0 z-40 bg-black/40"
             onClick={() => setSidebarOpen(false)}
+            aria-label="Close settings"
           />
 
           {/* Panel */}
           <div
             className="fixed top-0 right-0 h-screen w-80 z-50 border-l p-6 overflow-y-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Portfolio settings"
             style={{
               background: "var(--ctp-base)",
               borderColor: "var(--ctp-surface0)",
@@ -170,7 +179,7 @@ export function Navbar() {
           >
             <div className="flex items-center justify-between mb-8">
               <span
-                className="font-mono uppercase tracking-widest"
+                className="font-sans font-semibold uppercase tracking-widest"
                 style={{
                   fontSize: "0.65rem",
                   color: "var(--ctp-accent)",
@@ -182,6 +191,7 @@ export function Navbar() {
               <button
                 onClick={() => setSidebarOpen(false)}
                 style={{ color: "var(--ctp-subtext0)" }}
+                aria-label="Close settings"
               >
                 <X size={18} />
               </button>
@@ -192,7 +202,7 @@ export function Navbar() {
               href="https://terminal-aaron.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 flex min-h-10 w-full min-w-0 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-mono text-sm text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="mt-5 flex min-h-10 w-full min-w-0 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-sans text-sm font-medium text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={{
                 outlineColor: "var(--ctp-accent)",
               }}

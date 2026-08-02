@@ -26,7 +26,7 @@ export function Hero() {
       <div className="mx-auto flex max-w-4xl flex-col gap-8">
         <div className="space-y-5">
           <h1
-            className="scroll-parallax scroll-parallax-soft font-mono leading-tight text-balance"
+            className="scroll-parallax scroll-parallax-soft font-sans font-bold leading-tight text-balance"
             style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)", color: "var(--ctp-text)" }}
           >
             Hi! I'm{" "}
@@ -34,17 +34,17 @@ export function Hero() {
           </h1>
 
           <p
-            className="scroll-parallax scroll-parallax-soft max-w-2xl font-mono leading-relaxed text-pretty"
-            style={{ fontSize: "0.92rem", color: "var(--ctp-text)", lineHeight: "1.8" }}
+            className="scroll-parallax scroll-parallax-soft max-w-2xl font-sans leading-relaxed text-pretty"
+            style={{ fontSize: "1rem", color: "var(--ctp-text)", lineHeight: "1.75" }}
           >
             I'm a Computer Science Student @{" "}
             <GoldLink href="https://www.feutech.edu.ph/">FEUTECH</GoldLink>. I enjoy developing AI-powered applications, experimenting with emerging technologies, and transforming ideas into practical solutions that create meaningful impact.
           </p>
         </div>
 
-        <div className="scroll-parallax scroll-parallax-soft flex flex-wrap items-center gap-3 font-mono" style={{ fontSize: "0.85rem" }}>
+        <div className="scroll-parallax scroll-parallax-soft flex flex-wrap items-center gap-3 font-sans" style={{ fontSize: "0.85rem" }}>
           <span
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-mono text-sm text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] hover:shadow-[0_4px_0_var(--ctp-surface0)] active:translate-y-0 active:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-sans text-sm font-medium text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{
               outlineColor: "var(--ctp-accent)",
             }}
@@ -56,7 +56,7 @@ export function Hero() {
             href="https://terminal-aaron.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-mono text-sm text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-sans text-sm font-medium text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{
               outlineColor: "var(--ctp-accent)",
             }}
@@ -67,7 +67,7 @@ export function Hero() {
           <a
             href="/Aaron-Arada-Resume.pdf"
             download
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-mono text-sm text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] hover:shadow-[0_4px_0_var(--ctp-surface0)] active:translate-y-0 active:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-sans text-sm font-medium text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{
               outlineColor: "var(--ctp-accent)",
             }}
@@ -77,7 +77,7 @@ export function Hero() {
           </a>
         </div>
 
-        <div className="scroll-parallax scroll-parallax-card flex flex-wrap items-center gap-x-3 gap-y-3 font-mono" style={{ fontSize: "0.85rem" }}>
+        <div className="scroll-parallax scroll-parallax-card flex flex-wrap items-center gap-x-3 gap-y-3 font-sans" style={{ fontSize: "0.85rem" }}>
           {[
             { icon: <FolderGit2 size={14} />, ...profileLinks.github },
             { icon: <User size={14} />, ...profileLinks.linkedin },

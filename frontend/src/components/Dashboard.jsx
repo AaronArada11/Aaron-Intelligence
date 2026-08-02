@@ -19,7 +19,7 @@ function Card({ children, className = "" }) {
 function SectionLabel({ children }) {
   return (
     <p
-      className="font-mono uppercase tracking-widest"
+      className="font-sans font-semibold uppercase tracking-widest"
       style={{ fontSize: "0.65rem", color: "var(--ctp-accent)" }}
     >
       {children}
@@ -134,19 +134,19 @@ export function Dashboard() {
 
             <div className="space-y-2.5">
               {commitsStatus === "loading" && (
-                <p className="font-mono text-sm" style={{ color: "var(--ctp-subtext0)" }}>
+                <p className="font-sans text-sm" style={{ color: "var(--ctp-subtext0)" }}>
                   Loading commits...
                 </p>
               )}
 
               {commitsStatus === "error" && (
-                <p className="font-mono text-sm" style={{ color: "var(--ctp-red, #f38ba8)" }}>
+                <p className="font-sans text-sm" style={{ color: "var(--ctp-red, #f38ba8)" }}>
                   {commitsError}
                 </p>
               )}
 
               {commitsStatus === "ready" && commits.length === 0 && (
-                <p className="font-mono text-sm" style={{ color: "var(--ctp-subtext0)" }}>
+                <p className="font-sans text-sm" style={{ color: "var(--ctp-subtext0)" }}>
                   No commits found.
                 </p>
               )}

@@ -136,13 +136,13 @@ function SectionIntro({ command, title, children }) {
     <div className="space-y-3">
       <CommandLabel>{command}</CommandLabel>
       <h2
-        className="max-w-3xl font-mono leading-tight text-balance"
+        className="max-w-3xl font-sans font-bold leading-tight text-balance"
         style={{ color: "var(--ctp-text)", fontSize: "clamp(1.35rem, 3vw, 2rem)" }}
       >
         {title}
       </h2>
       {children && (
-        <p className="max-w-3xl font-mono text-sm leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
+        <p className="max-w-3xl font-sans text-base leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
           {children}
         </p>
       )}
@@ -170,7 +170,7 @@ function TagList({ tags }) {
       {tags.map((tag) => (
         <span
           key={tag}
-          className="rounded px-2 py-1 font-mono text-xs"
+          className="rounded px-2 py-1 font-sans text-xs font-medium"
           style={{
             background: "var(--ctp-surface0)",
             color: "var(--ctp-subtext1)",
@@ -397,7 +397,7 @@ function EducationCard({ item }) {
       style={{
         background: "var(--ctp-mantle)",
         border: "1px solid var(--ctp-surface0)",
-        boxShadow: `inset 4px 0 0 ${item.accent}`,
+        borderColor: `color-mix(in srgb, ${item.accent} 45%, var(--ctp-surface0))`,
       }}
     >
       <SchoolLogoHoverPanel item={item} />
@@ -406,17 +406,17 @@ function EducationCard({ item }) {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0 space-y-2">
             <h3
-              className="font-mono leading-tight text-balance"
+              className="font-sans font-semibold leading-tight text-balance"
               style={{ color: "var(--ctp-text)", fontSize: "clamp(1.15rem, 2.5vw, 1.5rem)" }}
             >
               {item.degree}
             </h3>
-            <p className="font-mono text-sm font-semibold" style={{ color: "var(--ctp-text)" }}>
+            <p className="font-sans text-sm font-semibold" style={{ color: "var(--ctp-text)" }}>
               {item.school}
             </p>
           </div>
           <span
-            className="inline-flex w-fit shrink-0 items-center rounded-full px-3 py-1 font-mono text-xs whitespace-nowrap"
+            className="inline-flex w-fit shrink-0 items-center rounded-full px-3 py-1 font-sans text-xs font-medium whitespace-nowrap"
             style={{
               background: "var(--ctp-surface0)",
               color: "var(--ctp-subtext1)",
@@ -426,12 +426,12 @@ function EducationCard({ item }) {
           </span>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-sm" style={{ color: "var(--ctp-subtext1)" }}>
+        <div className="flex items-center gap-2 font-sans text-sm" style={{ color: "var(--ctp-subtext1)" }}>
           <MapPin size={14} style={{ color: item.accent }} />
           {item.location}
         </div>
 
-        <p className="font-mono text-sm leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
+        <p className="font-sans text-base leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
           {item.summary}
         </p>
 
@@ -449,7 +449,7 @@ export function AboutPage({ onOpenChat }) {
           <div className="space-y-8">
             <a
               href="/"
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-mono text-sm transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-sans text-sm font-medium transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={{
                 color: "var(--ctp-text)",
                 outlineColor: "var(--ctp-accent)",
@@ -462,7 +462,7 @@ export function AboutPage({ onOpenChat }) {
             <div className="space-y-5">
               <CommandLabel>$ cat ~/about-aaron.md</CommandLabel>
               <h1
-                className="max-w-3xl font-mono leading-tight text-balance"
+                className="max-w-3xl font-sans font-bold leading-tight text-balance"
                 style={{
                   color: "var(--ctp-text)",
                   fontSize: "clamp(2rem, 5vw, 3.15rem)",
@@ -471,8 +471,8 @@ export function AboutPage({ onOpenChat }) {
                 About Me
               </h1>
               <p
-                className="max-w-2xl font-mono text-sm leading-relaxed text-pretty"
-                style={{ color: "var(--ctp-subtext1)", lineHeight: "1.85" }}
+                className="max-w-2xl font-sans text-base leading-relaxed text-pretty"
+                style={{ color: "var(--ctp-subtext1)", lineHeight: "1.75" }}
               >
                I'm Aaron Arada, a Computer Science student based in Manila. My work revolves around AI, full-stack development, and building tools that make complex ideas easier to understand and use. This portfolio is a living project. It grows alongside my experiences, projects, and goals.
               <br />
@@ -491,9 +491,9 @@ export function AboutPage({ onOpenChat }) {
         <div className="mx-auto max-w-5xl space-y-6">
           <SectionIntro
             command="$ cat ~/education.json"
-          
+            title="Education and foundations."
           >
-           
+            The academic path and core disciplines shaping how I approach software and AI.
           </SectionIntro>
 
           <div className="space-y-5">
@@ -534,7 +534,7 @@ export function AboutPage({ onOpenChat }) {
                       href={cert.credentialUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-lg border border-[var(--ctp-surface1)] px-3 py-1.5 font-mono text-xs transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                      className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-lg border border-[var(--ctp-surface1)] px-3 py-1.5 font-sans text-xs font-medium transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                       style={{ color: "var(--ctp-text)", outlineColor: "var(--ctp-accent)" }}
                     >
                       View Credential
@@ -543,10 +543,10 @@ export function AboutPage({ onOpenChat }) {
                 </div>
 
                 <div className="space-y-3">
-                  <h3 className="font-mono text-sm leading-snug" style={{ color: "var(--ctp-text)" }}>
+                  <h3 className="font-sans text-sm font-semibold leading-snug" style={{ color: "var(--ctp-text)" }}>
                     {cert.name}
                   </h3>
-                  <div className="space-y-2 font-mono text-xs" style={{ color: "var(--ctp-subtext1)" }}>
+                  <div className="space-y-2 font-sans text-xs" style={{ color: "var(--ctp-subtext1)" }}>
                     <p>{cert.issuer}</p>
                     <p className="inline-flex items-center gap-2">
                       <CalendarDays size={13} style={{ color: "var(--ctp-accent)" }} />
@@ -577,14 +577,14 @@ export function AboutPage({ onOpenChat }) {
               <Bot size={15} style={{ color: "var(--ctp-accent)" }} />
               <CommandLabel>Try the assistant</CommandLabel>
             </div>
-            <p className="max-w-2xl font-mono text-sm leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
+            <p className="max-w-2xl font-sans text-base leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
               Use the chatbot to ask about my projects, skills, resume, or what I am currently building.
             </p>
           </div>
           <button
             type="button"
             onClick={onOpenChat}
-            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-mono text-sm transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-sans text-sm font-medium transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{
               color: "var(--ctp-text)",
               outlineColor: "var(--ctp-accent)",
