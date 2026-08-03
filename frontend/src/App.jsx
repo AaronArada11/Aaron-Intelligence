@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { ThemeProvider } from './components/ThemeContext'
 import { Navbar } from './components/Navbar'
 import { Hero } from './components/Hero'
@@ -28,6 +28,12 @@ function App() {
     window.addEventListener('popstate', handleLocationChange)
     return () => window.removeEventListener('popstate', handleLocationChange)
   }, [])
+
+  useLayoutEffect(() => {
+    if (currentPath !== '/' || window.location.hash !== '#contact') return
+
+    document.getElementById('contact')?.scrollIntoView()
+  }, [currentPath])
 
   const isAboutPage = currentPath === '/about'
   const isProjectsPage = currentPath === '/projects'

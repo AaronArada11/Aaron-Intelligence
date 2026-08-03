@@ -5,6 +5,7 @@ import {
   Terminal,
 } from "lucide-react";
 import { projects } from "../projectsData";
+import { color } from "motion";
 
 const NON_PATH_CHARACTERS = /[^a-z0-9]+/g;
 const EDGE_DASHES = /(^-|-$)/g;
@@ -30,9 +31,11 @@ function ProjectPreview({ project, priority }) {
   return (
     <div
       className="project-preview"
-      style={{ "--project-accent": project.previewColor }}
+      style={{ color: "var(--ctp-accent)" }}
     >
-      <ProjectCommand className="project-preview__command">
+      <ProjectCommand 
+      className="project-preview__command"
+      >
         open ./screenshots/preview.png
       </ProjectCommand>
       <div className="project-preview__window">

@@ -7,7 +7,7 @@ export const projects = [
     shortDescription:
       "Registry-driven web utility catalog for media, document, image, and QR workflows.",
     description:
-      "Extensible public web app for focused utilities, including QR generation, permitted-media downloads, image conversion, and PDF-to-DOCX conversion.",
+      "Extensible web app for focused utilities, including QR generation, permitted-media downloads, image conversion, and PDF-to-DOCX conversion.",
     tags: ["Vite", "Python", "FastAPI", "FFmpeg", "Redis", "S3"],
     role: "Full-stack Developer",
     context: "Personal project",
@@ -31,7 +31,7 @@ export const projects = [
     shortDescription:
       "Real-time Filipino Sign Language recognition and translation across multiple Philippine languages.",
     description:
-      "Machine learning-powered Filipino Sign Language recognition and translation system that uses webcam input to recognize FSL gestures and translate them into readable text across multiple Philippine languages. Built during ACM TechSprint: Asteria 2026.",
+      "Machine learning-powered Filipino Sign Language recognition and translation system that uses webcam input to recognize FSL gestures and translate them into readable text across multiple Philippine dialects. Built during ACM TechSprint: Asteria 2026.",
     tags: ["React", "Vite", "TensorFlow", "MediaPipe", "OpenCV", "Railway", "Vercel"],
     role: "ML Developer",
     context: "ACM TechSprint: Asteria 2026",
@@ -82,7 +82,7 @@ export const projects = [
     shortDescription:
       "Interactive visual lessons for sorting and pathfinding algorithms.",
     description:
-      "Interactive algorithm visualization platform designed to help students and developers understand fundamental computer science concepts through real-time animations and visual feedback.",
+      "Interactive algorithm visualization tool designed to help students and developers understand fundamental computer science concepts through real-time animations and visual feedback.",
     tags: ["React", "JavaScript", "CSS"],
     role: "Frontend Developer",
     context: "Educational project",
