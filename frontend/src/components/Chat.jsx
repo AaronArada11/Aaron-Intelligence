@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Send, Bot, User } from 'lucide-react'
+import { Send, User } from 'lucide-react'
 import ChatButton from './ChatButton'
 import '../Chat.css'
 
 const API_URL = '/chat'
+const BOT_AVATAR_SRC = '/images/AaronIntelligence_AVATAR.png'
 const RATE_LIMIT_MESSAGE = 'Aaron Intelligence is temporarily rate limited. Please wait a moment and try again.'
 const GENERIC_ERROR_MESSAGE = 'Sorry, I encountered an error while generating a response. Please try again in a moment.'
 
@@ -110,8 +111,12 @@ function Chat({ onClose }) {
               className={`flex gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role === 'assistant' && (
-                <div className="flex-shrink-0 w-7 h-7 rounded-full border border-[var(--ctp-surface0)] bg-[var(--ctp-mantle)] flex items-center justify-center shadow-lg">
-                  <Bot className="w-3.5 h-3.5 text-[var(--ctp-accent)]" />
+                <div className="size-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--ctp-surface0)] bg-[var(--ctp-mantle)] shadow-lg">
+                  <img
+                    src={BOT_AVATAR_SRC}
+                    alt=""
+                    className="h-full w-full scale-150 object-cover"
+                  />
                 </div>
               )}
 
@@ -143,8 +148,12 @@ function Chat({ onClose }) {
 
           {isLoading && (
             <div className="flex gap-2.5 justify-start">
-              <div className="flex-shrink-0 w-7 h-7 rounded-full border border-[var(--ctp-surface0)] bg-[var(--ctp-mantle)] flex items-center justify-center shadow-lg">
-                <Bot className="w-3.5 h-3.5 text-[var(--ctp-accent)]" />
+              <div className="size-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--ctp-surface0)] bg-[var(--ctp-mantle)] shadow-lg">
+                <img
+                  src={BOT_AVATAR_SRC}
+                  alt=""
+                  className="h-full w-full scale-150 object-cover"
+                />
               </div>
               <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-[var(--ctp-mantle)] border border-[var(--ctp-accent)]">
                 <div className="flex gap-1.5 items-center">
