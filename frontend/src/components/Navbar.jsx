@@ -43,8 +43,11 @@ export function Navbar() {
       <nav
         className="sticky top-0 z-50"
         style={{
-          background: "var(--ctp-mantle)",
-          borderBottom: "1px solid var(--ctp-surface0)",
+          background: "color-mix(in srgb, var(--ctp-mantle) 70%, transparent)",
+          borderBottom:
+            "1px solid color-mix(in srgb, var(--ctp-surface0) 70%, transparent)",
+          backdropFilter: "blur(16px) saturate(140%)",
+          WebkitBackdropFilter: "blur(16px) saturate(140%)",
         }}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-12">
@@ -117,7 +120,7 @@ export function Navbar() {
             id="mobile-navigation"
             className="md:hidden border-t"
             style={{
-              background: "var(--ctp-base)",
+              background: "transparent",
               borderColor: "var(--ctp-surface0)",
             }}
           >
