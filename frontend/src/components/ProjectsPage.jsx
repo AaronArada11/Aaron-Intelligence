@@ -5,7 +5,6 @@ import {
   Terminal,
 } from "lucide-react";
 import { projects } from "../projectsData";
-import { color } from "motion";
 
 const NON_PATH_CHARACTERS = /[^a-z0-9]+/g;
 const EDGE_DASHES = /(^-|-$)/g;

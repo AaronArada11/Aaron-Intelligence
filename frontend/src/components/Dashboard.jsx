@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { GitCommitHorizontal, ExternalLink, Palette, ChartNoAxesColumnIncreasing } from "lucide-react";
+import { GitCommitHorizontal, ExternalLink, Palette } from "lucide-react";
 import { ThemeSelector } from "./ThemeSelector";
-import { SortingVisualizer } from "./SortingVisualizer"
 
 const COMMITS_API_URL = "/github-commits";
 
@@ -218,17 +217,6 @@ export function Dashboard() {
                   </span>
                 ))}
               </div>
-            </div>
-          </Card>
-
-          {/* AlgoVisualizer */}
-          <Card className="md:col-span-2 lg:col-span-3">
-            <div className="mb-4 flex items-center gap-2">
-              <ChartNoAxesColumnIncreasing size={13} style={{ color: "var(--ctp-accent)" }} />
-              <SectionLabel>AlgoVisualizer</SectionLabel>
-            </div>
-            <div>
-              <SortingVisualizer />
             </div>
           </Card>
 
