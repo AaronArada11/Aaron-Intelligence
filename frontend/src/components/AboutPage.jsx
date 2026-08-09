@@ -20,7 +20,7 @@ const education = [
     location: "Manila, PH",
     period: "2024 - Present",
     summary:
-      "Studying Computer Science with a Software Engineering specialization, with current focus on AI systems, web development, databases, and applied software projects.",
+      "Studying computer science with a software engineering specialization, focused on AI systems, web development, databases, and applied software projects.",
     tags: ["Software Engineering", "Web Development", "AI Systems", "Database Systems"],
     imageSrc: "/images/education/feu-tech.png",
     imageAlt: "FEU Institute of Technology campus or school photo",
@@ -34,7 +34,7 @@ const education = [
     location: "Antipolo, PH",
     period: "2022 - 2024",
     summary:
-      "Completed the STEM track, building a strong foundation in mathematics, research, and analytical thinking that prepared me for Computer Science and software engineering.",
+      "Completed the STEM track and built a foundation in mathematics, research, and analytical thinking for computer science and software engineering.",
     tags: ["STEM", "Research", "Engineering", "Foundations"],
     imageSrc: "/images/education/la-salle-college-antipolo.png",
     imageAlt: "La Salle College Antipolo school photo",
@@ -310,9 +310,9 @@ function EventsSection() {
       <div className="mx-auto max-w-5xl space-y-6">
         <SectionIntro
           command="$ ls ~/events/photos"
-          title="Event photos and community moments."
+          title="Events and community"
         >
-          A single interactive stack for conferences, meetups, and learning events. Hover a photo to reveal the event details.
+          Browse conferences, meetups, and learning events I've attended. Select a photo to see the event details.
         </SectionIntro>
 
         <div className="flex min-h-[19rem] items-center justify-center overflow-visible py-6 sm:min-h-[23rem] sm:py-8 lg:min-h-[26rem]">
@@ -474,10 +474,10 @@ export function AboutPage({ onOpenChat }) {
                 className="max-w-2xl font-sans text-base leading-relaxed text-pretty"
                 style={{ color: "var(--ctp-subtext1)", lineHeight: "1.75" }}
               >
-               I'm Aaron Arada, a Computer Science student based in Manila. My work revolves around AI, full-stack development, and building tools that make complex ideas easier to understand and use. This portfolio is a living project. It grows alongside my experiences, projects, and goals.
+               I'm Aaron Arada, a computer science student in Manila focused on AI and full-stack development. I build tools that make complex ideas easier to understand and use, and I update this portfolio as my work evolves.
               <br />
               <br />
-              Outside of software, you'll usually find me playing Valorant, Counter-Strike 2, or Hogwarts Legacy. When I'm away from my desk, I enjoy playing billiards and photography. Whether I'm solving technical problems or learning something new, I enjoy challenges that push me to improve both as a developer and as a person.
+              Outside software, I play Valorant, Counter-Strike 2, and Hogwarts Legacy. Away from my desk, I enjoy billiards and photography. I like challenges that sharpen both my technical judgment and the way I work with people.
               </p>
             </div>
 
@@ -491,9 +491,9 @@ export function AboutPage({ onOpenChat }) {
         <div className="mx-auto max-w-5xl space-y-6">
           <SectionIntro
             command="$ cat ~/education.json"
-            title="Education and foundations."
+            title="Education"
           >
-            The academic path and core disciplines shaping how I approach software and AI.
+            The coursework and technical foundations behind my approach to software and AI.
           </SectionIntro>
 
           <div className="space-y-5">
@@ -510,9 +510,9 @@ export function AboutPage({ onOpenChat }) {
         <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
           <SectionIntro
             command="$ cat ~/certifications.md"
-            title="Certifications and credentials."
+            title="Certifications"
           >
-            A compact place to keep credential progress, issued certificates, and skills covered.
+            Issued credentials, current coursework, and the skills each program covers.
           </SectionIntro>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -537,7 +537,7 @@ export function AboutPage({ onOpenChat }) {
                       className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-lg border border-[var(--ctp-surface1)] px-3 py-1.5 font-sans text-xs font-medium transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                       style={{ color: "var(--ctp-text)", outlineColor: "var(--ctp-accent)" }}
                     >
-                      View Credential
+                      View credential
                     </a>
                   )}
                 </div>
@@ -575,10 +575,10 @@ export function AboutPage({ onOpenChat }) {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Bot size={15} style={{ color: "var(--ctp-accent)" }} />
-              <CommandLabel>Try the assistant</CommandLabel>
+              <CommandLabel>Portfolio assistant</CommandLabel>
             </div>
             <p className="max-w-2xl font-sans text-base leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
-              Use the chatbot to ask about my projects, skills, resume, or what I am currently building.
+              Ask Aaron Intelligence about my projects, skills, experience, or current work.
             </p>
           </div>
           <button
@@ -590,7 +590,7 @@ export function AboutPage({ onOpenChat }) {
               outlineColor: "var(--ctp-accent)",
             }}
           >
-            Start a conversation
+            Ask Aaron Intelligence
           </button>
         </div>
       </section>

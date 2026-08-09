@@ -14,15 +14,6 @@ export function Footer() {
             <span className="font-sans text-sm" style={{ color: "var(--ctp-subtext0)" }}>© 2026 Aaron Arada</span>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            <span
-              className="font-mono rounded px-2 py-0.5"
-              style={{ fontSize: "0.7rem", background: "var(--ctp-surface0)", color: "var(--ctp-subtext0)" }}
-            >
-              views: <span style={{ color: "var(--ctp-green)" }}>(in development)</span>
-            </span>
-          </div>
-
         </div>
 
         <div className="flex gap-3">
@@ -35,7 +26,7 @@ export function Footer() {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={label}
+              aria-label={`Aaron Arada on ${label}`}
               className="p-2 rounded-lg hover:opacity-70 transition-opacity"
               style={{ color: "var(--ctp-subtext1)", background: "var(--ctp-surface0)" }}
             >

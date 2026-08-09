@@ -27,7 +27,7 @@ const topics = [
   "Artificial Intelligence",
   "Machine Learning",
   "Full-Stack Development",
-  "Automations",
+  "Automation",
 ];
 
 export function Contact() {
@@ -60,7 +60,7 @@ export function Contact() {
                   className="font-sans text-xs font-semibold uppercase tracking-widest"
                   style={{ color: "var(--ctp-subtext0)" }}
                 >
-                  Open to connect
+                  Open to opportunities
                 </span>
               </div>
 
@@ -71,17 +71,16 @@ export function Contact() {
                   fontSize: "clamp(1.45rem, 3vw, 2.15rem)",
                 }}
               >
-                Let's build something impactful together.
+                Have a project or role in mind?
               </h2>
 
               <p
                 className="max-w-2xl font-sans text-base leading-relaxed"
                 style={{ color: "var(--ctp-subtext1)" }}
               >
-                I'm always open to discussing software engineering, AI,
-                machine learning, project ideas, and career opportunities.
-                Send a note if you want to collaborate or talk through a
-                technical challenge.
+                I'm open to software engineering roles, collaborations on AI
+                projects, and conversations about technical work. Tell me what
+                you're working on and where I could help.
               </p>
             </div>
 
@@ -97,7 +96,7 @@ export function Contact() {
                   outlineColor: "var(--ctp-accent)",
                 }}
               >
-                Send email
+                Email Aaron
                 <Mail size={15} />
               </a>
               <a
@@ -128,7 +127,7 @@ export function Contact() {
               <div className="mb-4 flex items-center gap-2">
                 <MapPin size={14} style={{ color: "var(--ctp-accent)" }} />
                 <p className="font-sans text-sm font-medium" style={{ color: "var(--ctp-text)" }}>
-                  Philippines
+                  Manila, Philippines
                 </p>
               </div>
 

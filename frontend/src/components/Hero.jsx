@@ -37,8 +37,8 @@ export function Hero() {
             className="scroll-parallax scroll-parallax-soft max-w-2xl font-sans leading-relaxed text-pretty"
             style={{ fontSize: "1rem", color: "var(--ctp-text)", lineHeight: "1.75" }}
           >
-            I'm a Computer Science Student @{" "}
-            <GoldLink href="https://www.feutech.edu.ph/">FEUTECH</GoldLink>. I enjoy developing AI-powered applications, experimenting with emerging technologies, and transforming ideas into practical solutions that create meaningful impact.
+            I'm a 3rd year computer science student at{" "}
+            <GoldLink href="https://www.feutech.edu.ph/">FEUTECH</GoldLink>, focused on AI systems and full-stack development. I build practical tools that make complex ideas easier to understand and use.
           </p>
         </div>
 
@@ -52,18 +52,7 @@ export function Hero() {
             <MapPin size={14} />
             <span>Manila, PH</span>
           </span>
-          <a
-            href="https://terminal-aaron.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--ctp-surface1)] px-4 py-2 font-sans text-sm font-medium text-[var(--ctp-text)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-accent)] active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-            style={{
-              outlineColor: "var(--ctp-accent)",
-            }}
-          >
-            <Terminal size={14} />
-            Terminal
-          </a>
+
           <a
             href="/Aaron-Arada-Resume.pdf"
             download
@@ -73,7 +62,7 @@ export function Hero() {
             }}
           >
             <FileDown size={14} />
-            Resume
+            Download resume
           </a>
         </div>
 
@@ -107,7 +96,7 @@ export function Hero() {
               className="inline-flex min-h-11 items-center transition-opacity hover:opacity-70"
               style={{ color: "var(--ctp-subtext1)" }}
             >
-              More About me →
+              Learn more about me →
             </a>
           </span>
         </div>
