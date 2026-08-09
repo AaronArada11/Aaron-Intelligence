@@ -19,7 +19,7 @@ export function Projects() {
             className="transition-opacity hover:opacity-70"
             style={{ color: "var(--ctp-subtext1)" }}
           >
-            More projects →
+            View all projects →
           </a>
         </p>
 
@@ -58,6 +58,7 @@ export function Projects() {
                         rel="noopener noreferrer"
                         style={{ color: "var(--ctp-subtext0)" }}
                         className="hover:opacity-70 transition-opacity"
+                        aria-label={`View ${p.name} source code on GitHub`}
                       >
                         <FolderGit2 size={15} />
                       </a>
@@ -68,6 +69,7 @@ export function Projects() {
                           rel="noopener noreferrer"
                           style={{ color: "var(--ctp-subtext0)" }}
                           className="hover:opacity-70 transition-opacity"
+                          aria-label={`View ${p.name} live demo`}
                         >
                           <ExternalLink size={15} />
                         </a>
@@ -79,7 +81,7 @@ export function Projects() {
                     className="mb-4 flex-1 font-sans text-sm leading-relaxed"
                     style={{ color: "var(--ctp-subtext1)" }}
                   >
-                    {p.description}
+                    {p.shortDescription}
                   </p>
 
                   <div className="mt-auto flex flex-wrap gap-2">

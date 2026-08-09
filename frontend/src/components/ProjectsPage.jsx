@@ -59,12 +59,12 @@ function ProjectActions({ project }) {
       {project.liveDemo && (
         <a
           href={project.liveDemo}
-          aria-label={`Open ${project.name} project`}
+          aria-label={`View ${project.name} live demo`}
           target={isExternalDemo ? "_blank" : undefined}
           rel={isExternalDemo ? "noopener noreferrer" : undefined}
         >
           <span className="project-actions__prompt" aria-hidden="true">$</span>
-          open ./demo
+          open live-demo
           <ExternalLink size={15} aria-hidden="true" />
         </a>
       )}
@@ -75,7 +75,7 @@ function ProjectActions({ project }) {
         rel="noopener noreferrer"
       >
         <span className="project-actions__prompt" aria-hidden="true">$</span>
-        git remote -v
+        open source-code
         <FolderGit2 size={15} aria-hidden="true" />
       </a>
     </div>
@@ -148,9 +148,9 @@ export function ProjectsPage() {
           <ProjectCommand className="projects-hero__command">
             ls -la ~/projects
           </ProjectCommand>
-          <h1>My Projects</h1>
+          <h1>Projects</h1>
           <p className="projects-hero__output">
-            total {projects.length} · drwxr-xr-x · updated 2026
+            {projects.length} projects · last updated 2026
           </p>
           <div className="projects-hero__rule">
             <span>

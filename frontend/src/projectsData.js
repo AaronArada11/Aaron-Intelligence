@@ -2,30 +2,6 @@ import { BarChart2, Bot, Languages, MirrorRectangular, Wrench } from "lucide-rea
 
 export const projects = [
   {
-    name: "Aaron Toolkit",
-    year: "2026",
-    shortDescription:
-      "Registry-driven web utility catalog for media, document, image, and QR workflows.",
-    description:
-      "Extensible web app for focused utilities, including QR generation, permitted-media downloads, image conversion, and PDF-to-DOCX conversion.",
-    tags: ["Vite", "Python", "FastAPI", "FFmpeg", "Redis", "S3"],
-    role: "Full-stack Developer",
-    context: "Personal project",
-    category: "Developer utilities",
-    accentColor: "var(--ctp-accent)",
-    previewColor: "var(--ctp-green)",
-    image: "/images/projects/aaron-toolkit.png",
-    imageAlt:
-      "Aaron Toolkit interface showing its searchable catalog of four active utilities.",
-    highlights: [
-      "Built an extensible utility catalog where adding a tool manifest and feature module automatically updates search, navigation, and routing.",
-      "Ships four initial tools: a link QR generator, permitted YouTube downloader, image format converter, and PDF-to-Word converter.",
-      "Designed a production architecture with a Vite frontend, Python API and worker processes, Redis-backed queues, and S3-compatible artifact storage.",
-    ],
-    icon: Wrench,
-    github: "https://github.com/AaronArada11/aaron-toolkit",
-  },
-  {
     name: "KUMPAS",
     year: "2026",
     shortDescription:
@@ -77,30 +53,6 @@ export const projects = [
     liveDemo: "/",
   },
   {
-    name: "AlgoVisualizer",
-    year: "2026",
-    shortDescription:
-      "Interactive visual lessons for sorting and pathfinding algorithms.",
-    description:
-      "Interactive algorithm visualization tool designed to help students and developers understand fundamental computer science concepts through real-time animations and visual feedback.",
-    tags: ["React", "JavaScript", "CSS"],
-    role: "Frontend Developer",
-    context: "Educational project",
-    category: "Interactive systems",
-    accentColor: "var(--ctp-accent)",
-    previewColor: "var(--ctp-mauve)",
-    image: "/images/projects/algo-visualizer.png",
-    imageAlt:
-      "AlgoVisualizer sorting interface with algorithm controls and an array of green bars.",
-    highlights: [
-      "Turns sorting and pathfinding algorithms into step-by-step animations that expose comparisons, swaps, and traversal order.",
-      "Lets learners change algorithms and visualization parameters to understand how each approach behaves.",
-      "Designed the interface as an interactive learning tool for students building algorithm intuition.",
-    ],
-    icon: BarChart2,
-    github: "https://github.com/AaronArada11/AlgoVisualizer",
-  },
-  {
     name: "Mirror Mentor",
     year: "2026",
     shortDescription:
@@ -123,6 +75,53 @@ export const projects = [
     ],
     icon: MirrorRectangular,
     github: "https://github.com/Goodness-Gracious-GG/demo",
-    liveDemo: "https://demo-eight-delta-44.vercel.app/",
+  },
+  {
+    name: "Aaron Toolkit",
+    year: "2026",
+    shortDescription:
+      "Registry-driven web utility catalog for media, document, image, and QR workflows.",
+    description:
+      "Extensible web app for focused utilities, including QR generation, permitted-media downloads, image conversion, and PDF-to-DOCX conversion.",
+    tags: ["Vite", "Python", "FastAPI", "FFmpeg", "Redis", "S3"],
+    role: "Full-stack Developer",
+    context: "Personal project",
+    category: "Developer utilities",
+    accentColor: "var(--ctp-accent)",
+    previewColor: "var(--ctp-green)",
+    image: "/images/projects/aaron-toolkit.png",
+    imageAlt:
+      "Aaron Toolkit interface showing its searchable catalog of four active utilities.",
+    highlights: [
+      "Built an extensible utility catalog where adding a tool manifest and feature module automatically updates search, navigation, and routing.",
+      "Ships four initial tools: a link QR generator, permitted YouTube downloader, image format converter, and PDF-to-Word converter.",
+      "Designed a production architecture with a Vite frontend, Python API and worker processes, Redis-backed queues, and S3-compatible artifact storage.",
+    ],
+    icon: Wrench,
+    github: "https://github.com/AaronArada11/aaron-toolkit",
+  },
+  {
+    name: "AlgoVisualizer",
+    year: "2026",
+    shortDescription:
+      "Interactive visual lessons for sorting and pathfinding algorithms.",
+    description:
+      "Interactive algorithm visualization tool designed to help students and developers understand fundamental computer science concepts through real-time animations and visual feedback.",
+    tags: ["React", "JavaScript", "CSS"],
+    role: "Frontend Developer",
+    context: "Educational project",
+    category: "Interactive systems",
+    accentColor: "var(--ctp-accent)",
+    previewColor: "var(--ctp-mauve)",
+    image: "/images/projects/algo-visualizer.png",
+    imageAlt:
+      "AlgoVisualizer sorting interface with algorithm controls and an array of green bars.",
+    highlights: [
+      "Turns sorting and pathfinding algorithms into step-by-step animations that expose comparisons, swaps, and traversal order.",
+      "Lets learners change algorithms and visualization parameters to understand how each approach behaves.",
+      "Designed the interface as an interactive learning tool for students building algorithm intuition.",
+    ],
+    icon: BarChart2,
+    github: "https://github.com/AaronArada11/AlgoVisualizer",
   },
 ];
