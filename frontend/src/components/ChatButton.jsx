@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { Bot, ChevronDown, ChevronUp } from 'lucide-react'
 
 export default function ChatButton({ onClick, isOpen = false, embedded = false }) {
   return (
@@ -10,13 +10,17 @@ export default function ChatButton({ onClick, isOpen = false, embedded = false }
       style={{
         backgroundColor: "var(--ctp-base)",
       }}
-      className={`flex items-center justify-between border border-[var(--ctp-surface0)] px-5 py-4 text-left text-[var(--ctp-text)] transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-mantle)] ${
+      className={`flex items-center border border-[var(--ctp-surface0)] text-[var(--ctp-text)] transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-mantle)] ${
         embedded
-          ? "w-full border-x-0 border-t-0"
-          : "fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] max-w-80 rounded-xl shadow-2xl sm:bottom-6 sm:right-6"
+          ? "w-full justify-between border-x-0 border-t-0 px-5 py-4 text-left"
+          : "fixed right-4 bottom-4 z-50 size-14 justify-center rounded-full p-0 shadow-2xl sm:right-6 sm:bottom-6 sm:h-auto sm:w-80 sm:justify-between sm:rounded-xl sm:px-5 sm:py-4 sm:text-left"
       }`}
     >
-      <span className="flex min-w-0 flex-col gap-1">
+      {embedded ? null : (
+        <Bot className="size-5 sm:hidden" aria-hidden="true" />
+      )}
+
+      <span className={`${embedded ? "flex" : "hidden sm:flex"} min-w-0 flex-col gap-1`}>
         <span className="font-sans text-xs text-[var(--ctp-subtext1)]">
           Chat with
         </span>
@@ -31,9 +35,9 @@ export default function ChatButton({ onClick, isOpen = false, embedded = false }
       </span>
 
       {isOpen ? (
-        <ChevronUp className="h-5 w-5 flex-shrink-0 text-[var(--ctp-subtext0)]" />
+        <ChevronUp className={`${embedded ? "" : "hidden sm:block"} size-5 flex-shrink-0 text-[var(--ctp-subtext0)]`} />
       ) : (
-        <ChevronDown className="h-5 w-5 flex-shrink-0 text-[var(--ctp-subtext0)]" />
+        <ChevronDown className={`${embedded ? "" : "hidden sm:block"} size-5 flex-shrink-0 text-[var(--ctp-subtext0)]`} />
       )}
     </button>
   )

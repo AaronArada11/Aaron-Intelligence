@@ -75,3 +75,130 @@
   color: var(--ctp-subtext1);
   border-left: 2px solid var(--ctp-surface1);
 }
+
+.chat-shell {
+  right: 1rem;
+  bottom: 1rem;
+  width: 20rem;
+  height: min(510px, calc(100vh - 2rem));
+}
+
+.chat-empty-state {
+  min-height: 100%;
+  justify-content: center;
+}
+
+.chat-intro-message {
+  display: grid;
+  justify-items: center;
+  gap: 0.7rem;
+  width: min(100%, 34rem);
+  margin: 0 auto;
+  padding: 1rem 0.75rem 0.5rem;
+  color: var(--ctp-text);
+  text-align: center;
+}
+
+.chat-intro-message__icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  overflow: hidden;
+  border: 1px solid var(--ctp-surface0);
+  border-radius: 999px;
+  background: var(--ctp-mantle);
+  object-fit: cover;
+  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 20%);
+}
+
+.chat-intro-message__title {
+  margin: 0;
+  color: var(--ctp-text);
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.chat-intro-message__description {
+  max-width: 34ch;
+  margin: 0;
+  color: var(--ctp-subtext1);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.chat-suggestions {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0;
+  width: min(100%, 34rem);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.chat-suggestions__label {
+  margin: 0;
+  color: var(--ctp-subtext1);
+  font-family: var(--font-code);
+  font-size: 0.7rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.chat-suggestions__list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.chat-suggestion {
+  display: flex;
+  width: 100%;
+  min-height: 2.75rem;
+  align-items: center;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 0.65rem;
+  background: var(--ctp-base);
+  color: var(--ctp-text);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-align: left;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.chat-suggestion:hover {
+  border-color: var(--ctp-accent);
+  background: color-mix(in srgb, var(--ctp-accent) 8%, var(--ctp-base));
+  color: var(--ctp-accent);
+}
+
+.chat-suggestion:focus-visible {
+  outline: 2px solid var(--ctp-accent);
+  outline-offset: 3px;
+}
+
+.chat-suggestion:active {
+  transform: translateY(1px);
+}
+
+.chat-suggestion:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (min-width: 640px) {
+  .chat-shell {
+    right: 2rem;
+    bottom: 2rem;
+    width: 24rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-suggestion {
+    transition: none;
+  }
+}

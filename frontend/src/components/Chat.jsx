@@ -10,6 +10,11 @@ const BOT_AVATAR_SRC = '/images/AaronIntelligence_AVATAR.png'
 const RATE_LIMIT_MESSAGE = 'The assistant has reached its request limit. Wait a minute, then try again.'
 const NETWORK_ERROR_MESSAGE = 'I couldn\'t reach the assistant. Check your connection and try again.'
 const GENERIC_ERROR_MESSAGE = 'The assistant is unavailable right now. Please try again in a moment.'
+const SUGGESTED_QUESTIONS = [
+  'What can you help me with?',
+  'How can I contact Aaron?',
+  'What projects has Aaron worked on?',
+]
 
 const isRateLimitDetail = (value) => {
   const message = String(value || '').toLowerCase()
@@ -27,7 +32,7 @@ function Chat({ onClose }) {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Hi! I\'m Aaron Intelligence. Ask me about Aaron\'s projects, skills, education, or experience.'
+      content: 'You can ask me anything about Aaron and I\'ll help you find the relevant information.'
     }
   ])
   const [input, setInput] = useState('')
@@ -38,6 +43,13 @@ function Chat({ onClose }) {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const handleSuggestedQuestion = (question) => {
+    if (isLoading) return
+
+    setInput(question)
+    inputRef.current?.focus()
   }
 
   useEffect(() => {
@@ -99,54 +111,93 @@ function Chat({ onClose }) {
   return (
     <div
       id="aaron-intelligence-chat"
-      className="fixed bottom-4 right-4 z-50 flex h-[400px] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-[var(--ctp-accent)] bg-[var(--ctp-base)] text-[var(--ctp-text)] shadow-2xl shadow-black/50 sm:bottom-6 sm:right-6 sm:w-[420px]"
+      className="chat-shell fixed z-50 flex flex-col overflow-hidden rounded-lg border border-[var(--ctp-accent)] bg-[var(--ctp-base)] text-[var(--ctp-text)] shadow-2xl shadow-black/50"
     >
       <header className="bg-[var(--ctp-base)]">
         <ChatButton onClick={onClose} isOpen embedded />
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 py-4">
-        <div className="space-y-4">
-          {messages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`flex gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {msg.role === 'assistant' && (
-                <div className="size-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--ctp-surface0)] bg-[var(--ctp-mantle)] shadow-lg">
+        <div className={`flex flex-col gap-4 ${messages.length === 1 && !isLoading ? 'chat-empty-state' : ''}`}>
+          {messages.map((msg, idx) => {
+            const isIntroMessage = idx === 0 && msg.role === 'assistant'
+
+            if (isIntroMessage) {
+              return (
+                <div key={idx} className="chat-intro-message">
                   <img
                     src={BOT_AVATAR_SRC}
                     alt=""
-                    className="h-full w-full scale-150 object-cover"
+                    className="chat-intro-message__icon"
                   />
+                  <h2 className="chat-intro-message__title">Send a message to start the chat!</h2>
+                  <p className="chat-intro-message__description">{msg.content}</p>
                 </div>
-              )}
+              )
+            }
 
+            return (
               <div
-                className={`min-w-0 max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-words [overflow-wrap:anywhere] ${
-                  msg.role === 'user'
-                    ? 'border border-[var(--ctp-accent)] bg-[var(--ctp-surface0)] text-[var(--ctp-text)] rounded-br-sm'
-                    : 'bg-[var(--ctp-mantle)] border border-[var(--ctp-surface0)] text-[var(--ctp-text)] rounded-bl-sm'
-                }`}
+                key={idx}
+                className={`flex gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                {msg.role === 'assistant' ? (
-                  <div className="chat-markdown max-w-none break-words [overflow-wrap:anywhere]">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {msg.content}
-                    </ReactMarkdown>
+                {msg.role === 'assistant' && (
+                  <div className="size-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--ctp-surface0)] bg-[var(--ctp-mantle)] shadow-lg">
+                    <img
+                      src={BOT_AVATAR_SRC}
+                      alt=""
+                      className="h-full w-full scale-150 object-cover"
+                    />
                   </div>
-                ) : (
-                  <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{msg.content}</p>
+                )}
+
+                <div
+                  className={`min-w-0 max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-words [overflow-wrap:anywhere] ${
+                    msg.role === 'user'
+                      ? 'border border-[var(--ctp-accent)] bg-[var(--ctp-surface0)] text-[var(--ctp-text)] rounded-br-sm'
+                      : 'bg-[var(--ctp-mantle)] border border-[var(--ctp-surface0)] text-[var(--ctp-text)] rounded-bl-sm'
+                  }`}
+                >
+                  {msg.role === 'assistant' ? (
+                    <div className="chat-markdown max-w-none break-words [overflow-wrap:anywhere]">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{msg.content}</p>
+                  )}
+                </div>
+
+                {msg.role === 'user' && (
+                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-surface1)] border border-[var(--ctp-surface2)] flex items-center justify-center">
+                    <User className="w-3.5 h-3.5 text-[var(--ctp-text)]" />
+                  </div>
                 )}
               </div>
+            )
+          })}
 
-              {msg.role === 'user' && (
-                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[var(--ctp-surface1)] border border-[var(--ctp-surface2)] flex items-center justify-center">
-                  <User className="w-3.5 h-3.5 text-[var(--ctp-text)]" />
-                </div>
-              )}
-            </div>
-          ))}
+          {messages.length === 1 && !isLoading && (
+            <section className="chat-suggestions" aria-labelledby="chat-suggestions-label">
+              <p id="chat-suggestions-label" className="chat-suggestions__label">
+                Try asking:
+              </p>
+              <div className="chat-suggestions__list">
+                {SUGGESTED_QUESTIONS.map((question) => (
+                  <button
+                    key={question}
+                    type="button"
+                    className="chat-suggestion"
+                    onClick={() => handleSuggestedQuestion(question)}
+                    disabled={isLoading}
+                  >
+                    {question}
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
 
           {isLoading && (
             <div className="flex gap-2.5 justify-start">
@@ -191,7 +242,7 @@ function Chat({ onClose }) {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about Aaron's projects or experience"
+            placeholder="Ask something..."
             disabled={isLoading}
             className="flex-1 bg-[var(--ctp-base)] border border-[var(--ctp-surface1)] rounded-xl px-3 py-2.5 pr-12 text-base text-[var(--ctp-text)] placeholder:text-[var(--ctp-subtext1)] caret-[var(--ctp-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed sm:text-sm"
           />
