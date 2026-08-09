@@ -88,7 +88,10 @@ function ProjectShowcase({ project, index }) {
   return (
     <article
       className="project-showcase"
-      style={{ "--project-index": index }}
+      style={{
+        "--project-index": index,
+        "--project-accent": project.previewColor,
+      }}
     >
       <ProjectCommand
         className="project-showcase__command"
@@ -150,7 +153,7 @@ export function ProjectsPage() {
           </ProjectCommand>
           <h1>Projects</h1>
           <p className="projects-hero__output">
-            {projects.length} projects · last updated 2026
+            {projects.length} projects · last updated August 2026
           </p>
           <div className="projects-hero__rule">
             <span>

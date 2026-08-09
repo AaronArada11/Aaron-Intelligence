@@ -5,9 +5,9 @@ export const projects = [
     name: "KUMPAS",
     year: "2026",
     shortDescription:
-      "Real-time Filipino Sign Language recognition and translation across multiple Philippine languages.",
+      "Real-time FSL recognition across 29 gesture classes, with six-language translation from 30-frame landmark sequences.",
     description:
-      "Machine learning-powered Filipino Sign Language recognition and translation system that uses webcam input to recognize FSL gestures and translate them into readable text across multiple Philippine dialects. Built during ACM TechSprint: Asteria 2026.",
+      "Accessibility-focused Filipino Sign Language translator built during ACM TechSprint: Asteria 2026. As the ML Developer, I helped build and deploy a webcam recognition pipeline covering 29 gesture classes, 30-frame sequences, and 126 hand-landmark features per frame, with output across six Philippine languages.",
     tags: ["React", "Vite", "TensorFlow", "MediaPipe", "OpenCV", "Railway", "Vercel"],
     role: "ML Developer",
     context: "ACM TechSprint: Asteria 2026",
@@ -18,9 +18,10 @@ export const projects = [
     imageAlt:
       "KUMPAS homepage presenting its Filipino Sign Language translator and six-step workflow.",
     highlights: [
-      "Recognizes Filipino Sign Language gestures from a live webcam feed using a custom machine learning pipeline.",
-      "Translates recognized signs into readable Filipino and multiple Philippine languages in real time.",
-      "Built an accessible, responsive interface that makes multilingual communication easier for Deaf and hearing users.",
+      "An accessibility-focused web app that recognizes Filipino Sign Language from webcam input and translates signs into readable Philippine languages.",
+      "Built the recognition pipeline for 29 FSL gesture classes, representing each sample as a 30-frame sequence with 126 MediaPipe landmark features per frame.",
+      "Connected live webcam inference to readable translations across six Philippine languages and helped deploy the Vercel frontend and Railway backend.",
+      "Authored 14 of the team repository's 42 commits while contributing as the project's ML Developer.",
     ],
     icon: Languages,
     github: "https://github.com/Praybeyt-Benjamin-Techsprint/Kumpas",
@@ -30,9 +31,9 @@ export const projects = [
     name: "Aaron Intelligence",
     year: "2026",
     shortDescription:
-      "RAG-powered portfolio assistant grounded in a personal knowledge base.",
+      "RAG portfolio assistant evaluated with 65 questions; the current partial run returned successful responses for 93.8% of requests with a 2.63-second p50.",
     description:
-      "Personalized AI portfolio chatbot that answers questions about my projects, skills, education, and experience using a RAG-powered knowledge base.",
+      "Personalized portfolio assistant grounded in more than 30 knowledge documents about my projects, skills, education, and experience. Its three-run evaluation plan covers 195 requests, with 64 completed as of August 9, 2026.",
     tags: ["React", "Vite", "FastAPI", "Supabase", "pgvector", "Gemini"],
     role: "Full-stack Developer",
     context: "Personal project",
@@ -44,9 +45,10 @@ export const projects = [
       "Aaron Intelligence chat interface introducing the AI portfolio representative.",
     imageFit: "contain",
     highlights: [
-      "Built a retrieval-augmented assistant that answers questions about my projects, skills, education, and experience.",
-      "Grounds Gemini responses in a Supabase and pgvector knowledge base instead of relying on generic model memory.",
-      "Ships as a responsive React portfolio with a FastAPI retrieval layer and theme-aware interface.",
+      "A RAG-powered portfolio assistant that answers questions about my projects, skills, education, and experience from a curated knowledge base.",
+      "Grounds Gemini responses in a Supabase and pgvector knowledge base containing more than 30 curated documents.",
+      "Created a 65-question evaluation suite with three planned runs; the partial run completed 64 requests with 93.8% successful responses, a 2.63-second p50, and a 15.36-second p95.",
+      "Ships as a responsive React portfolio with a FastAPI retrieval layer, optional Langfuse tracing, and a theme-aware chat interface.",
     ],
     icon: Bot,
     github: "https://github.com/AaronArada11/Aaron-Intelligence",
@@ -56,9 +58,9 @@ export const projects = [
     name: "Mirror Mentor",
     year: "2026",
     shortDescription:
-      "A Socratic coding mentor that teaches through guided questions.",
+      "Socratic coding mentor with 17 endpoints and four-phase feedback, tested by five students and awarded fourth place.",
     description:
-      "AI-powered educational platform that helps students improve programming skills through guided Socratic questioning instead of direct answers. Built during ACM Developers Week.",
+      "AI-powered educational platform built during ACM Developers Week to teach programming through guided questions instead of direct answers. As Project Lead, I led backend development across 17 REST endpoints and a four-phase Socratic feedback workflow.",
     tags: ["Gemini", "Supabase", "FastAPI", "Vercel"],
     role: "Project Lead",
     context: "ACM Developers Week · 4th place",
@@ -69,9 +71,10 @@ export const projects = [
     imageAlt:
       "Mirror Mentor interface with side-by-side code editor and AI Professor panels.",
     highlights: [
-      "Guides students through code problems with Socratic questions rather than giving away direct answers.",
-      "Combines Gemini analysis with persistent Supabase conversations and secure authentication workflows.",
-      "Led the project from learning concept to a deployed educational platform, earning 4th place at ACM Developers Week.",
+      "An AI coding mentor that helps students solve programming problems through Socratic questions instead of direct answers.",
+      "Designed 17 REST endpoints for authentication, conversations, monitoring, and Gemini-assisted code analysis.",
+      "Structured feedback into four Socratic phases and tested conversation flow, authentication, feedback quality, and usability with five students.",
+      "Authored 18 of the team repository's 28 commits while leading the project to fourth place at ACM Developers Week.",
     ],
     icon: MirrorRectangular,
     github: "https://github.com/Goodness-Gracious-GG/demo",
@@ -80,9 +83,9 @@ export const projects = [
     name: "Aaron Toolkit",
     year: "2026",
     shortDescription:
-      "Registry-driven web utility catalog for media, document, image, and QR workflows.",
+      "Registry-driven utility platform with six tools, queued workers, object storage, container deployment, and 24 test files.",
     description:
-      "Extensible web app for focused utilities, including QR generation, permitted-media downloads, image conversion, and PDF-to-DOCX conversion.",
+      "Extensible utility platform with six registered tools spanning media downloads, document and image conversion, QR generation, and schedule comparison. The production architecture separates web and worker processes through Redis queues and S3-compatible artifact storage.",
     tags: ["Vite", "Python", "FastAPI", "FFmpeg", "Redis", "S3"],
     role: "Full-stack Developer",
     context: "Personal project",
@@ -91,11 +94,12 @@ export const projects = [
     previewColor: "var(--ctp-green)",
     image: "/images/projects/aaron-toolkit.png",
     imageAlt:
-      "Aaron Toolkit interface showing its searchable catalog of four active utilities.",
+      "Aaron Toolkit interface showing its searchable utility catalog.",
     highlights: [
-      "Built an extensible utility catalog where adding a tool manifest and feature module automatically updates search, navigation, and routing.",
-      "Ships four initial tools: a link QR generator, permitted YouTube downloader, image format converter, and PDF-to-Word converter.",
-      "Designed a production architecture with a Vite frontend, Python API and worker processes, Redis-backed queues, and S3-compatible artifact storage.",
+      "An extensible web utility platform for media downloads, file conversion, QR generation, and schedule comparison.",
+      "Built a manifest-driven catalog where each tool automatically joins search, navigation, and routing without a manual homepage update.",
+      "Ships six registered utilities across media, document, image, QR, and schedule-comparison workflows.",
+      "Separated web and worker processes with Redis-backed queues, S3-compatible storage, Docker deployment, and 24 backend, frontend, and end-to-end test files.",
     ],
     icon: Wrench,
     github: "https://github.com/AaronArada11/aaron-toolkit",
@@ -104,9 +108,9 @@ export const projects = [
     name: "AlgoVisualizer",
     year: "2026",
     shortDescription:
-      "Interactive visual lessons for sorting and pathfinding algorithms.",
+      "Interactive lessons for 11 algorithms: seven sorting methods and four pathfinding strategies.",
     description:
-      "Interactive algorithm visualization tool designed to help students and developers understand fundamental computer science concepts through real-time animations and visual feedback.",
+      "Interactive learning tool that turns 11 algorithms into step-by-step visual lessons. Learners can compare seven sorting methods and four pathfinding strategies while changing speed, array data, and traversal conditions.",
     tags: ["React", "JavaScript", "CSS"],
     role: "Frontend Developer",
     context: "Educational project",
@@ -117,9 +121,10 @@ export const projects = [
     imageAlt:
       "AlgoVisualizer sorting interface with algorithm controls and an array of green bars.",
     highlights: [
-      "Turns sorting and pathfinding algorithms into step-by-step animations that expose comparisons, swaps, and traversal order.",
-      "Lets learners change algorithms and visualization parameters to understand how each approach behaves.",
-      "Designed the interface as an interactive learning tool for students building algorithm intuition.",
+      "An interactive learning tool that visualizes sorting and pathfinding algorithms step by step.",
+      "Visualizes seven sorting algorithms, including merge, quick, heap, bubble, selection, radix, and insertion sort.",
+      "Demonstrates A*, Dijkstra, depth-first search, and breadth-first search with weighted grids and reconstructed paths.",
+      "Exposes comparisons, swaps, visits, and traversal order through configurable real-time animation controls.",
     ],
     icon: BarChart2,
     github: "https://github.com/AaronArada11/AlgoVisualizer",
