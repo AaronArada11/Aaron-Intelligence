@@ -261,7 +261,7 @@ function Chat({ onClose }) {
         </form>
 
         <p className="mt-2 text-xs text-[var(--ctp-subtext1)] text-center">
-          Answers come from Aaron's portfolio knowledge base and may be inaccurate.
+          Answers come from Aaron's knowledge base and may be inaccurate.
         </p>
       </footer>
     </div>
