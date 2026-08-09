@@ -4,7 +4,7 @@ export default function ChatButton({ onClick, isOpen = false, embedded = false }
   return (
     <button
       onClick={onClick}
-      aria-label={isOpen ? "Collapse chat" : "Open chat"}
+      aria-label={isOpen ? "Collapse Aaron Intelligence" : "Open Aaron Intelligence"}
       aria-expanded={isOpen}
       aria-controls="aaron-intelligence-chat"
       style={{

@@ -7,8 +7,9 @@ import '../Chat.css'
 
 const API_URL = '/chat'
 const BOT_AVATAR_SRC = '/images/AaronIntelligence_AVATAR.png'
-const RATE_LIMIT_MESSAGE = 'Aaron Intelligence is temporarily rate limited. Please wait a moment and try again.'
-const GENERIC_ERROR_MESSAGE = 'Sorry, I encountered an error while generating a response. Please try again in a moment.'
+const RATE_LIMIT_MESSAGE = 'The assistant has reached its request limit. Wait a minute, then try again.'
+const NETWORK_ERROR_MESSAGE = 'I couldn\'t reach the assistant. Check your connection and try again.'
+const GENERIC_ERROR_MESSAGE = 'The assistant is unavailable right now. Please try again in a moment.'
 
 const isRateLimitDetail = (value) => {
   const message = String(value || '').toLowerCase()
@@ -26,7 +27,7 @@ function Chat({ onClose }) {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Hello! I\'m Aaron Intelligence, the AI representative of Aaron. Feel free to ask questions about Aaron.'
+      content: 'Hi! I\'m Aaron Intelligence. Ask me about Aaron\'s projects, skills, education, or experience.'
     }
   ])
   const [input, setInput] = useState('')
@@ -81,13 +82,14 @@ function Chat({ onClose }) {
       setMessages(prev => [...prev, { role: 'assistant', content: data.answer }])
     } catch (err) {
       const isRateLimited = err.status === 429 || isRateLimitDetail(err.detail || err.message)
-      const message = isRateLimited ? RATE_LIMIT_MESSAGE : GENERIC_ERROR_MESSAGE
+      const isNetworkError = err instanceof TypeError && !err.status
+      const message = isRateLimited
+        ? RATE_LIMIT_MESSAGE
+        : isNetworkError
+          ? NETWORK_ERROR_MESSAGE
+          : GENERIC_ERROR_MESSAGE
 
       setError(message)
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: message
-      }])
     } finally {
       setIsLoading(false)
       inputRef.current?.focus()
@@ -156,7 +158,10 @@ function Chat({ onClose }) {
                 />
               </div>
               <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-[var(--ctp-mantle)] border border-[var(--ctp-accent)]">
-                <div className="flex gap-1.5 items-center">
+                <span className="sr-only" role="status">
+                  Aaron Intelligence is searching the portfolio knowledge base.
+                </span>
+                <div className="flex gap-1.5 items-center" aria-hidden="true">
                   <span className="w-2 h-2 rounded-full bg-[var(--ctp-overlay2)] animate-bounce [animation-delay:-0.3s]" />
                   <span className="w-2 h-2 rounded-full bg-[var(--ctp-overlay2)] animate-bounce [animation-delay:-0.15s]" />
                   <span className="w-2 h-2 rounded-full bg-[var(--ctp-overlay2)] animate-bounce" />
@@ -171,23 +176,28 @@ function Chat({ onClose }) {
 
       <footer className="border-t border-[var(--ctp-surface0)] bg-[var(--ctp-mantle)] px-4 py-3">
         {error && (
-          <div className="mb-2 px-3 py-2 rounded-lg bg-[var(--ctp-base)] border border-[var(--ctp-red)] text-[var(--ctp-red)] text-xs">
+          <div role="alert" className="mb-2 px-3 py-2 rounded-lg bg-[var(--ctp-base)] border border-[var(--ctp-red)] text-[var(--ctp-red)] text-xs">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="relative flex items-center gap-2">
+          <label htmlFor="aaron-intelligence-message" className="sr-only">
+            Ask a question about Aaron
+          </label>
           <input
+            id="aaron-intelligence-message"
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
+            placeholder="Ask about Aaron's projects or experience"
             disabled={isLoading}
             className="flex-1 bg-[var(--ctp-base)] border border-[var(--ctp-surface1)] rounded-xl px-3 py-2.5 pr-12 text-base text-[var(--ctp-text)] placeholder:text-[var(--ctp-subtext1)] caret-[var(--ctp-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--ctp-accent)] focus:border-[var(--ctp-accent)] transition-all disabled:opacity-50 disabled:cursor-not-allowed sm:text-sm"
           />
           <button
             type="submit"
+            aria-label="Send question"
             disabled={isLoading || !input.trim()}
             className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-[var(--ctp-accent)] transition-colors disabled:shadow-none ${
               input.trim()
@@ -200,7 +210,7 @@ function Chat({ onClose }) {
         </form>
 
         <p className="mt-2 text-xs text-[var(--ctp-subtext1)] text-center">
-          Responses are generated from a knowledge base.
+          Answers come from Aaron's portfolio knowledge base and may be inaccurate.
         </p>
       </footer>
     </div>
