@@ -1,4 +1,4 @@
-import { User, FolderGit2, Mail, MapPin, FileDown, Terminal } from "lucide-react";
+import { User, FolderGit2, Mail, MapPin, FileDown } from "lucide-react";
 import { profileLinks } from "../profileLinks";
 
 function GoldLink({ href, children }) {
