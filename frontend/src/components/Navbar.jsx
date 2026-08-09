@@ -97,7 +97,7 @@ export function Navbar() {
               className="font-sans text-sm font-medium transition-colors"
               style={{ color: "var(--ctp-subtext0)" }}
             >
-              More...
+              Customize
             </button>
           </div>
 
@@ -151,7 +151,7 @@ export function Navbar() {
                 className="font-sans text-sm font-medium py-1 text-left"
                 style={{ color: "var(--ctp-accent)" }}
               >
-                More...
+                Customize
               </button>
             </div>
           </div>
@@ -166,7 +166,7 @@ export function Navbar() {
             type="button"
             className="fixed inset-0 z-40 bg-black/40"
             onClick={() => setSidebarOpen(false)}
-            aria-label="Close settings"
+            aria-label="Close portfolio customization"
           />
 
           {/* Panel */}
@@ -174,7 +174,7 @@ export function Navbar() {
             className="fixed top-0 right-0 h-screen w-80 z-50 border-l p-6 overflow-y-auto"
             role="dialog"
             aria-modal="true"
-            aria-label="Portfolio settings"
+            aria-label="Customize portfolio appearance"
             style={{
               background: "var(--ctp-base)",
               borderColor: "var(--ctp-surface0)",
@@ -188,13 +188,13 @@ export function Navbar() {
                   color: "var(--ctp-accent)",
                 }}
               >
-                Settings
+                Customize portfolio
               </span>
 
               <button
                 onClick={() => setSidebarOpen(false)}
                 style={{ color: "var(--ctp-subtext0)" }}
-                aria-label="Close settings"
+                aria-label="Close portfolio customization"
               >
                 <X size={18} />
               </button>
@@ -211,7 +211,7 @@ export function Navbar() {
               }}
             >
               <Terminal size={14} />
-              Terminal
+              Open terminal portfolio
             </a>
           </div>
         </>

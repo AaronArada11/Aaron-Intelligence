@@ -81,8 +81,8 @@ export function Dashboard() {
         if (isMounted) {
           setCommitsError(
             error.name === "AbortError"
-              ? "GitHub commits request timed out."
-              : error.message
+              ? "Recent GitHub activity took too long to load. Try refreshing the page."
+              : "Recent GitHub activity is unavailable right now. View Aaron's GitHub profile instead."
           );
           setCommitsStatus("error");
         }
@@ -113,7 +113,7 @@ export function Dashboard() {
           <Card>
             <div className="flex items-center gap-2 mb-5">
               <Palette  size={13} style={{ color: "var(--ctp-accent)" }} />
-              <SectionLabel>Theme</SectionLabel>
+              <SectionLabel>Appearance</SectionLabel>
             </div>
 
             <ThemeSelector />
@@ -134,7 +134,7 @@ export function Dashboard() {
             <div className="space-y-2.5">
               {commitsStatus === "loading" && (
                 <p className="font-sans text-sm" style={{ color: "var(--ctp-subtext0)" }}>
-                  Loading commits...
+                  Loading recent GitHub activity...
                 </p>
               )}
 
@@ -146,7 +146,7 @@ export function Dashboard() {
 
               {commitsStatus === "ready" && commits.length === 0 && (
                 <p className="font-sans text-sm" style={{ color: "var(--ctp-subtext0)" }}>
-                  No commits found.
+                  No recent public commits to show.
                 </p>
               )}
 
@@ -191,7 +191,7 @@ export function Dashboard() {
                 className="inline-flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-sm"
                 style={{ color: "var(--ctp-accent)" }}
               >
-                View on GitHub
+                View Aaron's GitHub profile
                 <ExternalLink size={14} />
               </a>
               <div className="flex h-2 min-w-0 flex-1 overflow-visible rounded-full">
