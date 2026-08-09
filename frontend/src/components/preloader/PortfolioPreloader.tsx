@@ -3,6 +3,9 @@ import { useReducedMotion } from '../../hooks/useReducedMotion'
 import './portfolio-preloader.css'
 
 const DEFAULT_STORAGE_KEY = 'aaron-portfolio:preloader-complete'
+const PRELOADER_DURATION_MS = 600
+const PRELOADER_EXIT_DURATION_MS = 150
+const PRELOADER_ACTIVE_DURATION_MS = PRELOADER_DURATION_MS - PRELOADER_EXIT_DURATION_MS
 
 const BOOT_MESSAGES = [
   'Loading portfolio interface...',
@@ -45,6 +48,25 @@ function formatProgressBar(progress: number) {
   return `${'█'.repeat(filledBlocks)}${'░'.repeat(totalBlocks - filledBlocks)}`
 }
 
+function getBootLines(progress: number) {
+  const totalCharacters = BOOT_MESSAGES.reduce(
+    (total, message) => total + message.length,
+    0,
+  )
+  let remainingCharacters = Math.ceil(totalCharacters * progress)
+  const lines: string[] = []
+
+  for (const message of BOOT_MESSAGES) {
+    if (remainingCharacters <= 0) break
+
+    const visibleCharacters = Math.min(remainingCharacters, message.length)
+    lines.push(message.slice(0, visibleCharacters))
+    remainingCharacters -= visibleCharacters
+  }
+
+  return lines
+}
+
 export function PortfolioPreloader({
   disabled = false,
   storageKey = DEFAULT_STORAGE_KEY,
@@ -57,27 +79,12 @@ export function PortfolioPreloader({
   const [phase, setPhase] = useState<PreloaderPhase>('loading')
   const [bootLines, setBootLines] = useState<string[]>([])
   const [progress, setProgress] = useState(0)
-  const assetsLoadedRef = useRef(document.readyState === 'complete')
   const onCompleteRef = useRef(onComplete)
   const progressBar = formatProgressBar(progress)
 
   useEffect(() => {
     onCompleteRef.current = onComplete
   }, [onComplete])
-
-  useEffect(() => {
-    if (document.readyState === 'complete') {
-      assetsLoadedRef.current = true
-      return undefined
-    }
-
-    const handlePageLoad = () => {
-      assetsLoadedRef.current = true
-    }
-
-    window.addEventListener('load', handlePageLoad, { once: true })
-    return () => window.removeEventListener('load', handlePageLoad)
-  }, [])
 
   useEffect(() => {
     if (!isVisible) return undefined
@@ -122,123 +129,62 @@ export function PortfolioPreloader({
     if (!isVisible) return undefined
 
     let cancelled = false
-    const timeoutIds = new Set<number>()
-    const animationFrameIds = new Set<number>()
+    let animationFrameId: number | undefined
+    let exitTimeoutId: number | undefined
+    let completionTimeoutId: number | undefined
 
-    const wait = (duration: number) =>
-      new Promise<void>((resolve) => {
-        const timeoutId = window.setTimeout(() => {
-          timeoutIds.delete(timeoutId)
-          resolve()
-        }, duration)
-        timeoutIds.add(timeoutId)
-      })
-
-    const animateProgress = (from: number, to: number, duration: number) =>
-      new Promise<void>((resolve) => {
-        const startedAt = performance.now()
-
-        const update = (now: number) => {
-          if (cancelled) {
-            resolve()
-            return
-          }
-
-          const elapsed = Math.min((now - startedAt) / duration, 1)
-          const eased = 1 - Math.pow(1 - elapsed, 4)
-          setProgress(Math.round(from + (to - from) * eased))
-
-          if (elapsed < 1) {
-            const frameId = window.requestAnimationFrame(update)
-            animationFrameIds.add(frameId)
-          } else {
-            resolve()
-          }
-        }
-
-        const frameId = window.requestAnimationFrame(update)
-        animationFrameIds.add(frameId)
-      })
-
-    const typeBootMessage = async (message: string, lineIndex: number) => {
-      setBootLines((current) => [...current, ''])
-
-      for (let characterIndex = 0; characterIndex < message.length; characterIndex += 1) {
-        if (cancelled) return
-
-        const character = message[characterIndex]
-        setBootLines((current) => {
-          const next = [...current]
-          next[next.length - 1] += character
-          return next
-        })
-
-        const naturalVariance = (character.charCodeAt(0) + lineIndex + characterIndex) % 7
-        const punctuationPause = character === '.' ? 14 : 0
-        await wait(5 + naturalVariance + punctuationPause)
-      }
-    }
-
-    const complete = async () => {
+    const complete = () => {
       if (cancelled) return
-
-      setPhase('exiting')
-      await wait(prefersReducedMotion ? 160 : 340)
-      if (cancelled) return
-
       markSessionComplete(storageKey)
       setIsVisible(false)
       onCompleteRef.current?.()
     }
 
-    const runReducedSequence = async () => {
-      setBootLines([...BOOT_MESSAGES])
-      setProgress(100)
-      await wait(300)
-      await complete()
+    const beginExit = () => {
+      if (cancelled) return
+      setPhase('exiting')
     }
 
-    const runSequence = async () => {
-      setBootLines([])
-      setProgress(0)
+    exitTimeoutId = window.setTimeout(beginExit, PRELOADER_ACTIVE_DURATION_MS)
+    completionTimeoutId = window.setTimeout(complete, PRELOADER_DURATION_MS)
 
-      for (let index = 0; index < BOOT_MESSAGES.length; index += 1) {
-        await typeBootMessage(BOOT_MESSAGES[index], index)
-        setProgress(Math.round(((index + 1) / BOOT_MESSAGES.length) * 32))
-        await wait(46 + ((index * 17) % 28))
-      }
+    if (prefersReducedMotion) {
+      setBootLines([...BOOT_MESSAGES])
+      setProgress(100)
+    } else {
+      const startedAt = performance.now()
 
-      if (cancelled) return
+      const update = (now: number) => {
+        if (cancelled) return
 
-      if (assetsLoadedRef.current) {
-        await animateProgress(32, 100, 520)
-      } else {
-        await animateProgress(32, 88, 420)
-        await wait(70)
+        const elapsed = Math.min(
+          (now - startedAt) / PRELOADER_ACTIVE_DURATION_MS,
+          1,
+        )
+        const eased = 1 - Math.pow(1 - elapsed, 4)
 
-        if (assetsLoadedRef.current) {
-          await animateProgress(88, 100, 120)
-        } else {
-          await animateProgress(88, 96, 110)
-          await wait(45)
-          await animateProgress(96, 100, 85)
+        setProgress(Math.round(eased * 100))
+        setBootLines(getBootLines(elapsed))
+
+        if (elapsed < 1) {
+          animationFrameId = window.requestAnimationFrame(update)
         }
       }
 
-      await wait(320)
-      await complete()
-    }
-
-    if (prefersReducedMotion) {
-      void runReducedSequence()
-    } else {
-      void runSequence()
+      animationFrameId = window.requestAnimationFrame(update)
     }
 
     return () => {
       cancelled = true
-      timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId))
-      animationFrameIds.forEach((frameId) => window.cancelAnimationFrame(frameId))
+      if (animationFrameId !== undefined) {
+        window.cancelAnimationFrame(animationFrameId)
+      }
+      if (exitTimeoutId !== undefined) {
+        window.clearTimeout(exitTimeoutId)
+      }
+      if (completionTimeoutId !== undefined) {
+        window.clearTimeout(completionTimeoutId)
+      }
     }
   }, [isVisible, prefersReducedMotion, storageKey])
 

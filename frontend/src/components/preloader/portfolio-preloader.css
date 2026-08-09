@@ -4,14 +4,15 @@
   --preloader-muted: #778079;
   --preloader-green: #22c55e;
   --preloader-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --preloader-exit-duration: 150ms;
   --preloader-z-overlay: 80;
 }
 
 #portfolio-content {
   transition:
-    opacity 520ms var(--preloader-ease-out),
-    filter 520ms var(--preloader-ease-out),
-    transform 520ms var(--preloader-ease-out);
+    opacity var(--preloader-exit-duration) var(--preloader-ease-out),
+    filter var(--preloader-exit-duration) var(--preloader-ease-out),
+    transform var(--preloader-exit-duration) var(--preloader-ease-out);
   transform-origin: center top;
 }
 
@@ -46,7 +47,7 @@ body[data-portfolio-preloader='leaving'] #portfolio-content {
   line-height: 1.6;
   isolation: isolate;
   opacity: 1;
-  transition: opacity 330ms ease-in;
+  transition: opacity var(--preloader-exit-duration) ease-in;
 }
 
 .portfolio-preloader__scanlines,
@@ -80,9 +81,9 @@ body[data-portfolio-preloader='leaving'] #portfolio-content {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
   transition:
-    filter 320ms ease-in,
-    opacity 280ms ease-in,
-    transform 330ms ease-in;
+    filter var(--preloader-exit-duration) ease-in,
+    opacity var(--preloader-exit-duration) ease-in,
+    transform var(--preloader-exit-duration) ease-in;
 }
 
 .portfolio-preloader__stage {
@@ -104,8 +105,8 @@ body[data-portfolio-preloader='leaving'] #portfolio-content {
   text-transform: uppercase;
   text-shadow: 0 0 1rem rgba(34, 197, 94, 0.08);
   transition:
-    color 240ms var(--preloader-ease-out),
-    text-shadow 240ms var(--preloader-ease-out);
+    color 120ms var(--preloader-ease-out),
+    text-shadow 120ms var(--preloader-ease-out);
 }
 
 .portfolio-preloader__access-title--complete {
