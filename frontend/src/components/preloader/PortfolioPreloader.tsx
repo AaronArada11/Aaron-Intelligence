@@ -43,7 +43,8 @@ function markSessionComplete(storageKey: string) {
 
 function formatProgressBar(progress: number) {
   const totalBlocks = 20
-  const filledBlocks = Math.round((progress / 100) * totalBlocks)
+  const boundedProgress = Math.min(Math.max(progress, 0), 100)
+  const filledBlocks = Math.round((boundedProgress / 100) * totalBlocks)
 
   return `${'█'.repeat(filledBlocks)}${'░'.repeat(totalBlocks - filledBlocks)}`
 }
@@ -158,7 +159,7 @@ export function PortfolioPreloader({
         if (cancelled) return
 
         const elapsed = Math.min(
-          (now - startedAt) / PRELOADER_ACTIVE_DURATION_MS,
+          Math.max((now - startedAt) / PRELOADER_ACTIVE_DURATION_MS, 0),
           1,
         )
         const eased = 1 - Math.pow(1 - elapsed, 4)
