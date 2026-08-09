@@ -113,7 +113,7 @@ export function Dashboard() {
           <Card>
             <div className="flex items-center gap-2 mb-5">
               <Palette  size={13} style={{ color: "var(--ctp-accent)" }} />
-              <SectionLabel>Appearance</SectionLabel>
+              <SectionLabel>Theme</SectionLabel>
             </div>
 
             <ThemeSelector />

@@ -14,9 +14,6 @@ export function ThemeSelector() {
   return (
     <div className="space-y-5">
       <div>
-        <p className="mb-2 font-sans text-sm font-medium text-[var(--ctp-text)]">
-          Color theme
-        </p>
         <div
           className="grid grid-cols-[repeat(auto-fit,minmax(6.75rem,1fr))] gap-1 rounded-lg border p-1"
           style={{ borderColor: "var(--ctp-surface0)" }}
@@ -39,9 +36,6 @@ export function ThemeSelector() {
         </div>
       </div>
       <div>
-        <p className="mb-2 font-sans text-sm font-medium text-[var(--ctp-text)]">
-          Accent color
-        </p>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(2.35rem,1fr))] gap-2">
           {accentList.map((a) => {
             const color = flavors[flavor][a];
