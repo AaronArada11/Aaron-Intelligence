@@ -5,11 +5,11 @@ import './portfolio-preloader.css'
 const DEFAULT_STORAGE_KEY = 'aaron-portfolio:preloader-complete'
 
 const BOOT_MESSAGES = [
-  'Initializing AaronOS...',
-  'Loading kernel...',
-  'Mounting portfolio...',
-  'Establishing secure connection...',
-  'Loading AI modules...',
+  'Loading portfolio interface...',
+  'Preparing project previews...',
+  'Applying saved theme...',
+  'Preparing portfolio assistant...',
+  'Portfolio ready.',
 ] as const
 
 type PreloaderPhase = 'loading' | 'exiting'
@@ -246,14 +246,14 @@ export function PortfolioPreloader({
 
   const screenReaderStatus =
     phase === 'exiting' || progress === 100
-      ? 'Access granted. Launching portfolio.'
-      : 'Loading portfolio.'
+      ? 'Portfolio ready. Opening site.'
+      : 'Loading Aaron Arada\'s portfolio.'
 
   return (
     <div
       className={`portfolio-preloader ${phase === 'exiting' ? 'portfolio-preloader--exiting' : ''}`}
       role="status"
-      aria-label="Portfolio loading"
+      aria-label="Loading Aaron Arada's portfolio"
       data-phase={phase}
     >
       <span className="sr-only" aria-live="polite">
@@ -270,7 +270,7 @@ export function PortfolioPreloader({
               progress === 100 ? 'portfolio-preloader__access-title--complete' : ''
             }`}
           >
-            Access Granted
+            Portfolio Ready
           </div>
 
           <div className="portfolio-preloader__progress-system">
