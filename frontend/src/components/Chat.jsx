@@ -154,8 +154,8 @@ function Chat({ onClose }) {
                 <div
                   className={`min-w-0 max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-words [overflow-wrap:anywhere] ${
                     msg.role === 'user'
-                      ? 'border border-[var(--ctp-accent)] bg-[var(--ctp-surface0)] text-[var(--ctp-text)] rounded-br-sm'
-                      : 'bg-[var(--ctp-mantle)] border border-[var(--ctp-surface0)] text-[var(--ctp-text)] rounded-bl-sm'
+                      ? 'border border-[var(--ctp-accent)] bg-[var(--ctp-surface0)] text-[var(--ctp-text)] rounded-tr-sm'
+                      : 'bg-[var(--ctp-mantle)] border border-[var(--ctp-surface0)] text-[var(--ctp-text)] rounded-tl-sm'
                   }`}
                 >
                   {msg.role === 'assistant' ? (
@@ -261,7 +261,7 @@ function Chat({ onClose }) {
         </form>
 
         <p className="mt-2 text-xs text-[var(--ctp-subtext1)] text-center">
-          Answers come from Aaron's knowledge base and may be inaccurate.
+          Answers come from Aaron's knowledge base <br />and may be inaccurate.
         </p>
       </footer>
     </div>
