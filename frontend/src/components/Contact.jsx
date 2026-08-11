@@ -1,27 +1,10 @@
 import {
   ArrowUpRight,
-  FolderGit2,
+  CalendarDays,
   Mail,
-  MapPin,
   MessageCircle,
-  UserRound,
 } from "lucide-react";
 import { profileLinks } from "../profileLinks";
-
-const contactLinks = [
-  {
-    icon: Mail,
-    ...profileLinks.email,
-  },
-  {
-    icon: UserRound,
-    ...profileLinks.linkedin,
-  },
-  {
-    icon: FolderGit2,
-    ...profileLinks.github,
-  },
-];
 
 const topics = [
   "Artificial Intelligence",
@@ -118,55 +101,37 @@ export function Contact() {
 
           <div className="space-y-4">
             <div
-              className="rounded-lg p-4"
+              className="rounded-xl p-5"
               style={{
-                background: "var(--ctp-base)",
+                background: "var(--ctp-mantle)",
                 border: "1px solid var(--ctp-surface0)",
               }}
             >
-              <div className="mb-4 flex items-center gap-2">
-                <MapPin size={14} style={{ color: "var(--ctp-accent)" }} />
-                <p className="font-sans text-sm font-medium" style={{ color: "var(--ctp-text)" }}>
-                  Manila, Philippines
-                </p>
+              <div className="mb-5 flex items-center gap-2">
+                <CalendarDays size={13} style={{ color: "var(--ctp-accent)" }} />
+                <h3 className="font-mono text-sm font-semibold" style={{ color: "var(--ctp-text)" }}>
+                  Let's Connect
+                </h3>
               </div>
 
-              <div className="space-y-3">
-                {contactLinks.map(({ icon: Icon, label, value, href }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center justify-between gap-3 rounded-md p-2 transition-colors"
-                    style={{ color: "var(--ctp-subtext1)" }}
-                  >
-                    <span className="flex min-w-0 items-center gap-3">
-                      <span
-                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md"
-                        style={{
-                          background: "var(--ctp-surface0)",
-                          color: "var(--ctp-accent)",
-                        }}
-                      >
-                        <Icon size={15} />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block font-sans text-xs" style={{ color: "var(--ctp-subtext0)" }}>
-                          {label}
-                        </span>
-                        <span className="block truncate font-sans text-sm font-medium" style={{ color: "var(--ctp-text)" }}>
-                          {value}
-                        </span>
-                      </span>
-                    </span>
-                    <ArrowUpRight
-                      size={14}
-                      className="shrink-0 opacity-60 transition-opacity group-hover:opacity-100"
-                    />
-                  </a>
-                ))}
-              </div>
+              <p className="max-w-[14rem] font-mono text-sm leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
+                Always open to interesting projects and conversations.
+              </p>
+
+              <a
+                href="https://cal.com/aaronarada/15min"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg px-4 py-2 font-mono text-sm font-semibold transition-opacity hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                style={{
+                  background: "var(--ctp-accent)",
+                  color: "#0d1310",
+                  outlineColor: "var(--ctp-accent)",
+                }}
+              >
+                <CalendarDays size={14} />
+                Book a Chat
+              </a>
             </div>
 
             <div className="flex flex-wrap gap-2">
