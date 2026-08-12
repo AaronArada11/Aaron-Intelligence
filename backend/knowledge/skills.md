@@ -52,6 +52,18 @@
 - Vercel
 - Railway
 
+# Infrastructure and Tooling
+
+- Vite
+- Docker
+- Redis
+- FFmpeg
+- S3-compatible object storage
+- Cloudflare Turnstile
+- Tesseract.js
+- IndexedDB
+- jsPDF
+
 # Tools
 
 - Git

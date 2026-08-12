@@ -14,16 +14,17 @@ Personal Project / Full-stack Developer
 
 Architecture:
 
-* Frontend: Vite
-* Backend: Python ASGI application served with Uvicorn
+* Frontend: React, TypeScript, and Vite
+* Backend: FastAPI Python ASGI application served with Uvicorn
 * Media Processing: FFmpeg
 * Background Jobs: Separate Python worker process
 * Production Queue: Redis
 * Production Artifact Storage: S3-compatible object storage
 * Abuse Protection: Cloudflare Turnstile
+* Browser OCR and persistence: Tesseract.js and IndexedDB
 * Packaging and Deployment: Docker / OCI image
 
-Core Tools:
+Current Tools:
 
 1. Link QR Generator
    * Accepts an HTTP or HTTPS link.
@@ -34,12 +35,26 @@ Core Tools:
    * Supports MP4, MP3, and MOV output.
    * Includes an explicit requirement to follow platform terms, copyright law, and permission requirements.
 
-3. Image Format Converter
+3. TikTok Downloader
+   * Processes permitted individual public-video URLs.
+   * Supports MP4, MP3, and MOV output.
+   * Validates direct TikTok video links and requires permission confirmation.
+
+4. Image Format Converter
    * Accepts JPG, PNG, WebP, GIF, BMP, TIFF, HEIC, and AVIF.
    * Converts supported images to JPG, PNG, or WebP.
 
-4. PDF to Word
+5. PDF to Word
    * Converts text-based PDF files into editable DOCX files.
+   * Uses bounded background processing and does not include OCR.
+
+6. Schedule Comparator
+   * Accepts PNG, JPEG, and WebP screenshots of class schedules.
+   * Uses browser-side Tesseract.js OCR to extract course, time, room, instructor, day, and unit data.
+   * Lets users review and correct extracted sections before comparison.
+   * Compares conflicts, school days, class time, campus time, free time, gaps, and schedule fit against preferences.
+   * Exports schedule comparisons as CSV, iCalendar, or PDF files.
+   * Persists projects and source screenshots in IndexedDB with an in-memory fallback.
 
 Registry-Driven Catalog:
 
@@ -50,9 +65,10 @@ This design keeps the homepage independent from individual tool implementations 
 Development Architecture:
 
 * Requires Node.js 22 or newer, Python 3.11 or newer, and FFmpeg.
-* The Vite frontend proxies `/api` requests to the local Python API.
+* The Vite frontend proxies `/api` requests to the local FastAPI application.
 * Without Redis, development uses an in-process queue.
 * Without production object storage, development uses local expiring artifact storage.
+* The Schedule Comparator runs in the browser and stores its working data locally.
 
 Production Architecture:
 
@@ -63,11 +79,13 @@ The same container image supports two process types:
 
 Production deployments require Redis, S3-compatible object storage, and Cloudflare Turnstile.
 
+Production media and PDF jobs use bounded execution, private artifact storage, short-lived pre-signed download URLs, and cleanup of temporary inputs. The Schedule Comparator does not use the server job queue because its OCR and comparison workflow runs client-side.
+
 Testing:
 
-* Python tests run with pytest.
-* Frontend tests run through the web workspace.
-* The frontend includes a production build check.
+* Backend tests run with pytest.
+* Frontend tests run with Vitest.
+* The frontend includes TypeScript and production-build checks.
 * Optional real-media and local PDF conversion smoke tests are disabled by default and enabled explicitly.
 
 Technical Decisions:
@@ -90,20 +108,29 @@ Why S3-compatible storage?
 * Artifact storage can scale independently from the application containers.
 * The architecture is portable across S3-compatible providers.
 
+Why a client-side Schedule Comparator?
+
+* OCR and comparison can happen in the browser without sending schedule screenshots to the backend.
+* IndexedDB preserves projects and source images between sessions when browser storage is available.
+* Exporting CSV, iCalendar, and PDF makes the comparison useful beyond the web interface.
+
 Key Learnings:
 
 * Designing extensible, registry-driven applications
 * Separating request handling from background processing
 * Media conversion with FFmpeg
+* Browser OCR and client-side data workflows
+* Schedule comparison and calendar export
 * Redis-backed job queues
 * S3-compatible artifact storage
 * Docker and multi-process production deployment
 * Development fallbacks that reduce local infrastructure requirements
 * Safety and permission boundaries for media-processing tools
+* TypeScript frontend architecture and local browser persistence
 
 Impact:
 
-Aaron Toolkit demonstrates Aaron's ability to turn several practical utilities into a coherent product rather than a collection of disconnected scripts. It highlights full-stack architecture, modular feature design, background processing, media and document workflows, testing, and production infrastructure.
+Aaron Toolkit demonstrates Aaron's ability to turn several practical utilities into a coherent product rather than a collection of disconnected scripts. It highlights full-stack architecture, modular feature design, browser OCR, background processing, media and document workflows, testing, and production infrastructure.
 
 
 # Aaron Intelligence

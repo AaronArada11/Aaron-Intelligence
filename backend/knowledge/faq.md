@@ -29,9 +29,15 @@ These projects involve AI integration using Google's Gemini API.
 
 Aaron's newest listed project is Aaron Toolkit, an extensible public web application for practical utilities.
 
-It uses a registry-driven catalog so adding a tool manifest and feature module automatically adds the tool to search, navigation, and routing. Its initial tools include a link QR generator, permitted YouTube downloader, image format converter, and PDF-to-Word converter.
+It uses a registry-driven catalog so adding a tool manifest and feature module automatically adds the tool to search, navigation, and routing. Its six current tools are Link QR Generator, permitted YouTube and TikTok downloaders, Image Format Converter, PDF to Word, and Schedule Comparator.
 
 The source code is available at https://github.com/AaronArada11/aaron-toolkit.
+
+---
+
+## What does Aaron Toolkit's Schedule Comparator do?
+
+The Schedule Comparator uses browser-side OCR to read class-schedule screenshots, lets users review and compare sections, and evaluates conflicts, school days, class time, campus time, free time, gaps, and weekly fit. It can export comparisons as CSV, iCalendar, or PDF files and stores projects locally in the browser when storage is available.
 
 ---
 

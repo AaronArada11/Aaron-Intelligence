@@ -1,18 +1,9 @@
 # School Organizations
 
-## AWS Learning Club - FEU Tech
+## FEU Tech ACM Student Chapter 
+Status: Active member
 
-Role:
-Founding Co-Lead
+# Companies
 
-Start Date:
-March 2026
+Aaron has not yet been professionally employed
 
-Responsibilities:
-- Co-led accreditation and launch efforts
-- Coordinated with student organizations and faculty
-
-Focus Areas:
-- AWS Fundamentals
-- Backend Deployment
-- Cloud Computing

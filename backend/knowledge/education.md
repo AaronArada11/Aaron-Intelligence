@@ -23,7 +23,7 @@ Acitve member in FEU Tech ACM Student Chapter
 
 ## La Salle College Antipolo
 
-Track:
+Senior High Scool Track/Strand:
 Science, Technology, Engineering, and Mathematics (STEM)
 
 Graduated:

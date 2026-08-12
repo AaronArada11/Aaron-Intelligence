@@ -99,3 +99,9 @@ This project reflects Aaron's ability to take an idea from research and developm
 * He is actively improving his knowledge of software architecture, testing practices, and large-scale collaborative development.
 
 Aaron views these areas as opportunities for growth and actively works on them through personal projects, continuous learning, and seeking feedback from experienced developers.
+
+---
+
+# What languages does Aaron speak?
+ 
+Aaron is Fluent in both Filipino and English

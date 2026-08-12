@@ -28,9 +28,9 @@ Aaron's strongest project areas include:
 
 # Resume Project Highlights
 
-Aaron Toolkit is an extensible public utility application built with Vite, Python, FFmpeg, Redis, S3-compatible object storage, and Docker.
+Aaron Toolkit is an extensible public utility application built with React, TypeScript, Vite, FastAPI, Python, FFmpeg, Redis, S3-compatible object storage, Cloudflare Turnstile, and Docker.
 
-Aaron Toolkit uses a registry-driven catalog where adding a tool manifest and feature module automatically updates search, navigation, and routing. Its initial utilities include a link QR generator, permitted YouTube downloader, image format converter, and PDF-to-Word converter. The production architecture separates web and worker processes and uses Redis-backed queues with S3-compatible artifact storage.
+Aaron Toolkit uses a registry-driven catalog where adding a tool manifest and feature module automatically updates search, navigation, and routing. Its six registered tools include a link QR generator, permitted YouTube and TikTok downloaders, image format conversion, PDF-to-Word conversion, and a browser-side OCR schedule comparator. The production architecture separates web and worker processes and uses Redis-backed queues with S3-compatible artifact storage, while the schedule comparator uses Tesseract.js and IndexedDB in the browser.
 
 KUMPAS is a Filipino Sign Language translator built with React, Python, TensorFlow, and MediaPipe.
 

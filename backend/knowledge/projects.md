@@ -18,38 +18,49 @@ Repository:
 https://github.com/AaronArada11/aaron-toolkit
 
 Tech Stack:
+- React
+- TypeScript
 - Vite
 - Python
+- FastAPI
 - Uvicorn
 - FFmpeg
 - Redis
 - S3-compatible object storage
 - Cloudflare Turnstile
 - Docker
+- Tesseract.js
+- IndexedDB
+- jsPDF
 
 Description:
-Aaron Toolkit is an extensible public web application for practical, focused utilities. Its catalog is registry-driven: adding a tool manifest and its feature module automatically adds the tool to search, navigation, and routing without requiring homepage changes.
+Aaron Toolkit is an extensible public web application for small, practical utilities. Its catalog is registry-driven: adding a tool manifest and its feature module automatically adds the tool to search, navigation, and routing without requiring homepage changes.
 
-Initial Tools:
+Current Tools:
 - Link QR Generator for customized PNG QR codes
 - YouTube Downloader for permitted single-video URLs in MP4, MP3, or MOV
+- TikTok Downloader for permitted individual public videos in MP4, MP3, or MOV
 - Image Format Converter for common and modern image formats
 - PDF to Word converter for turning text-based PDFs into editable DOCX files
+- Schedule Comparator for OCR-assisted comparison of class-schedule screenshots, including gaps, campus time, conflicts, and weekly fit
 
 Architecture:
-- Vite frontend that proxies `/api` to the Python API during development
-- Python web process for API requests
+- React and TypeScript frontend built with Vite; it loads the tool registry from the API and discovers tool plugins by slug
+- Python FastAPI web process served with Uvicorn
 - Separate Python worker process for background jobs
 - Redis-backed production queues
 - S3-compatible production artifact storage
+- Browser-side Schedule Comparator OCR with Tesseract.js and IndexedDB persistence
 - In-process development queue and local expiring artifact storage when Redis is unavailable
 - Cloudflare Turnstile protection in production
 
 Contributions:
 - Designed a registry-driven utility catalog that can grow without homepage changes
-- Built media, image, document, and QR workflows behind one consistent interface
+- Built media, image, document, QR, and schedule-comparison workflows behind one consistent interface
+- Added permitted TikTok media processing alongside YouTube workflows
 - Structured the application for separate web and worker processes
 - Added local development fallbacks for queues and artifact storage
+- Built browser OCR, schedule comparison, local persistence, and CSV/ICS/PDF export workflows
 - Documented local development, testing, container builds, and production requirements
 
 Key Learnings:
@@ -57,10 +68,12 @@ Key Learnings:
 - Registry-driven frontend design
 - Background job processing
 - Media processing with FFmpeg
+- Browser OCR and client-side document generation
 - Redis queues
 - S3-compatible object storage
 - Docker-based deployment
 - Safe handling of permitted media workflows
+- TypeScript frontend architecture and browser persistence
 
 # Mirror Mentor
 

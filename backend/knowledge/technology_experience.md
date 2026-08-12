@@ -8,6 +8,7 @@ Used In:
 * Aaron Intelligence
 * Mirror Mentor
 * KUMPAS
+* Aaron Toolkit
 
 Applications:
 
@@ -17,6 +18,7 @@ Applications:
 * Backend services
 * Machine learning inference backend development
 * Computer vision and sign language recognition workflows
+* FastAPI utility APIs and background job services
 
 Key Learnings:
 
@@ -50,6 +52,7 @@ Key Learnings:
 Used In:
 
 * KUMPAS
+* Aaron Toolkit
 
 Applications:
 
@@ -57,6 +60,7 @@ Applications:
 * Component architecture
 * Type-safe web development
 * Full-stack ML application development
+* Registry-driven utility interfaces and browser-side schedule workflows
 
 Key Learnings:
 
@@ -169,6 +173,7 @@ Used In:
 * Aaron Intelligence
 * AlgoVisualizer
 * KUMPAS
+* Aaron Toolkit
 
 Applications:
 
@@ -176,6 +181,7 @@ Applications:
 * Component-based development
 * State management
 * Frontend architecture
+* Utility catalogs and client-side OCR workflows
 
 Key Learnings:
 
@@ -207,6 +213,7 @@ Used In:
 
 * Aaron Intelligence
 * Mirror Mentor
+* Aaron Toolkit
 
 Applications:
 
@@ -214,12 +221,18 @@ Applications:
 * Backend services
 * AI application backends
 * Request handling
+* Utility service endpoints
+* Background job orchestration
+* Media and document processing APIs
 
 Key Learnings:
 
 * API architecture
 * Backend engineering
 * Service-oriented development
+* Request validation
+* Async service design
+* Separating web and worker processes
 
 # Supabase
 
@@ -248,6 +261,7 @@ Used In:
 
 * Aaron Intelligence
 * KUMPAS
+* Aaron Toolkit
 
 Applications:
 
@@ -260,6 +274,79 @@ Key Learnings:
 * Modern frontend tooling
 * Development server workflows
 * Frontend deployment preparation
+* Registry-driven tool catalogs
+
+# Redis
+
+Used In:
+
+* Aaron Toolkit
+
+Applications:
+
+* Production job queues
+* Job state and ownership locks
+* Rate limiting
+
+Key Learnings:
+
+* Background processing infrastructure
+* Queue-backed service design
+* Shared state for multi-process applications
+
+# FFmpeg
+
+Used In:
+
+* Aaron Toolkit
+
+Applications:
+
+* Media format conversion
+* MP4, MP3, and MOV output workflows
+* Bounded media processing jobs
+
+Key Learnings:
+
+* Media pipelines
+* Temporary-file management
+* Safe limits for user-requested processing
+
+# Docker
+
+Used In:
+
+* Aaron Toolkit
+
+Applications:
+
+* OCI image builds
+* Web and worker process deployment
+* Local multi-service development with Docker Compose
+
+Key Learnings:
+
+* Containerized application delivery
+* Multi-process deployment models
+* Environment-based production configuration
+
+# Browser OCR and Storage
+
+Used In:
+
+* Aaron Toolkit
+
+Technologies:
+
+* Tesseract.js
+* IndexedDB
+* jsPDF
+
+Applications:
+
+* Extracting schedule data from screenshots in the browser
+* Persisting schedule projects and source images locally
+* Exporting schedule comparisons to PDF
 
 # Convex
 
