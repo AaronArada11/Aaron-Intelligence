@@ -101,14 +101,7 @@ export function Dashboard() {
   }, []);
 
   return (
-    <section style={{ background: "var(--ctp-base)" }} className="py-14 px-6">
-      <div className="max-w-4xl mx-auto">
-        <p className="scroll-parallax scroll-parallax-soft font-mono text-xs mb-5 uppercase tracking-widest" style={{ color: "var(--ctp-accent)" }}>
-          $ cat ~/dashboard.json
-        </p>
-
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-
+    <div className="homepage-dashboard">
           {/* Theme */}
           <Card>
             <div className="flex items-center gap-2 mb-5">
@@ -220,8 +213,6 @@ export function Dashboard() {
             </div>
           </Card>
 
-        </div>
-      </div>
-    </section>
+    </div>
   );
 }

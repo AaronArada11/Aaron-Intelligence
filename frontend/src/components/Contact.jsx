@@ -15,26 +15,14 @@ const topics = [
 
 export function Contact() {
   return (
-    <section
-      id="contact"
-      className="px-6 py-16"
-      style={{ background: "var(--ctp-base)" }}
-    >
-      <div className="mx-auto max-w-4xl">
-        <p
-          className="scroll-parallax scroll-parallax-soft mb-6 flex items-center gap-2 font-mono text-sm tracking-widest"
-          style={{ color: "var(--ctp-accent)" }}
-        >
-          <span>$ mail --compose ~/contact</span>
-        </p>
-
-        <div
-          className="scroll-parallax scroll-parallax-deep grid gap-4 rounded-lg p-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,0.85fr)] md:p-6"
-          style={{
-            background: "var(--ctp-mantle)",
-            border: "1px solid var(--ctp-surface0)",
-          }}
-        >
+    <div className="homepage-contact md:col-span-2">
+      <div
+        className="scroll-parallax scroll-parallax-deep grid gap-4 rounded-lg p-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,0.85fr)] md:p-6"
+        style={{
+          background: "var(--ctp-mantle)",
+          border: "1px solid var(--ctp-surface0)",
+        }}
+      >
           <div className="flex min-w-0 flex-col justify-between gap-8">
             <div>
               <div className="mb-4 flex items-center gap-2">
@@ -114,7 +102,7 @@ export function Contact() {
                 </h3>
               </div>
 
-              <p className="max-w-[14rem] font-sans text-sm leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
+              <p className="max-w-full font-sans text-sm leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
                 Have a project, role, or idea to discuss? Book a short chat and let’s explore how I could help.
               </p>
 
@@ -150,8 +138,7 @@ export function Contact() {
               ))}
             </div>
           </div>
-        </div>
       </div>
-    </section>
+      </div>
   );
 }
