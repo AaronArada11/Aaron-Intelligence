@@ -109,20 +109,20 @@ export function Contact() {
             >
               <div className="mb-5 flex items-center gap-2">
                 <CalendarDays size={13} style={{ color: "var(--ctp-accent)" }} />
-                <h3 className="font-mono text-sm font-semibold" style={{ color: "var(--ctp-text)" }}>
-                  Let's Connect
+                <h3 className="font-sans text-sm font-semibold" style={{ color: "var(--ctp-text)" }}>
+                  Let's Talk It Through
                 </h3>
               </div>
 
-              <p className="max-w-[14rem] font-mono text-sm leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
-                Always open to interesting projects and conversations.
+              <p className="max-w-[14rem] font-sans text-sm leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
+                Have a project, role, or idea to discuss? Book a short chat and let’s explore how I could help.
               </p>
 
               <a
                 href="https://cal.com/aaronarada/15min"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg px-4 py-2 font-mono text-sm font-semibold transition-opacity hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="mt-5 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg px-4 py-2 font-sans text-sm font-semibold transition-opacity hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 style={{
                   background: "var(--ctp-accent)",
                   color: "#0d1310",
