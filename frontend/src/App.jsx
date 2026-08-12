@@ -1,16 +1,29 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react'
 import { ThemeProvider } from './components/ThemeContext'
 import { Navbar } from './components/Navbar'
-import { Hero } from './components/Hero'
-import { AboutPage } from './components/AboutPage'
-import { Projects } from './components/Projects'
 import { ProjectsPage } from './components/ProjectsPage'
-import { Dashboard } from './components/Dashboard'
-import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
-import Chat from './components/Chat'
 import ChatButton from './components/ChatButton'
-import { PortfolioPreloader } from './components/preloader/PortfolioPreloader'
+
+const HomePage = lazy(() => import('./components/HomePage.jsx'))
+const AboutPage = lazy(() =>
+  import('./components/AboutPage.jsx').then(({ AboutPage: Page }) => ({
+    default: Page,
+  })),
+)
+const Chat = lazy(() => import('./components/Chat.jsx'))
+const enablePreloader = import.meta.env.VITE_ENABLE_PRELOADER === 'true'
+const PortfolioPreloader = enablePreloader
+  ? lazy(() =>
+      import('./components/preloader/PortfolioPreloader.tsx').then(
+        ({ PortfolioPreloader: Preloader }) => ({ default: Preloader }),
+      ),
+    )
+  : null
+
+function RouteFallback() {
+  return <main className="min-h-screen" aria-busy="true" />
+}
 
 function getCurrentPath() {
   return window.location.pathname
@@ -40,26 +53,31 @@ function App() {
 
   return (
     <div className="relative">
-      <PortfolioPreloader
-        disabled={import.meta.env.VITE_DISABLE_PRELOADER === 'true'}
-      />
+      {PortfolioPreloader ? (
+        <Suspense fallback={null}>
+          <PortfolioPreloader
+            disabled={import.meta.env.VITE_DISABLE_PRELOADER === 'true'}
+          />
+        </Suspense>
+      ) : null}
       <div id="portfolio-content">
         <ThemeProvider>
           <Navbar />
           {isAboutPage ? (
-            <AboutPage onOpenChat={() => setIsChatOpen(true)} />
+            <Suspense fallback={<RouteFallback />}>
+              <AboutPage onOpenChat={() => setIsChatOpen(true)} />
+            </Suspense>
           ) : isProjectsPage ? (
             <ProjectsPage />
           ) : (
-            <main>
-              <Hero />
-              <Projects />
-              <Dashboard />
-              <Contact />
-            </main>
+            <Suspense fallback={<RouteFallback />}>
+              <HomePage />
+            </Suspense>
           )}
           {isChatOpen ? (
-            <Chat onClose={() => setIsChatOpen(false)} />
+            <Suspense fallback={null}>
+              <Chat onClose={() => setIsChatOpen(false)} />
+            </Suspense>
           ) : (
             <ChatButton onClick={() => setIsChatOpen(true)} />
           )}
