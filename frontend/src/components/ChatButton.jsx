@@ -13,7 +13,7 @@ export default function ChatButton({ onClick, isOpen = false, embedded = false }
       className={`flex items-center border border-[var(--ctp-surface0)] text-[var(--ctp-text)] transition-colors hover:border-[var(--ctp-accent)] hover:bg-[var(--ctp-mantle)] ${
         embedded
           ? "w-full justify-between border-x-0 border-t-0 px-5 py-4 text-left"
-          : "fixed right-4 bottom-4 z-50 size-14 justify-center rounded-full p-0 shadow-2xl sm:right-6 sm:bottom-6 sm:h-auto sm:w-80 sm:justify-between sm:rounded-xl sm:px-5 sm:py-4 sm:text-left"
+          : "fixed right-4 bottom-4 z-50 size-14 justify-center rounded-full p-0 shadow-2xl sm:right-6 sm:bottom-6 sm:h-auto sm:w-60 sm:justify-between sm:rounded-xl sm:px-5 sm:py-4 sm:text-left"
       }`}
     >
       {embedded ? null : (
