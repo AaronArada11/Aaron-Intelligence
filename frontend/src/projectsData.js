@@ -1,7 +1,31 @@
 import { BarChart2, Bot, Languages, MirrorRectangular, Wrench } from "lucide-react";
 
+const PROJECT_IMAGE_WIDTHS = [640, 960, 1280, 1800];
+
+function projectImage(name, width, height) {
+  const variantWidths = PROJECT_IMAGE_WIDTHS.filter((variant) => variant < width);
+
+  if (width <= 1800) {
+    variantWidths.push(width);
+  }
+
+  return {
+    image: `/images/projects/${name}.png`,
+    imageAvifSrcSet: [...new Set(variantWidths)]
+      .sort((left, right) => left - right)
+      .map(
+        (variant) =>
+          `/images/projects/optimized/v1/${name}-${variant}.avif ${variant}w`,
+      )
+      .join(", "),
+    imageWidth: width,
+    imageHeight: height,
+  };
+}
+
 export const projects = [
   {
+    ...projectImage("kumpas", 1800, 1045),
     name: "KUMPAS",
     year: "2026",
     shortDescription:
@@ -14,7 +38,6 @@ export const projects = [
     category: "Machine learning",
     accentColor: "var(--ctp-accent)",
     previewColor: "var(--ctp-yellow)",
-    image: "/images/projects/kumpas.png",
     imageAlt:
       "KUMPAS homepage presenting its Filipino Sign Language translator and six-step workflow.",
     highlights: [
@@ -28,6 +51,7 @@ export const projects = [
     liveDemo: "https://kumpas-translator.vercel.app/",
   },
   {
+    ...projectImage("aaron-intelligence", 870, 840),
     name: "Aaron Intelligence",
     year: "2026",
     shortDescription:
@@ -40,7 +64,6 @@ export const projects = [
     category: "AI engineering",
     accentColor: "var(--ctp-accent)",
     previewColor: "var(--ctp-green)",
-    image: "/images/projects/aaron-intelligence.png",
     imageAlt:
       "Aaron Intelligence chat interface introducing the AI portfolio representative.",
     imageFit: "contain",
@@ -55,6 +78,7 @@ export const projects = [
     liveDemo: "/",
   },
   {
+    ...projectImage("mirror-mentor", 1800, 1045),
     name: "Mirror Mentor",
     year: "2026",
     shortDescription:
@@ -67,7 +91,6 @@ export const projects = [
     category: "AI education",
     accentColor: "var(--ctp-accent)",
     previewColor: "var(--ctp-blue)",
-    image: "/images/projects/mirror-mentor.png",
     imageAlt:
       "Mirror Mentor interface with side-by-side code editor and AI Professor panels.",
     highlights: [
@@ -80,6 +103,7 @@ export const projects = [
     github: "https://github.com/Goodness-Gracious-GG/demo",
   },
   {
+    ...projectImage("aaron-toolkit", 1800, 1044),
     name: "Aaron Toolkit",
     year: "2026",
     shortDescription:
@@ -92,7 +116,6 @@ export const projects = [
     category: "Developer utilities",
     accentColor: "var(--ctp-accent)",
     previewColor: "var(--ctp-green)",
-    image: "/images/projects/aaron-toolkit.png",
     imageAlt:
       "Aaron Toolkit interface showing its searchable utility catalog.",
     highlights: [
@@ -105,6 +128,7 @@ export const projects = [
     github: "https://github.com/AaronArada11/aaron-toolkit",
   },
   {
+    ...projectImage("algo-visualizer", 3420, 1914),
     name: "AlgoVisualizer",
     year: "2026",
     shortDescription:
@@ -117,7 +141,6 @@ export const projects = [
     category: "Interactive systems",
     accentColor: "var(--ctp-accent)",
     previewColor: "var(--ctp-mauve)",
-    image: "/images/projects/algo-visualizer.png",
     imageAlt:
       "AlgoVisualizer sorting interface with algorithm controls and an array of green bars.",
     highlights: [

@@ -3,6 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <script>
+      if (window.location.pathname === "/projects") {
+        const projectImagePreload = document.createElement("link");
+        projectImagePreload.rel = "preload";
+        projectImagePreload.as = "image";
+        projectImagePreload.href = "/images/projects/optimized/v1/kumpas-1280.avif";
+        projectImagePreload.type = "image/avif";
+        projectImagePreload.setAttribute(
+          "imagesrcset",
+          "/images/projects/optimized/v1/kumpas-640.avif 640w, /images/projects/optimized/v1/kumpas-960.avif 960w, /images/projects/optimized/v1/kumpas-1280.avif 1280w, /images/projects/optimized/v1/kumpas-1800.avif 1800w",
+        );
+        projectImagePreload.setAttribute(
+          "imagesizes",
+          "(max-width: 960px) calc(100vw - 3rem), 45vw",
+        );
+        projectImagePreload.setAttribute("fetchpriority", "high");
+        document.head.appendChild(projectImagePreload);
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

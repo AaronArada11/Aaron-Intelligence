@@ -496,6 +496,12 @@
     border-color 320ms ease;
 }
 
+.project-preview__picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .project-preview__image {
   display: block;
   width: 100%;

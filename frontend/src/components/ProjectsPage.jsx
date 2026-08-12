@@ -8,6 +8,7 @@ import { projects } from "../projectsData";
 
 const NON_PATH_CHARACTERS = /[^a-z0-9]+/g;
 const EDGE_DASHES = /(^-|-$)/g;
+const PROJECT_IMAGE_SIZES = "(max-width: 960px) calc(100vw - 3rem), 45vw";
 
 function getProjectDirectory(name) {
   return name
@@ -38,14 +39,23 @@ function ProjectPreview({ project, priority }) {
         open ./screenshots/preview.png
       </ProjectCommand>
       <div className="project-preview__window">
-        <img
-          src={project.image}
-          alt={project.imageAlt}
-          className={`project-preview__image project-preview__image--${project.imageFit ?? "cover"}`}
-          loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : "auto"}
-          decoding="async"
-        />
+        <picture className="project-preview__picture">
+          <source
+            type="image/avif"
+            srcSet={project.imageAvifSrcSet}
+            sizes={PROJECT_IMAGE_SIZES}
+          />
+          <img
+            src={project.image}
+            alt={project.imageAlt}
+            width={project.imageWidth}
+            height={project.imageHeight}
+            className={`project-preview__image project-preview__image--${project.imageFit ?? "cover"}`}
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            decoding="async"
+          />
+        </picture>
       </div>
     </div>
   );
