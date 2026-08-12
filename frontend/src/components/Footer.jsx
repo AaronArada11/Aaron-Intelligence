@@ -4,19 +4,16 @@ import { profileLinks } from "../profileLinks";
 export function Footer() {
   return (
     <footer
-      className="scroll-parallax scroll-parallax-soft py-10 px-6"
-      style={{ background: "var(--ctp-crust)", borderTop: "1px solid var(--ctp-surface0)" }}
+      className="site-footer"
+      style={{ background: "var(--ctp-base)" }}
     >
-      <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-sm" style={{ color: "var(--ctp-subtext0)" }}>~/</span>
-            <span className="font-sans text-sm" style={{ color: "var(--ctp-subtext0)" }}>© 2026 Aaron Arada</span>
-          </div>
-
+      <div className="site-footer__bar">
+        <div className="site-footer__identity">
+          <span className="site-footer__path">~/</span>
+          <span className="site-footer__copyright">© 2026 Aaron Arada</span>
         </div>
 
-        <div className="flex gap-3">
+        <nav className="site-footer__links" aria-label="Social links">
           {[
              { icon: FolderGit2, ...profileLinks.github },
              { icon: User, ...profileLinks.linkedin },
@@ -27,13 +24,12 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Aaron Arada on ${label}`}
-              className="p-2 rounded-lg hover:opacity-70 transition-opacity"
-              style={{ color: "var(--ctp-subtext1)", background: "var(--ctp-surface0)" }}
+              className="site-footer__link"
             >
               <Icon size={15} />
             </a>
           ))}
-        </div>
+        </nav>
       </div>
     </footer>
   );
