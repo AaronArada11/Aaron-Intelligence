@@ -53,7 +53,7 @@ export function Hero() {
         style={{ background: "var(--ctp-base)" }}
         className="px-6 py-14 sm:px-8 sm:py-18 lg:py-20"
       >
-        <div className="mx-auto flex max-w-4xl flex-col gap-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-8">
           <div className="space-y-5">
             <h1
               className="scroll-parallax scroll-parallax-soft font-sans font-bold leading-tight text-balance"

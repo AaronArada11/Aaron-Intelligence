@@ -1,19 +1,110 @@
 import { ExternalLink, FolderGit2 } from "lucide-react";
 import { projects } from "../projectsData";
 
+const FEATURED_PROJECTS = projects.slice(0, 2);
+const PROJECT_IMAGE_SIZES =
+  "(max-width: 699px) calc(100vw - 3rem), (max-width: 1024px) calc(50vw - 3.5rem), 28rem";
+
+function FeaturedProjectCard({ project, index }) {
+  return (
+    <div
+      className="homepage-project-card__parallax scroll-parallax scroll-parallax-card"
+      style={{
+        "--parallax-distance": index === 0 ? "44px" : "62px",
+        "--parallax-end": index === 0 ? "-10px" : "-16px",
+      }}
+    >
+      <article
+        className="homepage-project-card"
+        style={{ "--project-accent": project.previewColor }}
+      >
+        <div className="homepage-project-card__windowbar">
+          <div className="homepage-project-card__traffic-lights" aria-hidden="true">
+            <span className="homepage-project-card__traffic-light homepage-project-card__traffic-light--close" />
+            <span className="homepage-project-card__traffic-light homepage-project-card__traffic-light--minimize" />
+            <span className="homepage-project-card__traffic-light homepage-project-card__traffic-light--maximize" />
+          </div>
+          <span className="homepage-project-card__window-path">
+            featured/{String(index + 1).padStart(2, "0")}/preview
+          </span>
+          <span className="homepage-project-card__year">{project.year}</span>
+        </div>
+
+        <div className="homepage-project-card__preview">
+          <picture>
+            <source
+              type="image/avif"
+              srcSet={project.imageAvifSrcSet}
+              sizes={PROJECT_IMAGE_SIZES}
+            />
+            <img
+              src={project.image}
+              alt={project.imageAlt}
+              width={project.imageWidth}
+              height={project.imageHeight}
+              className={`homepage-project-card__image homepage-project-card__image--${project.imageFit ?? "cover"}`}
+              loading={index === 0 ? "eager" : "lazy"}
+              fetchPriority={index === 0 ? "high" : "auto"}
+              decoding="async"
+            />
+          </picture>
+        </div>
+
+        <div className="homepage-project-card__body">
+          <div className="homepage-project-card__heading">
+            <h3>{project.name}</h3>
+            <p>{project.shortDescription}</p>
+          </div>
+
+          <div className="homepage-project-card__tags" aria-label={`${project.name} technology stack`}>
+            {project.tags.map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+          </div>
+
+          <div className="homepage-project-card__links">
+            {project.liveDemo && (
+              <a
+                href={project.liveDemo}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`View ${project.name} live demo`}
+                className="homepage-project-card__link homepage-project-card__link--primary"
+              >
+                Live demo
+                <ExternalLink size={14} aria-hidden="true" />
+              </a>
+            )}
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`View ${project.name} source code on GitHub`}
+              className="homepage-project-card__link"
+            >
+              Source
+              <FolderGit2 size={14} aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      </article>
+    </div>
+  );
+}
+
 export function Projects() {
   return (
     <section
       id="projects"
-      className="py-16 px-6"
+      className="homepage-projects px-6 py-16"
       style={{ background: "var(--ctp-base)" }}
     >
-      <div className="max-w-4xl mx-auto ">
+      <div className="homepage-projects__inner mx-auto max-w-6xl">
         <p
-          className="scroll-parallax scroll-parallax-soft font-mono text-sm mb-6 tracking-widest flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+          className="scroll-parallax scroll-parallax-soft mb-6 flex flex-col gap-2 font-mono text-sm tracking-widest sm:flex-row sm:items-center sm:justify-between"
           style={{ color: "var(--ctp-accent)" }}
         >
-          <span>$ ls ~/projects</span>
+          <span>$ ls ~/projects --featured</span>
           <a
             href="/projects"
             className="transition-opacity hover:opacity-70"
@@ -23,86 +114,14 @@ export function Projects() {
           </a>
         </p>
 
-        <div className="grid items-stretch gap-4 md:grid-cols-2 md:auto-rows-fr">
-          {projects.slice(0, 4).map((p, index) => {
-            const Icon = p.icon;
-            return (
-              <div
-                key={p.name}
-                className="scroll-parallax scroll-parallax-card h-full"
-                style={{
-                  "--parallax-distance": index % 2 === 0 ? "44px" : "62px",
-                  "--parallax-end": index % 2 === 0 ? "-10px" : "-16px",
-                }}
-              >
-                <div
-                  className="group flex h-full min-h-[18rem] flex-col rounded-lg p-5 transition-transform hover:scale-[1.01]"
-                  style={{ background: "var(--ctp-base)", border: "1px solid var(--ctp-surface0)" }}
-                  onMouseEnter={(e) => e.currentTarget.style.outline = "1px solid var(--ctp-accent)"}
-                  onMouseLeave={(e) => e.currentTarget.style.outline = "none"}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="p-2 rounded-lg"
-                        style={{ background: `${p.accentColor}18`, color: p.accentColor }}
-                      >
-                        <Icon size={16} />
-                      </div>
-                      <span className="font-sans font-semibold" style={{ color: "var(--ctp-text)" }}>{p.name}</span>
-                    </div>
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <a
-                        href={p.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: "var(--ctp-subtext0)" }}
-                        className="hover:opacity-70 transition-opacity"
-                        aria-label={`View ${p.name} source code on GitHub`}
-                      >
-                        <FolderGit2 size={15} />
-                      </a>
-                      {p.liveDemo && (
-                        <a
-                          href={p.liveDemo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: "var(--ctp-subtext0)" }}
-                          className="hover:opacity-70 transition-opacity"
-                          aria-label={`View ${p.name} live demo`}
-                        >
-                          <ExternalLink size={15} />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-
-                  <p
-                    className="mb-4 flex-1 font-sans text-sm leading-relaxed"
-                    style={{ color: "var(--ctp-subtext1)" }}
-                  >
-                    {p.shortDescription}
-                  </p>
-
-                  <div className="mt-auto flex flex-wrap gap-2">
-                    {p.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="font-sans rounded px-2 py-0.5 font-medium"
-                        style={{
-                          fontSize: "0.7rem",
-                          background: "var(--ctp-surface0)",
-                          color: p.accentColor,
-                        }}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className="homepage-projects__grid">
+          {FEATURED_PROJECTS.map((project, index) => (
+            <FeaturedProjectCard
+              key={project.name}
+              project={project}
+              index={index}
+            />
+          ))}
         </div>
       </div>
     </section>

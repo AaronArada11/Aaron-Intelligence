@@ -32,21 +32,45 @@ function getCurrentPath() {
 function App() {
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [currentPath, setCurrentPath] = useState(getCurrentPath)
+  const [currentHash, setCurrentHash] = useState(() => window.location.hash)
 
   useEffect(() => {
     const handleLocationChange = () => {
       setCurrentPath(getCurrentPath())
+      setCurrentHash(window.location.hash)
     }
 
     window.addEventListener('popstate', handleLocationChange)
-    return () => window.removeEventListener('popstate', handleLocationChange)
+    window.addEventListener('hashchange', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+      window.removeEventListener('hashchange', handleLocationChange)
+    }
   }, [])
 
   useLayoutEffect(() => {
-    if (currentPath !== '/' || window.location.hash !== '#contact') return
+    if (currentPath !== '/' || currentHash !== '#contact') return
 
-    document.getElementById('contact')?.scrollIntoView()
-  }, [currentPath])
+    const scrollToContact = () => {
+      const contact = document.getElementById('contact')
+
+      if (!contact) return false
+
+      contact.scrollIntoView({ block: 'start' })
+      return true
+    }
+
+    if (scrollToContact()) return
+
+    const observer = new MutationObserver(() => {
+      if (scrollToContact()) observer.disconnect()
+    })
+
+    observer.observe(document.body, { childList: true, subtree: true })
+
+    return () => observer.disconnect()
+  }, [currentHash, currentPath])
 
   const isAboutPage = currentPath === '/about'
   const isProjectsPage = currentPath === '/projects'
