@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useLayoutEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Send, User } from 'lucide-react'
@@ -38,11 +38,14 @@ function Chat({ onClose }) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
-  const messagesEndRef = useRef(null)
+  const messagesContainerRef = useRef(null)
   const inputRef = useRef(null)
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const container = messagesContainerRef.current
+    if (!container) return
+
+    container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' })
   }
 
   const handleSuggestedQuestion = (question) => {
@@ -52,7 +55,15 @@ function Chat({ onClose }) {
     inputRef.current?.focus()
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const container = messagesContainerRef.current
+    if (!container) return
+
+    if (messages.length === 1) {
+      container.scrollTop = 0
+      return
+    }
+
     scrollToBottom()
   }, [messages])
 
@@ -117,7 +128,7 @@ function Chat({ onClose }) {
         <ChatButton onClick={onClose} isOpen embedded />
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 py-4">
+      <main ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-4">
         <div className={`flex flex-col gap-4 ${messages.length === 1 && !isLoading ? 'chat-empty-state' : ''}`}>
           {messages.map((msg, idx) => {
             const isIntroMessage = idx === 0 && msg.role === 'assistant'
@@ -221,7 +232,6 @@ function Chat({ onClose }) {
             </div>
           )}
 
-          <div ref={messagesEndRef} />
         </div>
       </main>
 
