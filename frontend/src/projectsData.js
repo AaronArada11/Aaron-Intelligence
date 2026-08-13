@@ -37,7 +37,7 @@ export const projects = [
     context: "ACM TechSprint: Asteria 2026",
     category: "Machine learning",
     accentColor: "var(--ctp-accent)",
-    previewColor: "var(--ctp-yellow)",
+    previewColor: "var(--ctp-accent)",
     imageAlt:
       "KUMPAS homepage presenting its Filipino Sign Language translator and six-step workflow.",
     highlights: [
@@ -63,7 +63,7 @@ export const projects = [
     context: "Personal project",
     category: "AI engineering",
     accentColor: "var(--ctp-accent)",
-    previewColor: "var(--ctp-green)",
+    previewColor: "var(--ctp-accent)",
     imageAlt:
       "Aaron Intelligence chat interface introducing the AI portfolio representative.",
     imageFit: "contain",

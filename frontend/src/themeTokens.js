@@ -46,6 +46,6 @@ export const flavors = {
 };
 
 export const accentList = [
-  "pink", "mauve", "red", "peach", "yellow",
-  "green", "teal", "sky", "sapphire", "blue",
+  "rosewater", "pink", "flamingo", "mauve", "peach", "red", "maroon", "lavender", "yellow", "green", "teal", "sky", "sapphire", "blue"
 ];
+

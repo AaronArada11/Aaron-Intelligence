@@ -143,7 +143,7 @@ export function MapCard() {
   }, []);
 
   return (
-    <article className="homepage-map scroll-parallax scroll-parallax-deep rounded-xl md:col-span-2 lg:col-span-1">
+    <article className="homepage-map scroll-parallax scroll-parallax-deep rounded-xl p-5 md:col-span-2 lg:col-span-1">
       <div className="homepage-map__header">
         <div className="homepage-map__title">
           <MapPin

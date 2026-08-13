@@ -100,11 +100,13 @@ export function Projects() {
       style={{ background: "var(--ctp-base)" }}
     >
       <div className="homepage-projects__inner mx-auto max-w-6xl">
-        <p
-          className="scroll-parallax scroll-parallax-soft mb-6 flex flex-col gap-2 font-mono text-sm tracking-widest sm:flex-row sm:items-center sm:justify-between"
-          style={{ color: "var(--ctp-accent)" }}
-        >
-          <span>$ ls ~/projects --featured</span>
+        <div className="scroll-parallax scroll-parallax-soft mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h1
+            className="font-sans text-2xl font-semibold tracking-tight sm:text-3xl"
+            style={{ color: "var(--ctp-text)" }}
+          >
+            Projects
+          </h1>
           <a
             href="/projects"
             className="transition-opacity hover:opacity-70"
@@ -112,7 +114,7 @@ export function Projects() {
           >
             View all projects →
           </a>
-        </p>
+        </div>
 
         <div className="homepage-projects__grid">
           {FEATURED_PROJECTS.map((project, index) => (

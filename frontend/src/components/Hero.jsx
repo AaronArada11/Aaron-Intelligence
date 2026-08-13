@@ -148,7 +148,6 @@ export function Hero() {
       >
         <div className="resume-preview__header">
           <div>
-            <p className="resume-preview__command">$ preview ~/Aaron-Arada-Resume.pdf</p>
             <h2 id="resume-preview-title">Resume preview</h2>
           </div>
           <button

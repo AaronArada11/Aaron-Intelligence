@@ -6,38 +6,21 @@ import {
 } from "lucide-react";
 import { projects } from "../projectsData";
 
-const NON_PATH_CHARACTERS = /[^a-z0-9]+/g;
-const EDGE_DASHES = /(^-|-$)/g;
 const PROJECT_IMAGE_SIZES = "(max-width: 960px) calc(100vw - 3rem), 45vw";
 
-function getProjectDirectory(name) {
-  return name
-    .toLowerCase()
-    .replace(NON_PATH_CHARACTERS, "-")
-    .replace(EDGE_DASHES, "");
-}
-
-function ProjectCommand({ children, className = "", status }) {
+function WindowControls() {
   return (
-    <div className={`projects-command ${className}`}>
-      <span className="projects-command__prompt" aria-hidden="true">$</span>
-      <code>{children}</code>
-      {status && <span className="projects-command__status">{status}</span>}
+    <div className="projects-windowbar__controls" aria-hidden="true">
+      <span className="projects-windowbar__control projects-windowbar__control--close" />
+      <span className="projects-windowbar__control projects-windowbar__control--minimize" />
+      <span className="projects-windowbar__control projects-windowbar__control--maximize" />
     </div>
   );
 }
 
 function ProjectPreview({ project, priority }) {
   return (
-    <div
-      className="project-preview"
-      style={{ color: "var(--ctp-accent)" }}
-    >
-      <ProjectCommand 
-      className="project-preview__command"
-      >
-        open ./screenshots/preview.png
-      </ProjectCommand>
+    <div className="project-preview">
       <div className="project-preview__window">
         <picture className="project-preview__picture">
           <source
@@ -73,8 +56,7 @@ function ProjectActions({ project }) {
           target={isExternalDemo ? "_blank" : undefined}
           rel={isExternalDemo ? "noopener noreferrer" : undefined}
         >
-          <span className="project-actions__prompt" aria-hidden="true">$</span>
-          open live-demo
+          Live demo
           <ExternalLink size={15} aria-hidden="true" />
         </a>
       )}
@@ -84,8 +66,7 @@ function ProjectActions({ project }) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <span className="project-actions__prompt" aria-hidden="true">$</span>
-        open source-code
+        Source code
         <FolderGit2 size={15} aria-hidden="true" />
       </a>
     </div>
@@ -93,8 +74,6 @@ function ProjectActions({ project }) {
 }
 
 function ProjectShowcase({ project, index }) {
-  const projectDirectory = getProjectDirectory(project.name);
-
   return (
     <article
       className="project-showcase"
@@ -103,12 +82,11 @@ function ProjectShowcase({ project, index }) {
         "--project-accent": project.previewColor,
       }}
     >
-      <ProjectCommand
-        className="project-showcase__command"
-        status="exit 0"
-      >
-        {`cat ~/projects/${projectDirectory}/README.md`}
-      </ProjectCommand>
+      <div className="projects-windowbar">
+        <WindowControls />
+        <span className="projects-windowbar__title">{project.name}</span>
+        <span className="projects-windowbar__meta">{project.category}</span>
+      </div>
 
       <div className="project-showcase__copy">
         <header className="project-showcase__header">
@@ -158,9 +136,6 @@ export function ProjectsPage() {
     <main className="projects-page">
       <section className="projects-page__inner">
         <header className="projects-hero">
-          <ProjectCommand className="projects-hero__command">
-            ls -la ~/projects
-          </ProjectCommand>
           <h1>Projects</h1>
           <p className="projects-hero__output">
             {projects.length} projects · last updated August 2026

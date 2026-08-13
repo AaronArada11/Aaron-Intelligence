@@ -120,7 +120,7 @@ const certifications = [
   },
 ];
 
-function CommandLabel({ children }) {
+function SectionKicker({ children }) {
   return (
     <p
       className="font-mono text-xs uppercase tracking-widest"
@@ -131,10 +131,9 @@ function CommandLabel({ children }) {
   );
 }
 
-function SectionIntro({ command, title, children }) {
+function SectionIntro({ title, children }) {
   return (
     <div className="space-y-3">
-      <CommandLabel>{command}</CommandLabel>
       <h2
         className="max-w-3xl font-sans font-bold leading-tight text-balance"
         style={{ color: "var(--ctp-text)", fontSize: "clamp(1.35rem, 3vw, 2rem)" }}
@@ -309,7 +308,6 @@ function EventsSection() {
     <section className="px-6 pb-16 sm:px-8 lg:pb-20">
       <div className="mx-auto max-w-5xl space-y-6">
         <SectionIntro
-          command="$ ls ~/events/photos"
           title="Events and community"
         >
           Browse conferences, meetups, and learning events I've attended. Select a photo to see the event details.
@@ -460,7 +458,6 @@ export function AboutPage({ onOpenChat }) {
             </a>
 
             <div className="space-y-5">
-              <CommandLabel>$ cat ~/about-aaron.md</CommandLabel>
               <h1
                 className="max-w-3xl font-sans font-bold leading-tight text-balance"
                 style={{
@@ -490,7 +487,6 @@ export function AboutPage({ onOpenChat }) {
       <section className="px-6 pb-16 sm:px-8 lg:pb-20">
         <div className="mx-auto max-w-5xl space-y-6">
           <SectionIntro
-            command="$ cat ~/education.json"
             title="Education"
           >
             The coursework and technical foundations behind my approach to software and AI.
@@ -509,7 +505,6 @@ export function AboutPage({ onOpenChat }) {
       <section className="px-6 pb-16 sm:px-8 lg:pb-20">
         <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
           <SectionIntro
-            command="$ cat ~/certifications.md"
             title="Certifications"
           >
             Issued credentials, current coursework, and the skills each program covers.
@@ -575,7 +570,7 @@ export function AboutPage({ onOpenChat }) {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Bot size={15} style={{ color: "var(--ctp-accent)" }} />
-              <CommandLabel>Portfolio assistant</CommandLabel>
+              <SectionKicker>Portfolio assistant</SectionKicker>
             </div>
             <p className="max-w-2xl font-sans text-base leading-relaxed" style={{ color: "var(--ctp-subtext1)" }}>
               Ask Aaron Intelligence about my projects, skills, experience, or current work.
