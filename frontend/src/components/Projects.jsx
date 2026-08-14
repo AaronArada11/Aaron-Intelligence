@@ -25,7 +25,7 @@ function FeaturedProjectCard({ project, index }) {
             <span className="homepage-project-card__traffic-light homepage-project-card__traffic-light--maximize" />
           </div>
           <span className="homepage-project-card__window-path">
-            featured/{String(index + 1).padStart(2, "0")}/preview
+             
           </span>
           <span className="homepage-project-card__year">{project.year}</span>
         </div>

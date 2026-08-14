@@ -48,7 +48,6 @@ export const projects = [
     ],
     icon: Languages,
     github: "https://github.com/Praybeyt-Benjamin-Techsprint/Kumpas",
-    liveDemo: "https://kumpas-translator.vercel.app/",
   },
   {
     ...projectImage("aaron-intelligence", 870, 840),
