@@ -743,6 +743,10 @@
   color: color-mix(in srgb, var(--project-accent) 88%, var(--ctp-text));
 }
 
+.homepage-project-card__link--source {
+  grid-column: 1 / -1;
+}
+
 .homepage-project-card__link:hover {
   border-color: var(--project-accent);
   background: color-mix(in srgb, var(--project-accent) 14%, transparent);

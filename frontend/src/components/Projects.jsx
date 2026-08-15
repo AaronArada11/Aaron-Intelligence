@@ -80,7 +80,9 @@ function FeaturedProjectCard({ project, index }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`View ${project.name} source code on GitHub`}
-              className="homepage-project-card__link"
+              className={`homepage-project-card__link${
+                project.liveDemo ? "" : " homepage-project-card__link--source"
+              }`}
             >
               Source
               <FolderGit2 size={14} aria-hidden="true" />
