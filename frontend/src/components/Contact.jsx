@@ -91,7 +91,7 @@ export function Contact() {
             <div
               className="rounded-xl p-5"
               style={{
-                background: "var(--ctp-mantle)",
+                background: "var(--ctp-base)",
                 border: "1px solid var(--ctp-surface0)",
               }}
             >
