@@ -43,7 +43,7 @@
   padding: 0.85rem 1.25rem;
   border: 1px solid color-mix(in srgb, var(--ctp-surface0) 72%, transparent);
   border-radius: 0.65rem;
-  background: var(--ctp-crust);
+  background: var(--ctp-mantle);
 }
 
 .site-footer__identity {

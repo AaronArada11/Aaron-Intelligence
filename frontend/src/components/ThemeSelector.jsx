@@ -12,10 +12,10 @@ export function ThemeSelector() {
   const { flavor, accent, setFlavor, setAccent } = useTheme();
 
   return (
-    <div className="space-y-5">
+    <div className="@container/theme space-y-5">
       <div>
         <div
-          className="grid grid-cols-[repeat(auto-fit,minmax(6.75rem,1fr))] gap-1 rounded-lg border p-1"
+          className="grid grid-cols-2 gap-1 rounded-lg border p-1"
           style={{ borderColor: "var(--ctp-surface0)" }}
         >
           {flavourLabels.map(({ key, label }) => (
@@ -24,21 +24,34 @@ export function ThemeSelector() {
               onClick={() => setFlavor(key)}
               aria-pressed={flavor === key}
               style={{
-                background: flavor === key ? "var(--ctp-surface0)" : "transparent",
-                boxShadow: flavor === key ? "inset 0 0 0 1px var(--ctp-accent)" : "none",
-                color: flavor === key ? "var(--ctp-text)" : "var(--ctp-subtext1)",
+                background:
+                  flavor === key
+                    ? "var(--ctp-surface0)"
+                    : "transparent",
+                boxShadow:
+                  flavor === key
+                    ? "inset 0 0 0 1px var(--ctp-accent)"
+                    : "none",
+                color:
+                  flavor === key
+                    ? "var(--ctp-text)"
+                    : "var(--ctp-subtext1)",
               }}
-              className="min-h-10 min-w-0 rounded-md px-3 py-2 font-mono text-sm transition-colors hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-text)]"
+              className={`min-h-10 min-w-0 rounded-md px-3 py-2 font-mono text-sm transition-colors hover:bg-[var(--ctp-surface0)] hover:text-[var(--ctp-text)] ${
+                key === "abyss" ? "theme-abyss" : ""
+              }`}
             >
               <span className="text-sm font-medium">{label}</span>
             </button>
           ))}
         </div>
       </div>
+
       <div>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(2.35rem,1fr))] gap-2">
           {accentList.map((a) => {
             const color = flavors[flavor][a];
+
             return (
               <button
                 key={a}
@@ -48,7 +61,10 @@ export function ThemeSelector() {
                 aria-pressed={accent === a}
                 style={{
                   background: color,
-                  boxShadow: accent === a ? `0 0 0 3px var(--ctp-base), 0 0 0 5px ${color}` : "none",
+                  boxShadow:
+                    accent === a
+                      ? `0 0 0 3px var(--ctp-base), 0 0 0 5px ${color}`
+                      : "none",
                 }}
                 className="aspect-square w-full min-w-0 rounded-lg border border-[var(--ctp-surface0)] transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ctp-accent)]"
               />

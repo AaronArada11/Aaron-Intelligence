@@ -211,7 +211,7 @@ export function Navbar() {
               }}
             >
               <Terminal size={14} />
-              Open terminal portfolio
+              Open terminal
             </a>
           </div>
         </>
