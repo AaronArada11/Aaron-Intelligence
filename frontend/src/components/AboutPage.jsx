@@ -99,9 +99,10 @@ const profilePhotos = [
 
 const certifications = [
   {
-    name: "AWS Academy Generative AI Foundations",
-    issuer: "AWS Academy",
-    date: "In progress",
+    name: "AWS Academy Graduate - Generative AI Foundations - Training Badge",
+    issuer: "AWS Training and Certification",
+    date: "Issued August 2026",
+    credentialUrl: "https://www.credly.com/badges/1e196669-e582-4a00-8a16-cf0b74fb2c95/public_url",
     tags: ["Generative AI", "Prompt Engineering", "Responsible AI"],
   },
   {
