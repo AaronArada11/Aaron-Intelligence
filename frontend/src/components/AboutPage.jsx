@@ -103,21 +103,18 @@ const certifications = [
     issuer: "AWS Training and Certification",
     date: "Issued August 2026",
     credentialUrl: "https://www.credly.com/badges/1e196669-e582-4a00-8a16-cf0b74fb2c95/public_url",
-    tags: ["Generative AI", "Prompt Engineering", "Responsible AI"],
   },
   {
     name: "IT Specialist - Python",
     issuer: "Certiport",
     date: "Issued July 2026",
     credentialUrl: "https://www.credly.com/badges/ec1e2018-4ce3-43e6-add2-47db4eb680e8/public_url",
-    tags: ["Python", "Programming", "Problem Solving"],
   },
   {
     name: "Microsoft Office Specialist: Excel Associate",
     issuer: "Microsoft",
     date: "Issued August 2023",
     credentialUrl: "https://www.credly.com/badges/d7302b70-bf16-4c05-989b-aab9a76c1938",
-    tags: ["Excel", "Data Analysis", "Spreadsheets"],
   },
 ];
 
@@ -550,8 +547,6 @@ export function AboutPage({ onOpenChat }) {
                     </p>
                   </div>
                 </div>
-
-                <TagList tags={cert.tags} />
               </TerminalPanel>
             ))}
           </div>
