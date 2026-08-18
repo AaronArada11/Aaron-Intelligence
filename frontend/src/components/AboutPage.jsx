@@ -505,7 +505,7 @@ export function AboutPage({ onOpenChat }) {
           <SectionIntro
             title="Certifications"
           >
-            Issued credentials, current coursework, and the skills each program covers.
+            Credentials earned through hands-on learning, technical training, and continuous development.
           </SectionIntro>
 
           <div className="grid gap-4 md:grid-cols-3">
