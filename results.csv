@@ -130,3 +130,35 @@ He builds full-stack, AI-powered, and machine learning applications using techno
 2,What backend technologies does Aaron use?,"Aaron uses FastAPI, Node.js, REST APIs, Supabase, and PostgreSQL for backend technologies.",2180,True,0,,2026-08-09T17:33:06.370041+00:00
 2,What frontend technologies does Aaron use?,"Aaron uses React, Next.js, TailwindCSS, shadcn/ui, HTML, and CSS for frontend development.",2782,True,0,,2026-08-09T17:34:14.190653+00:00
 2,What databases has Aaron worked with?,"Aaron has worked with PostgreSQL, MongoDB, Supabase, and Convex.",2368,True,0,,2026-08-09T17:35:21.584264+00:00
+2,What cloud platforms does Aaron know?,"Aaron knows AWS EC2, AWS S3, Vercel, and Railway.",4648,True,0,,2026-08-18T14:44:54.533736+00:00
+2,What AI or machine learning tools has Aaron used?,Aaron has used Google's Gemini API for AI integration in his projects.,4401,True,0,,2026-08-18T14:46:03.947199+00:00
+2,What projects has Aaron built?,"Aaron has built the following projects:
+
+*   Aaron Toolkit
+*   KUMPAS
+*   Aaron Intelligence
+*   Mirror Mentor
+*   AlgoVisualizer
+*   Scriptorium",8941,True,0,,2026-08-18T14:47:17.898291+00:00
+2,What is Aaron's most recent project?,Aaron's most recent listed project is Aaron Toolkit.,4039,True,0,,2026-08-18T14:48:26.943861+00:00
+2,Tell me about Aaron Intelligence.,"Aaron Intelligence is a personalized RAG chatbot designed to act as an interactive digital representation of Aaron Randolph S.D. Arada. It focuses entirely on Aaron's background, projects, skills, experiences, and technical journey. The chatbot uses a Retrieval-Augmented Generation (RAG) architecture to retrieve information from Aaron's personal knowledge base, providing accurate, context-aware responses. It serves as both a portfolio project demonstrating full-stack AI engineering skills and a practical tool for showcasing Aaron's work. It also involves AI integration using Google's Gemini API.",14326,True,0,,2026-08-18T14:49:46.280214+00:00
+2,What problem does Aaron Intelligence solve?,"Aaron Intelligence solves the problem of traditional portfolio websites requiring visitors to manually browse multiple pages to learn about a candidate's projects, skills, and experiences. It creates a more interactive and conversational way for visitors, recruiters, and collaborators to learn about Aaron through natural conversation.",20992,True,0,,2026-08-18T15:08:42.405523+00:00
+2,What tech stack does Aaron Intelligence use?,"Aaron Intelligence uses the following tech stack:
+
+*   **Frontend**: React, Vite
+*   **Backend**: FastAPI
+*   **Database**: Supabase PostgreSQL
+*   **Vector Search**: pgvector
+*   **Embeddings**: Gemini Embedding 001
+*   **AI Model**: Gemini 2.5 Flash
+*   **Deployment**: Vercel",17323,True,0,,2026-08-18T15:41:44.655480+00:00
+2,Why did Aaron use Supabase for Aaron Intelligence?,"Aaron used Supabase for Aaron Intelligence because:
+*   He was already familiar with Supabase from previous projects.
+*   Supabase provides PostgreSQL and `pgvector` support within a single platform.
+*   Using Supabase reduced infrastructure complexity and simplified development.
+*   Vector search could be implemented directly inside PostgreSQL through `pgvector`.",19867,True,0,,2026-08-18T15:59:26.770065+00:00
+2,Why did Aaron use Gemini?,"Aaron used Gemini for the following reasons:
+*   Gemini provides both embedding generation and response generation capabilities, simplifying the architecture.
+*   Aaron had prior experience integrating Gemini into multiple projects.
+*   Gemini 2.5 Flash offers a strong balance between performance, speed, and cost.",19212,True,0,,2026-08-18T16:17:29.689978+00:00
+2,What is Mirror Mentor?,Retriever error: Server disconnected without sending a response.,65226,False,0,,2026-08-18T16:39:49.402890+00:00

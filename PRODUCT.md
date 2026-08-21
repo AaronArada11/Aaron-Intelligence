@@ -23,7 +23,6 @@ Avoid generic SaaS landing-page polish, decorative UI that distracts from the wo
 ## Design Principles
 
 - Keep the portfolio interactive and immediately useful.
-- Let technical personality show through terminal-inspired language and compact controls.
 - Prioritize clear navigation to projects, contact paths, resume, and live demos.
 - Preserve the existing theme system and monospace identity.
 - Make small additions feel native to the current interface.

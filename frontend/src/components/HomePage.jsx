@@ -3,12 +3,14 @@ import { Dashboard } from "./Dashboard";
 import { Hero } from "./Hero";
 import { MapCard } from "./MapCard";
 import { Projects } from "./Projects";
+import { Skills } from "./Skills";
 
 export default function HomePage() {
   return (
     <main>
       <Hero />
       <Projects />
+      <Skills />
       <section
         id="contact"
         className="homepage-dashboard-contact bg-[var(--ctp-base)] px-6 py-14"

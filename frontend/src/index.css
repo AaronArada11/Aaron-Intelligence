@@ -795,6 +795,121 @@
   }
 }
 
+.homepage-skills__grid {
+  display: grid;
+  gap: clamp(0.85rem, 2vw, 1.1rem);
+}
+
+.homepage-skills-loop {
+  overflow: hidden;
+}
+
+.homepage-skills-loop__marquee {
+  padding-block: 1.35rem;
+}
+
+.homepage-skills-loop__marquee .logoloop__node {
+  color: var(--ctp-subtext1);
+  transition: color 180ms ease;
+}
+
+.homepage-skills-loop__marquee .logoloop__link:hover .logoloop__node,
+.homepage-skills-loop__marquee .logoloop__link:focus-visible .logoloop__node {
+  color: var(--ctp-accent);
+}
+
+.homepage-skills-card__parallax {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+}
+
+.homepage-skills-card {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--ctp-surface0);
+  border-radius: 0.9rem;
+  background: var(--ctp-mantle);
+  box-shadow: 0 1rem 2.5rem color-mix(in srgb, var(--ctp-crust) 28%, transparent);
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.homepage-skills-card:hover,
+.homepage-skills-card:focus-within {
+  border-color: color-mix(in srgb, var(--skill-accent) 52%, var(--ctp-surface1));
+  box-shadow: 0 1.25rem 3rem color-mix(in srgb, var(--ctp-crust) 42%, transparent);
+  transform: translateY(-3px);
+}
+
+.homepage-skills-card__header {
+  display: flex;
+  align-items: center;
+  min-height: 2.55rem;
+  padding: 0 0.9rem;
+  border-bottom: 1px solid var(--ctp-surface0);
+  background: var(--ctp-crust);
+}
+
+.homepage-skills-card__label {
+  overflow: hidden;
+  color: color-mix(in srgb, var(--skill-accent) 82%, var(--ctp-text));
+  font-family: var(--font-code);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.homepage-skills-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.85rem 0.9rem 1rem;
+}
+
+.homepage-skills-card__tags span {
+  padding: 0.3rem 0.48rem;
+  border: 1px solid var(--ctp-surface0);
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--ctp-surface0) 72%, transparent);
+  color: color-mix(in srgb, var(--skill-accent) 86%, var(--ctp-text));
+  font-family: var(--font-code);
+  font-size: 0.61rem;
+  line-height: 1.25;
+}
+
+@media (min-width: 640px) {
+  .homepage-skills__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .homepage-skills__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homepage-skills-card {
+    transition: none;
+  }
+
+  .homepage-skills-card:hover,
+  .homepage-skills-card:focus-within {
+    transform: none;
+  }
+}
+
 .projects-page {
   min-height: 100vh;
   background: var(--ctp-base);

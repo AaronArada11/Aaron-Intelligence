@@ -1,0 +1,43 @@
+import { FaAws } from "react-icons/fa6";
+import {
+  SiFastapi,
+  SiGit,
+  SiGooglegemini,
+  SiJavascript,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiOpencv,
+  SiOpenjdk,
+  SiPostgresql,
+  SiPython,
+  SiRailway,
+  SiReact,
+  SiSupabase,
+  SiTailwindcss,
+  SiTensorflow,
+  SiTypescript,
+  SiVercel,
+} from "react-icons/si";
+import { TbBrandVscode } from "react-icons/tb";
+
+export const techLogos = [
+  { node: <SiPython />, title: "Python", href: "https://www.python.org" },
+  { node: <SiTypescript />, title: "TypeScript", href: "https://www.typescriptlang.org" },
+  { node: <SiJavascript />, title: "JavaScript", href: "https://developer.mozilla.org/en-US/docs/Web/JavaScript" },
+  { node: <SiOpenjdk />, title: "Java", href: "https://openjdk.org" },
+  { node: <SiReact />, title: "React", href: "https://react.dev" },
+  { node: <SiNextdotjs />, title: "Next.js", href: "https://nextjs.org" },
+  { node: <SiTailwindcss />, title: "Tailwind CSS", href: "https://tailwindcss.com" },
+  { node: <SiFastapi />, title: "FastAPI", href: "https://fastapi.tiangolo.com" },
+  { node: <SiNodedotjs />, title: "Node.js", href: "https://nodejs.org" },
+  { node: <SiSupabase />, title: "Supabase", href: "https://supabase.com" },
+  { node: <SiPostgresql />, title: "PostgreSQL", href: "https://www.postgresql.org" },
+  { node: <SiTensorflow />, title: "TensorFlow", href: "https://www.tensorflow.org" },
+  { node: <SiGooglegemini />, title: "Gemini API", href: "https://ai.google.dev" },
+  { node: <SiOpencv />, title: "OpenCV", href: "https://opencv.org" },
+  { node: <FaAws />, title: "AWS", href: "https://aws.amazon.com" },
+  { node: <SiVercel />, title: "Vercel", href: "https://vercel.com" },
+  { node: <SiRailway />, title: "Railway", href: "https://railway.com" },
+  { node: <SiGit />, title: "Git", href: "https://git-scm.com" },
+  { node: <TbBrandVscode />, title: "VS Code", href: "https://code.visualstudio.com" },
+];
