@@ -809,7 +809,7 @@
 }
 
 .homepage-skills-loop__marquee .logoloop__node {
-  color: var(--ctp-subtext1);
+  color: var(--ctp-accent);
   transition: color 180ms ease;
 }
 
