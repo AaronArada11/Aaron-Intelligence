@@ -92,10 +92,10 @@ function App() {
               <AboutPage onOpenChat={() => setIsChatOpen(true)} />
             </Suspense>
           ) : isProjectsPage ? (
-            <ProjectsPage />
+            <ProjectsPage onOpenChat={() => setIsChatOpen(true)} />
           ) : (
             <Suspense fallback={<RouteFallback />}>
-              <HomePage />
+              <HomePage onOpenChat={() => setIsChatOpen(true)} />
             </Suspense>
           )}
           {isChatOpen ? (

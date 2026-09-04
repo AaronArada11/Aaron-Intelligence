@@ -1,11 +1,14 @@
-import { ExternalLink, FolderGit2 } from "lucide-react";
+import { ExternalLink, FolderGit2, MessageCircle } from "lucide-react";
 import { projects } from "../projectsData";
 
 const FEATURED_PROJECTS = projects.slice(0, 2);
 const PROJECT_IMAGE_SIZES =
   "(max-width: 699px) calc(100vw - 3rem), (max-width: 1024px) calc(50vw - 3.5rem), 28rem";
 
-function FeaturedProjectCard({ project, index }) {
+function FeaturedProjectCard({ project, index, onOpenChat }) {
+  const opensChat = project.demoAction === "chat";
+  const hasDemo = opensChat || project.liveDemo;
+
   return (
     <div
       className="homepage-project-card__parallax scroll-parallax scroll-parallax-card"
@@ -63,7 +66,18 @@ function FeaturedProjectCard({ project, index }) {
           </div>
 
           <div className="homepage-project-card__links">
-            {project.liveDemo && (
+            {opensChat ? (
+              <button
+                type="button"
+                onClick={onOpenChat}
+                aria-label="Open the Aaron Intelligence chat demo"
+                aria-controls="aaron-intelligence-chat"
+                className="homepage-project-card__link homepage-project-card__link--primary"
+              >
+                Live demo
+                <MessageCircle size={14} aria-hidden="true" />
+              </button>
+            ) : project.liveDemo ? (
               <a
                 href={project.liveDemo}
                 target="_blank"
@@ -74,14 +88,14 @@ function FeaturedProjectCard({ project, index }) {
                 Live demo
                 <ExternalLink size={14} aria-hidden="true" />
               </a>
-            )}
+            ) : null}
             <a
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`View ${project.name} source code on GitHub`}
               className={`homepage-project-card__link${
-                project.liveDemo ? "" : " homepage-project-card__link--source"
+                hasDemo ? "" : " homepage-project-card__link--source"
               }`}
             >
               Source
@@ -94,7 +108,7 @@ function FeaturedProjectCard({ project, index }) {
   );
 }
 
-export function Projects() {
+export function Projects({ onOpenChat }) {
   return (
     <section
       id="projects"
@@ -124,6 +138,7 @@ export function Projects() {
               key={project.name}
               project={project}
               index={index}
+              onOpenChat={onOpenChat}
             />
           ))}
         </div>

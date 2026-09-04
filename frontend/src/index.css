@@ -719,6 +719,8 @@
 }
 
 .homepage-project-card__link {
+  width: 100%;
+  padding: 0;
   display: inline-flex;
   min-height: 2.55rem;
   align-items: center;
@@ -726,7 +728,9 @@
   gap: 0.45rem;
   border: 1px solid var(--ctp-surface1);
   border-radius: 0.5rem;
+  background: transparent;
   color: var(--ctp-text);
+  cursor: pointer;
   font-family: var(--font-code);
   font-size: 0.68rem;
   text-decoration: none;
@@ -1147,15 +1151,19 @@
   gap: 0.65rem;
 }
 
-.project-actions a {
+.project-actions :is(a, button) {
   display: inline-flex;
+  width: 100%;
   min-height: 3rem;
+  padding: 0;
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
   border: 1px solid var(--ctp-surface1);
   border-radius: 0.55rem;
+  background: transparent;
   color: var(--ctp-text);
+  cursor: pointer;
   font-family: var(--font-code);
   font-size: 0.75rem;
   transition:
@@ -1165,19 +1173,19 @@
     transform 180ms ease;
 }
 
-.project-actions a:hover {
+.project-actions :is(a, button):hover {
   border-color: var(--ctp-accent);
   background: color-mix(in srgb, var(--ctp-accent) 9%, transparent);
   color: var(--ctp-accent);
   transform: translateY(-2px);
 }
 
-.project-actions a:focus-visible {
+.project-actions :is(a, button):focus-visible {
   outline: 2px solid var(--ctp-accent);
   outline-offset: 3px;
 }
 
-.project-actions a:only-child {
+.project-actions :is(a, button):only-child {
   grid-column: 1 / -1;
 }
 
@@ -1660,7 +1668,7 @@
     grid-template-columns: 1fr;
   }
 
-  .project-actions a:only-child {
+  .project-actions :is(a, button):only-child {
     grid-column: auto;
   }
 
@@ -1711,7 +1719,7 @@
   }
 
   .project-showcase:hover .project-preview__window,
-  .project-actions a:hover {
+  .project-actions :is(a, button):hover {
     transform: none;
   }
 }

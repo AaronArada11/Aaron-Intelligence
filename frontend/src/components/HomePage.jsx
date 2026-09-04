@@ -5,11 +5,11 @@ import { MapCard } from "./MapCard";
 import { Projects } from "./Projects";
 import { Skills } from "./Skills";
 
-export default function HomePage() {
+export default function HomePage({ onOpenChat }) {
   return (
     <main>
       <Hero />
-      <Projects />
+      <Projects onOpenChat={onOpenChat} />
       <Skills />
       <section
         id="contact"

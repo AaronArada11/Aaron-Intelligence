@@ -74,7 +74,7 @@ export const projects = [
     ],
     icon: Bot,
     github: "https://github.com/AaronArada11/Aaron-Intelligence",
-    liveDemo: "/",
+    demoAction: "chat",
   },
   {
     ...projectImage("mirror-mentor", 1800, 1045),

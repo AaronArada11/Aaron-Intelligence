@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import {
   ExternalLink,
   FolderGit2,
+  MessageCircle,
   Terminal,
 } from "lucide-react";
 import { projects } from "../projectsData";
@@ -44,12 +45,23 @@ function ProjectPreview({ project, priority }) {
   );
 }
 
-function ProjectActions({ project }) {
+function ProjectActions({ project, onOpenChat }) {
+  const opensChat = project.demoAction === "chat";
   const isExternalDemo = project.liveDemo?.startsWith("http");
 
   return (
     <div className="project-actions">
-      {project.liveDemo && (
+      {opensChat ? (
+        <button
+          type="button"
+          onClick={onOpenChat}
+          aria-label="Open the Aaron Intelligence chat demo"
+          aria-controls="aaron-intelligence-chat"
+        >
+          Live demo
+          <MessageCircle size={15} aria-hidden="true" />
+        </button>
+      ) : project.liveDemo ? (
         <a
           href={project.liveDemo}
           aria-label={`View ${project.name} live demo`}
@@ -59,7 +71,7 @@ function ProjectActions({ project }) {
           Live demo
           <ExternalLink size={15} aria-hidden="true" />
         </a>
-      )}
+      ) : null}
       <a
         href={project.github}
         aria-label={`View ${project.name} source code`}
@@ -73,7 +85,7 @@ function ProjectActions({ project }) {
   );
 }
 
-function ProjectShowcase({ project, index }) {
+function ProjectShowcase({ project, index, onOpenChat }) {
   return (
     <article
       className="project-showcase"
@@ -114,7 +126,7 @@ function ProjectShowcase({ project, index }) {
           </div>
         </dl>
 
-        <ProjectActions project={project} />
+        <ProjectActions project={project} onOpenChat={onOpenChat} />
       </div>
 
       <ProjectPreview project={project} priority={index === 0} />
@@ -122,7 +134,7 @@ function ProjectShowcase({ project, index }) {
   );
 }
 
-export function ProjectsPage() {
+export function ProjectsPage({ onOpenChat }) {
   useEffect(() => {
     const previousTitle = document.title;
     document.title = "Projects — Aaron Arada";
@@ -153,6 +165,7 @@ export function ProjectsPage() {
               key={project.name}
               project={project}
               index={index}
+              onOpenChat={onOpenChat}
             />
           ))}
         </div>
