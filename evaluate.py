@@ -43,6 +43,15 @@ CSV_COLUMNS = [
     "Response Time (ms)",
     "Success",
     "Retry Count",
+    "Pipeline Latency (ms)",
+    "Retrieval Latency (ms)",
+    "Generation Latency (ms)",
+    "Input Tokens",
+    "Output Tokens",
+    "Thoughts Tokens",
+    "Total Tokens",
+    "Document Count",
+    "Top Similarity",
     "Trace ID",
     "Timestamp",
 ]
@@ -93,7 +102,12 @@ class Config:
 
 
 class ChatClient:
-    def ask(self, question: str) -> tuple[int, dict[str, Any], dict[str, str]]:
+    def ask(
+        self,
+        question: str,
+        run_number: int,
+        question_number: int,
+    ) -> tuple[int, dict[str, Any], dict[str, str]]:
         raise NotImplementedError
 
     @property
@@ -107,10 +121,20 @@ class HttpChatClient(ChatClient):
         self.timeout_seconds = timeout_seconds
         self.session = requests.Session()
 
-    def ask(self, question: str) -> tuple[int, dict[str, Any], dict[str, str]]:
+    def ask(
+        self,
+        question: str,
+        run_number: int,
+        question_number: int,
+    ) -> tuple[int, dict[str, Any], dict[str, str]]:
         response = self.session.post(
             self.url,
-            json={"message": question},
+            json={
+                "message": question,
+                "include_metrics": True,
+                "evaluation_run": run_number,
+                "evaluation_question": question_number,
+            },
             timeout=self.timeout_seconds,
         )
         data = _response_json(response)
@@ -129,8 +153,21 @@ class InProcessChatClient(ChatClient):
 
         self.client = TestClient(app)
 
-    def ask(self, question: str) -> tuple[int, dict[str, Any], dict[str, str]]:
-        response = self.client.post("/chat", json={"message": question})
+    def ask(
+        self,
+        question: str,
+        run_number: int,
+        question_number: int,
+    ) -> tuple[int, dict[str, Any], dict[str, str]]:
+        response = self.client.post(
+            "/chat",
+            json={
+                "message": question,
+                "include_metrics": True,
+                "evaluation_run": run_number,
+                "evaluation_question": question_number,
+            },
+        )
         data = _response_json(response)
         return response.status_code, data, dict(response.headers)
 
@@ -460,6 +497,7 @@ def write_csv(path: Path, results: list[dict[str, Any]]) -> None:
         writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
         writer.writeheader()
         for result in sorted_results(results):
+            metrics = result.get("langfuse_metrics") or {}
             writer.writerow(
                 {
                     "Run Number": result.get("run_number"),
@@ -468,6 +506,15 @@ def write_csv(path: Path, results: list[dict[str, Any]]) -> None:
                     "Response Time (ms)": result.get("response_time_ms"),
                     "Success": result.get("success"),
                     "Retry Count": result.get("retry_count"),
+                    "Pipeline Latency (ms)": metrics.get("pipeline_latency_ms"),
+                    "Retrieval Latency (ms)": metrics.get("retrieval_latency_ms"),
+                    "Generation Latency (ms)": metrics.get("generation_latency_ms"),
+                    "Input Tokens": metrics.get("input_tokens"),
+                    "Output Tokens": metrics.get("output_tokens"),
+                    "Thoughts Tokens": metrics.get("thoughts_tokens"),
+                    "Total Tokens": metrics.get("total_tokens"),
+                    "Document Count": metrics.get("document_count"),
+                    "Top Similarity": metrics.get("top_similarity"),
                     "Trace ID": result.get("trace_id"),
                     "Timestamp": result.get("timestamp"),
                 }
@@ -495,12 +542,30 @@ def sorted_results(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def completed_keys(results: list[dict[str, Any]]) -> set[tuple[int, int]]:
     keys = set()
     for result in results:
+        if not result.get("success"):
+            continue
         run_number = result.get("run_number")
         question_number = result.get("question_number")
         if run_number is None or question_number is None:
             continue
         keys.add((int(run_number), int(question_number)))
     return keys
+
+
+def replace_result(
+    results: list[dict[str, Any]],
+    replacement: dict[str, Any],
+) -> list[dict[str, Any]]:
+    replacement_key = (
+        replacement.get("run_number"),
+        replacement.get("question_number"),
+    )
+    return [
+        result
+        for result in results
+        if (result.get("run_number"), result.get("question_number"))
+        != replacement_key
+    ] + [replacement]
 
 
 def run_evaluation(config: Config) -> dict[str, Any]:
@@ -538,8 +603,11 @@ def run_evaluation(config: Config) -> dict[str, Any]:
 
             print(f"Run {run_number}/{config.runs}, question {index}/{len(questions)}")
             result = ask_with_retries(client, question, run_number, index, config)
-            results.append(result)
-            done.add(key)
+            results = replace_result(results, result)
+            if result.get("success"):
+                done.add(key)
+            else:
+                done.discard(key)
 
             summary = build_summary(
                 results,
@@ -556,6 +624,13 @@ def run_evaluation(config: Config) -> dict[str, Any]:
                 len(questions),
                 client.mode,
             )
+
+            if result.get("status_code") == 429:
+                print(
+                    "Gemini quota is exhausted. Stopping without marking this "
+                    "question complete; rerun the same command after quota reset."
+                )
+                return summary
 
             if index < len(questions) and has_remaining_questions(
                 done,
@@ -577,7 +652,8 @@ def run_evaluation(config: Config) -> dict[str, Any]:
 
 
 def outputs_are_complete(results_path: Path, expected_count: int) -> bool:
-    return len(load_existing_results(results_path)) >= expected_count
+    results = load_existing_results(results_path)
+    return len(completed_keys(results)) >= expected_count
 
 
 def archive_outputs(output_dir: Path) -> None:
@@ -618,7 +694,11 @@ def ask_with_retries(
 
     for attempt in range(config.max_retries + 1):
         try:
-            status, data, headers = client.ask(question)
+            status, data, headers = client.ask(
+                question,
+                run_number,
+                question_number,
+            )
             last_status = status
             last_data = data
             last_headers = headers
@@ -775,6 +855,10 @@ def extract_trace_id(data: dict[str, Any], headers: dict[str, str]) -> str:
 
 
 def extract_langfuse_metrics(data: dict[str, Any]) -> dict[str, Any]:
+    response_metrics = data.get("metrics")
+    if isinstance(response_metrics, dict):
+        return response_metrics
+
     metrics = {}
     for key, value in data.items():
         lower_key = str(key).lower()
@@ -790,9 +874,10 @@ def build_summary(
     client_mode: str,
     evaluation_start: float,
 ) -> dict[str, Any]:
-    completed = len(results)
+    attempted = len(results)
+    completed = len(completed_keys(results))
     successes = [row for row in results if row.get("success")]
-    failures = completed - len(successes)
+    failures = attempted - len(successes)
     response_times = [
         float(row["response_time_ms"])
         for row in results
@@ -813,12 +898,13 @@ def build_summary(
         "configured_runs": config.runs,
         "questions_per_run": len(questions),
         "expected_questions": expected,
+        "attempted_questions": attempted,
         "completed_questions": completed,
         "remaining_questions": max(0, expected - completed),
         "success_count": len(successes),
         "failure_count": failures,
-        "success_rate": rate(len(successes), completed),
-        "failure_rate": rate(failures, completed),
+        "success_rate": rate(len(successes), attempted),
+        "failure_rate": rate(failures, attempted),
         "retry_count": sum(int(row.get("retry_count") or 0) for row in results),
         "average_response_time_ms": average(response_times),
         "median_response_time_ms": percentile(response_times, 50),
@@ -827,6 +913,7 @@ def build_summary(
         "total_runtime_ms": total_runtime_ms,
         "total_runtime_seconds": round(total_runtime_ms / 1000, 3),
         "langfuse_metrics": summarize_langfuse_metrics(results),
+        "observability": build_observability_summary(results),
         "configuration": {
             "delay_seconds": config.delay_seconds,
             "run_delay_seconds": config.run_delay_seconds,
@@ -837,6 +924,41 @@ def build_summary(
         },
     }
     return summary
+
+
+def metric_values(results: list[dict[str, Any]], key: str) -> list[float]:
+    values = []
+    for row in results:
+        metrics = row.get("langfuse_metrics") or {}
+        value = metrics.get(key) if isinstance(metrics, dict) else None
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            values.append(float(value))
+    return values
+
+
+def build_observability_summary(results: list[dict[str, Any]]) -> dict[str, Any]:
+    pipeline = metric_values(results, "pipeline_latency_ms")
+    retrieval = metric_values(results, "retrieval_latency_ms")
+    generation = metric_values(results, "generation_latency_ms")
+    input_tokens = metric_values(results, "input_tokens")
+    output_tokens = metric_values(results, "output_tokens")
+    total_tokens = metric_values(results, "total_tokens")
+
+    return {
+        "instrumented_response_count": len(pipeline),
+        "median_pipeline_latency_ms": percentile(pipeline, 50),
+        "p95_pipeline_latency_ms": percentile(pipeline, 95),
+        "median_retrieval_latency_ms": percentile(retrieval, 50),
+        "p95_retrieval_latency_ms": percentile(retrieval, 95),
+        "median_generation_latency_ms": percentile(generation, 50),
+        "p95_generation_latency_ms": percentile(generation, 95),
+        "average_input_tokens": average(input_tokens),
+        "average_output_tokens": average(output_tokens),
+        "average_total_tokens": average(total_tokens),
+        "total_input_tokens": round(sum(input_tokens)),
+        "total_output_tokens": round(sum(output_tokens)),
+        "total_tokens": round(sum(total_tokens)),
+    }
 
 
 def average(values: list[float]) -> float | None:
@@ -952,6 +1074,23 @@ def print_summary(summary: dict[str, Any]) -> None:
     print(f"P95 response time: {summary['p95_response_time_ms']} ms")
     print(f"Retry count: {summary['retry_count']}")
     print(f"Total runtime: {summary['total_runtime_seconds']} s")
+
+    observability = summary.get("observability") or {}
+    instrumented = observability.get("instrumented_response_count", 0)
+    if instrumented:
+        print(f"Responses with backend metrics: {instrumented}")
+        print(
+            "Pipeline latency median/P95: "
+            f"{observability['median_pipeline_latency_ms']} / "
+            f"{observability['p95_pipeline_latency_ms']} ms"
+        )
+        print(
+            "Average input/output/total tokens: "
+            f"{observability['average_input_tokens']} / "
+            f"{observability['average_output_tokens']} / "
+            f"{observability['average_total_tokens']}"
+        )
+        print(f"Total tokens: {observability['total_tokens']}")
 
 
 def main() -> int:

@@ -5,7 +5,9 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from backend.langfuse_tracing import (
     flush_langfuse,
+    get_current_trace_id,
     get_runtime_environment,
+    safe_end,
     safe_update,
     start_observation,
 )
@@ -82,6 +84,9 @@ def favicon():
 
 class ChatRequest(BaseModel):
     message: str
+    include_metrics: bool = False
+    evaluation_run: int | None = None
+    evaluation_question: int | None = None
 
 
 def _is_rate_limit_error(exc):
@@ -99,6 +104,85 @@ def _is_rate_limit_error(exc):
         "too many requests",
     )
     return any(term in message for term in rate_limit_terms)
+
+
+def _elapsed_ms(started):
+    return round((time.perf_counter() - started) * 1000, 3)
+
+
+def _usage_value(usage_metadata, field):
+    if usage_metadata is None:
+        return None
+    value = getattr(usage_metadata, field, None)
+    if value is None and isinstance(usage_metadata, dict):
+        value = usage_metadata.get(field)
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _gemini_usage_details(response):
+    usage_metadata = getattr(response, "usage_metadata", None)
+    provider_usage = {
+        "input_tokens": _usage_value(usage_metadata, "prompt_token_count"),
+        "output_tokens": _usage_value(usage_metadata, "candidates_token_count"),
+        "thoughts_tokens": _usage_value(usage_metadata, "thoughts_token_count"),
+        "cached_tokens": _usage_value(
+            usage_metadata,
+            "cached_content_token_count",
+        ),
+        "total_tokens": _usage_value(usage_metadata, "total_token_count"),
+    }
+    provider_usage = {
+        key: value
+        for key, value in provider_usage.items()
+        if value is not None
+    }
+
+    langfuse_usage = {}
+    usage_mapping = {
+        "input_tokens": "input",
+        "output_tokens": "output",
+        "thoughts_tokens": "reasoning",
+        "cached_tokens": "cache_read_input_tokens",
+        "total_tokens": "total",
+    }
+    for provider_key, langfuse_key in usage_mapping.items():
+        if provider_key in provider_usage:
+            langfuse_usage[langfuse_key] = provider_usage[provider_key]
+
+    return provider_usage, langfuse_usage
+
+
+def _retrieval_observation_output(retrieved_docs, latency_ms):
+    documents = []
+    for doc in retrieved_docs or []:
+        similarity = doc.get("similarity")
+        if isinstance(similarity, (int, float)):
+            similarity = round(float(similarity), 6)
+        documents.append({
+            "source": doc.get("source"),
+            "chunk_id": doc.get("chunk_id"),
+            "similarity": similarity,
+        })
+
+    return {
+        "document_count": len(documents),
+        "latency_ms": latency_ms,
+        "documents": documents,
+    }
+
+
+def _chat_payload(answer, request, metrics, trace_id):
+    payload = {"answer": answer}
+    if request.include_metrics:
+        payload["metrics"] = metrics
+        if trace_id:
+            payload["trace_id"] = trace_id
+    return payload
 
 
 def _github_headers():
@@ -410,12 +494,16 @@ def github_commits():
 
 @fastapi_app.post("/chat")
 @fastapi_app.post("/api/chat")
-def chat(request: ChatRequest):
+def chat(request: ChatRequest, http_response: Response):
+    request_started = time.perf_counter()
     trace_metadata = {
         "app": "Aaron Intelligence",
         "route": "/chat",
         "model": CHAT_MODEL,
         "environment": get_runtime_environment(),
+        "evaluation": request.include_metrics,
+        "evaluation_run": request.evaluation_run,
+        "evaluation_question": request.evaluation_question,
     }
 
     with start_observation(
@@ -423,7 +511,12 @@ def chat(request: ChatRequest):
         name="chat-request",
         input=request.message,
         metadata=trace_metadata,
+        end_on_exit=False,
     ) as trace:
+        trace_id = get_current_trace_id()
+        if trace_id:
+            http_response.headers["X-Langfuse-Trace-Id"] = trace_id
+
         try:
             retrieval_span = None
             try:
@@ -437,7 +530,9 @@ def chat(request: ChatRequest):
                         "similarity_threshold": RETRIEVAL_MIN_SIMILARITY,
                     },
                 ) as retrieval_span:
+                    retrieval_started = time.perf_counter()
                     retrieved_docs = retrieve(request.message)
+                    retrieval_latency_ms = _elapsed_ms(retrieval_started)
                     top_similarity = (
                         retrieved_docs[0].get("similarity")
                         if retrieved_docs
@@ -451,7 +546,10 @@ def chat(request: ChatRequest):
                     safe_update(
                         retrieval_span,
                         output={
-                            "document_count": len(retrieved_docs or []),
+                            **_retrieval_observation_output(
+                                retrieved_docs,
+                                retrieval_latency_ms,
+                            ),
                             "top_similarity": top_similarity,
                             "passed_threshold": passed_threshold,
                         },
@@ -509,9 +607,15 @@ def chat(request: ChatRequest):
                         "top_similarity": top_similarity,
                     },
                 )
-                return {
-                    "answer": answer
+                metrics = {
+                    "pipeline_latency_ms": _elapsed_ms(request_started),
+                    "retrieval_latency_ms": retrieval_latency_ms,
+                    "generation_latency_ms": 0.0,
+                    "document_count": len(retrieved_docs or []),
+                    "top_similarity": top_similarity,
+                    "refused": True,
                 }
+                return _chat_payload(answer, request, metrics, trace_id)
 
             context_span = None
             try:
@@ -606,15 +710,35 @@ Question:
                         "context_length": len(context),
                     },
                 ) as generation:
+                    generation_started = time.perf_counter()
                     response = client.models.generate_content(
                         model=CHAT_MODEL,
                         contents=prompt,
                     )
+                    generation_latency_ms = _elapsed_ms(generation_started)
                     answer = response.text
+                    provider_usage, langfuse_usage = _gemini_usage_details(response)
                     safe_update(
                         generation,
                         output=answer,
+                        usage_details=langfuse_usage or None,
+                        metadata={
+                            "provider": "google",
+                            "latency_ms": generation_latency_ms,
+                            **provider_usage,
+                        },
                     )
+
+                metrics = {
+                    "pipeline_latency_ms": _elapsed_ms(request_started),
+                    "retrieval_latency_ms": retrieval_latency_ms,
+                    "generation_latency_ms": generation_latency_ms,
+                    "document_count": len(retrieved_docs),
+                    "top_similarity": retrieved_docs[0].get("similarity"),
+                    "context_characters": len(context),
+                    "refused": False,
+                    **provider_usage,
+                }
 
                 safe_update(
                     trace,
@@ -625,12 +749,14 @@ Question:
                         "document_count": len(retrieved_docs),
                         "top_similarity": retrieved_docs[0].get("similarity"),
                         "context_length": len(context),
+                        "pipeline_latency_ms": metrics["pipeline_latency_ms"],
+                        "retrieval_latency_ms": retrieval_latency_ms,
+                        "generation_latency_ms": generation_latency_ms,
+                        **provider_usage,
                     },
                 )
 
-                return {
-                    "answer": answer
-                }
+                return _chat_payload(answer, request, metrics, trace_id)
 
             except Exception as exc:
                 safe_update(
@@ -659,6 +785,7 @@ Question:
                     detail=f"Gemini error: {str(exc)}"
                 )
         finally:
+            safe_end(trace)
             flush_langfuse()
 
 
