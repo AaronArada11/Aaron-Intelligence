@@ -144,8 +144,6 @@ Interactive algorithm visualization platform designed to help students and devel
 Features:
 
 - Sorting algorithm visualizations
-- Pathfinding algorithm visualizations
-- Interactive grid and wall placement
 - Adjustable animation speed
 - Real-time algorithm execution
 

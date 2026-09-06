@@ -1,9 +1,9 @@
 # Certifications
 
-## AWS Academy Generative AI Foundations
-
-Status:
-In Progress
+## AWS Academy Graduate - Generative AI Foundations
+Date Issued: August 2026 
+Expiry Date: No Expiry
+Issued by AWS Training and Certification
 
 Skills Learned:
 - Generative AI concepts
