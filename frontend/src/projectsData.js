@@ -2,7 +2,7 @@ import { BarChart2, Bot, Languages, MirrorRectangular, Wrench } from "lucide-rea
 
 const PROJECT_IMAGE_WIDTHS = [640, 960, 1280, 1800];
 
-function projectImage(name, width, height) {
+function projectImage(name, width, height, version = "v1") {
   const variantWidths = PROJECT_IMAGE_WIDTHS.filter((variant) => variant < width);
 
   if (width <= 1800) {
@@ -15,19 +15,44 @@ function projectImage(name, width, height) {
       .sort((left, right) => left - right)
       .map(
         (variant) =>
-          `/images/projects/optimized/v1/${name}-${variant}.avif ${variant}w`,
+          `/images/projects/optimized/${version}/${name}-${variant}.avif ${variant}w`,
       )
       .join(", "),
-    imageWidth: width,
-    imageHeight: height,
-  };
-}
+      imageWidth: width,
+      imageHeight: height,
+    };
+  }
 
-export const projects = [
-  {
-    ...projectImage("kumpas", 1800, 1045),
-    name: "KUMPAS",
-    year: "2026",
+  export const projects = [
+    {
+      ...projectImage("foundry", 3420, 1914, "v2"),
+      name: "Foundry",
+      year: "2026",
+      shortDescription:
+        "Registry-driven utility platform with six tools, queued workers, object storage, container deployment, and 24 test files.",
+      description:
+        "Extensible utility platform with six registered tools spanning media downloads, document and image conversion, and QR generation. The production architecture separates web and worker processes through Redis queues and S3-compatible artifact storage.",
+      tags: ["Vite", "Python", "FastAPI", "FFmpeg", "Redis", "S3"],
+      role: "Full-stack Developer",
+      context: "Personal project",
+      category: "Developer utilities",
+      accentColor: "var(--ctp-accent)",
+      previewColor: "var(--ctp-green)",
+      imageAlt:
+        "Foundry interface showing its searchable utility catalog.",
+      highlights: [
+        "An extensible web utility platform for media downloads, file conversion, and QR generation.",
+        "Built a manifest-driven catalog where each tool automatically joins search, navigation, and routing without a manual homepage update.",
+        "Ships six registered utilities across media, document, image, and QR workflows.",
+        "Separated web and worker processes with Redis-backed queues, S3-compatible storage, Docker deployment, and 24 backend, frontend, and end-to-end test files.",
+      ],
+      icon: Wrench,
+      github: "https://github.com/AaronArada11/The-Foundry",
+    },
+    {
+      ...projectImage("kumpas", 1800, 1045),
+      name: "KUMPAS",
+      year: "2026",
     shortDescription:
       "Real-time FSL recognition across 29 gesture classes, with six-language translation from 30-frame landmark sequences.",
     description:
@@ -102,38 +127,13 @@ export const projects = [
     github: "https://github.com/Goodness-Gracious-GG/demo",
   },
   {
-    ...projectImage("aaron-toolkit", 1800, 1044),
-    name: "Aaron Toolkit",
-    year: "2026",
-    shortDescription:
-      "Registry-driven utility platform with six tools, queued workers, object storage, container deployment, and 24 test files.",
-    description:
-      "Extensible utility platform with six registered tools spanning media downloads, document and image conversion, QR generation, and schedule comparison. The production architecture separates web and worker processes through Redis queues and S3-compatible artifact storage.",
-    tags: ["Vite", "Python", "FastAPI", "FFmpeg", "Redis", "S3"],
-    role: "Full-stack Developer",
-    context: "Personal project",
-    category: "Developer utilities",
-    accentColor: "var(--ctp-accent)",
-    previewColor: "var(--ctp-green)",
-    imageAlt:
-      "Aaron Toolkit interface showing its searchable utility catalog.",
-    highlights: [
-      "An extensible web utility platform for media downloads, file conversion, QR generation, and schedule comparison.",
-      "Built a manifest-driven catalog where each tool automatically joins search, navigation, and routing without a manual homepage update.",
-      "Ships six registered utilities across media, document, image, QR, and schedule-comparison workflows.",
-      "Separated web and worker processes with Redis-backed queues, S3-compatible storage, Docker deployment, and 24 backend, frontend, and end-to-end test files.",
-    ],
-    icon: Wrench,
-    github: "https://github.com/AaronArada11/aaron-toolkit",
-  },
-  {
     ...projectImage("algo-visualizer", 3420, 1914),
     name: "AlgoVisualizer",
     year: "2026",
     shortDescription:
-      "Interactive lessons for 11 algorithms: seven sorting methods and four pathfinding strategies.",
+      "Interactive lessons for seven sorting algorithms with configurable real-time controls.",
     description:
-      "Interactive learning tool that turns 11 algorithms into step-by-step visual lessons. Learners can compare seven sorting methods and four pathfinding strategies while changing speed, array data, and traversal conditions.",
+      "Interactive learning tool that turns seven sorting algorithms into step-by-step visual lessons. Learners can compare sorting methods while changing speed and array data.",
     tags: ["React", "JavaScript", "CSS"],
     role: "Frontend Developer",
     context: "Educational project",
@@ -143,10 +143,9 @@ export const projects = [
     imageAlt:
       "AlgoVisualizer sorting interface with algorithm controls and an array of green bars.",
     highlights: [
-      "An interactive learning tool that visualizes sorting and pathfinding algorithms step by step.",
+      "An interactive learning tool that visualizes sorting algorithms step by step.",
       "Visualizes seven sorting algorithms, including merge, quick, heap, bubble, selection, radix, and insertion sort.",
-      "Demonstrates A*, Dijkstra, depth-first search, and breadth-first search with weighted grids and reconstructed paths.",
-      "Exposes comparisons, swaps, visits, and traversal order through configurable real-time animation controls.",
+      "Exposes comparisons and swaps through configurable real-time animation controls.",
     ],
     icon: BarChart2,
     github: "https://github.com/AaronArada11/AlgoVisualizer",

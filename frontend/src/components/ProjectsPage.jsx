@@ -150,7 +150,7 @@ export function ProjectsPage({ onOpenChat }) {
         <header className="projects-hero">
           <h1>Projects</h1>
           <p className="projects-hero__output">
-            {projects.length} projects · last updated August 2026
+            {projects.length} projects · last updated September 2026
           </p>
           <div className="projects-hero__rule">
             <span>
