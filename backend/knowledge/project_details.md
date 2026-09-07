@@ -1,12 +1,12 @@
-# Aaron Toolkit
+# Foundry
 
 Problem:
 
-Small online utilities are often scattered across unrelated websites with inconsistent interfaces, unclear data handling, and duplicated implementation. Aaron Toolkit was built as one extensible application where focused tools can share a catalog, interface, API, job infrastructure, and deployment model.
+Small online utilities are often scattered across unrelated websites with inconsistent interfaces, unclear data handling, and duplicated implementation. Foundry was built as one extensible application where focused tools can share a catalog, interface, API, job infrastructure, and deployment model.
 
 Repository:
 
-https://github.com/AaronArada11/aaron-toolkit
+https://github.com/AaronArada11/The-Foundry
 
 Role:
 
@@ -21,7 +21,6 @@ Architecture:
 * Production Queue: Redis
 * Production Artifact Storage: S3-compatible object storage
 * Abuse Protection: Cloudflare Turnstile
-* Browser OCR and persistence: Tesseract.js and IndexedDB
 * Packaging and Deployment: Docker / OCI image
 
 Current Tools:
@@ -48,17 +47,10 @@ Current Tools:
    * Converts text-based PDF files into editable DOCX files.
    * Uses bounded background processing and does not include OCR.
 
-6. Schedule Comparator
-   * Accepts PNG, JPEG, and WebP screenshots of class schedules.
-   * Uses browser-side Tesseract.js OCR to extract course, time, room, instructor, day, and unit data.
-   * Lets users review and correct extracted sections before comparison.
-   * Compares conflicts, school days, class time, campus time, free time, gaps, and schedule fit against preferences.
-   * Exports schedule comparisons as CSV, iCalendar, or PDF files.
-   * Persists projects and source screenshots in IndexedDB with an in-memory fallback.
 
 Registry-Driven Catalog:
 
-Aaron Toolkit is designed so a tool can be added through a manifest and feature module. The catalog then exposes that tool through search, navigation, and routing without requiring a manual homepage update.
+Foundry is designed so a tool can be added through a manifest and feature module. The catalog then exposes that tool through search, navigation, and routing without requiring a manual homepage update.
 
 This design keeps the homepage independent from individual tool implementations and makes the application easier to extend as more utilities are added.
 
@@ -78,8 +70,6 @@ The same container image supports two process types:
 * Worker process: executes background jobs.
 
 Production deployments require Redis, S3-compatible object storage, and Cloudflare Turnstile.
-
-Production media and PDF jobs use bounded execution, private artifact storage, short-lived pre-signed download URLs, and cleanup of temporary inputs. The Schedule Comparator does not use the server job queue because its OCR and comparison workflow runs client-side.
 
 Testing:
 
@@ -108,19 +98,12 @@ Why S3-compatible storage?
 * Artifact storage can scale independently from the application containers.
 * The architecture is portable across S3-compatible providers.
 
-Why a client-side Schedule Comparator?
-
-* OCR and comparison can happen in the browser without sending schedule screenshots to the backend.
-* IndexedDB preserves projects and source images between sessions when browser storage is available.
-* Exporting CSV, iCalendar, and PDF makes the comparison useful beyond the web interface.
 
 Key Learnings:
 
 * Designing extensible, registry-driven applications
 * Separating request handling from background processing
 * Media conversion with FFmpeg
-* Browser OCR and client-side data workflows
-* Schedule comparison and calendar export
 * Redis-backed job queues
 * S3-compatible artifact storage
 * Docker and multi-process production deployment
@@ -130,7 +113,7 @@ Key Learnings:
 
 Impact:
 
-Aaron Toolkit demonstrates Aaron's ability to turn several practical utilities into a coherent product rather than a collection of disconnected scripts. It highlights full-stack architecture, modular feature design, browser OCR, background processing, media and document workflows, testing, and production infrastructure.
+Foundry demonstrates Aaron's ability to turn several practical utilities into a coherent product rather than a collection of disconnected scripts. It highlights full-stack architecture, modular feature design, background processing, media and document workflows, testing, and production infrastructure.
 
 
 # Aaron Intelligence

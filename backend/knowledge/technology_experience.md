@@ -330,24 +330,6 @@ Key Learnings:
 * Multi-process deployment models
 * Environment-based production configuration
 
-# Browser OCR and Storage
-
-Used In:
-
-* Foundry
-
-Technologies:
-
-* Tesseract.js
-* IndexedDB
-* jsPDF
-
-Applications:
-
-* Extracting schedule data from screenshots in the browser
-* Persisting schedule projects and source images locally
-* Exporting schedule comparisons to PDF
-
 # Convex
 
 Used In:
