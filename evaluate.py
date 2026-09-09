@@ -19,7 +19,7 @@ import sys
 import time
 import zipfile
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree as ET
@@ -35,6 +35,7 @@ DEFAULT_DELAY_SECONDS = 65.0
 DEFAULT_RUN_DELAY_SECONDS = 900.0
 DEFAULT_BACKOFF_INITIAL_SECONDS = 60.0
 DEFAULT_BACKOFF_MAX_SECONDS = 900.0
+OUTPUT_DATE_TEMPLATE = "YYYY-MM-DD"
 
 CSV_COLUMNS = [
     "Run Number",
@@ -217,7 +218,11 @@ def parse_args() -> Config:
     parser.add_argument(
         "--output-dir",
         default=os.getenv("EVAL_OUTPUT_DIR", str(DEFAULT_OUTPUT_DIR)),
-        help="Directory for results.csv, results.json, and summary.json.",
+        help=(
+            "Directory for results.csv, results.json, and summary.json. A "
+            "YYYY-MM-DD placeholder reuses a compatible dated evaluation, "
+            "preferring unfinished progress, or uses today's date for a new one."
+        ),
     )
     parser.add_argument(
         "--chat-url",
@@ -552,6 +557,114 @@ def completed_keys(results: list[dict[str, Any]]) -> set[tuple[int, int]]:
     return keys
 
 
+def resolve_output_dir(
+    config: Config,
+    question_count: int,
+    *,
+    today: date | None = None,
+) -> Path:
+    """Resolve a dated output template to a compatible existing evaluation."""
+    requested = config.output_dir
+    if OUTPUT_DATE_TEMPLATE not in str(requested):
+        return requested
+
+    current_date = today or datetime.now().date()
+    new_output_dir = Path(
+        str(requested).replace(OUTPUT_DATE_TEMPLATE, current_date.isoformat())
+    )
+    expected_count = config.runs * question_count
+    name_pattern = re.compile(
+        "^"
+        + re.escape(requested.name).replace(
+            re.escape(OUTPUT_DATE_TEMPLATE),
+            r"\d{4}-\d{2}-\d{2}",
+        )
+        + "$"
+    )
+
+    candidates: set[Path] = set()
+    if requested.parent.is_dir():
+        candidates.update(
+            path
+            for path in requested.parent.iterdir()
+            if path.is_dir() and name_pattern.fullmatch(path.name)
+        )
+
+    compatible = compatible_output_dirs(candidates, config, question_count)
+    if not compatible and requested.is_dir():
+        # Preserve progress created by older versions that used the placeholder
+        # literally, but prefer any real dated evaluation when one exists.
+        compatible = compatible_output_dirs({requested}, config, question_count)
+
+    if not compatible:
+        return new_output_dir
+
+    unfinished = [item for item in compatible if item[0] < expected_count]
+    pool = unfinished or compatible
+    completed, _, output_dir = max(
+        pool,
+        key=lambda item: (item[0], item[1], str(item[2])),
+    )
+    state = "unfinished" if completed < expected_count else "completed"
+    print(f"Using {state} evaluation in {output_dir} ({completed}/{expected_count} complete).")
+    return output_dir
+
+
+def compatible_output_dirs(
+    candidates: set[Path],
+    config: Config,
+    question_count: int,
+) -> list[tuple[int, float, Path]]:
+    compatible = []
+    for output_dir in candidates:
+        results_path = output_dir / "results.json"
+        progress = compatible_progress(
+            results_path,
+            config,
+            question_count,
+        )
+        if progress is not None:
+            compatible.append((progress, results_path.stat().st_mtime, output_dir))
+    return compatible
+
+
+def compatible_progress(
+    results_path: Path,
+    config: Config,
+    question_count: int,
+) -> int | None:
+    if not results_path.exists():
+        return None
+
+    try:
+        with results_path.open("r", encoding="utf-8") as file:
+            payload = json.load(file)
+    except (OSError, json.JSONDecodeError):
+        return None
+
+    if not isinstance(payload, dict) or not isinstance(payload.get("results"), list):
+        return None
+
+    metadata = payload.get("metadata")
+    if not isinstance(metadata, dict):
+        metadata = {}
+
+    if metadata.get("question_count") not in (None, question_count):
+        return None
+    if metadata.get("runs") not in (None, config.runs):
+        return None
+
+    workbook = metadata.get("workbook")
+    if workbook and Path(str(workbook)).expanduser().resolve() != config.workbook:
+        return None
+
+    client_mode = metadata.get("client_mode")
+    if config.chat_url and client_mode not in (None, f"HTTP {config.chat_url}"):
+        return None
+
+    return len(completed_keys(payload["results"]))
+
+
 def replace_result(
     results: list[dict[str, Any]],
     replacement: dict[str, Any],
@@ -570,6 +683,7 @@ def replace_result(
 
 def run_evaluation(config: Config) -> dict[str, Any]:
     questions = load_questions(config.workbook)
+    config.output_dir = resolve_output_dir(config, len(questions))
     expected_count = config.runs * len(questions)
     results_path = config.output_dir / "results.json"
 

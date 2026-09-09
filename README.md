@@ -159,6 +159,10 @@ uv run python evaluate.py \
 The runner saves after every question. If Gemini returns HTTP 429 after all
 retries, the runner stops and leaves that question incomplete. Run the same
 command again after the quota resets; successful question/run pairs are skipped,
-and the interrupted question is retried. Use a new output directory when changing
-the deployment or benchmark configuration so results from different environments
-are not mixed.
+and the interrupted question is retried. The `YYYY-MM-DD` placeholder automatically
+resumes the compatible unfinished production evaluation with the most completed
+questions, even on a later date. A completed set is reused when there is no unfinished
+set, so rerunning does not accidentally start over. If no compatible evaluation
+exists, the placeholder is replaced with today's date to start a new set. Use a
+different output-directory pattern when changing the deployment or benchmark
+configuration so results from different environments are not mixed.
