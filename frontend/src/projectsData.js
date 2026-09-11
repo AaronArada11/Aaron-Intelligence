@@ -37,7 +37,7 @@ function projectImage(name, width, height, version = "v1") {
       context: "Personal project",
       category: "Developer utilities",
       accentColor: "var(--ctp-accent)",
-      previewColor: "var(--ctp-green)",
+      previewColor: "var(--ctp-accent)",
       imageAlt:
         "Foundry interface showing its searchable utility catalog.",
       highlights: [

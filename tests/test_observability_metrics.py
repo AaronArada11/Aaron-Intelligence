@@ -1,3 +1,7 @@
+import json
+from datetime import date
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 from unittest import TestCase
 
@@ -7,6 +11,7 @@ from evaluate import (
     completed_keys,
     extract_langfuse_metrics,
     replace_result,
+    resolve_output_dir,
 )
 
 
@@ -113,3 +118,129 @@ class ObservabilityMetricsTests(TestCase):
 
         self.assertEqual(results, [successful_retry])
         self.assertEqual(completed_keys(results), {(1, 2)})
+
+    def test_date_template_resumes_most_advanced_compatible_evaluation(self):
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            workbook = root / "questions.xlsx"
+            config = SimpleNamespace(
+                output_dir=root / "production-YYYY-MM-DD",
+                workbook=workbook.resolve(),
+                runs=3,
+                chat_url="https://example.com/chat",
+            )
+            older = root / "production-2026-09-05"
+            literal = root / "production-YYYY-MM-DD"
+            incompatible = root / "production-2026-09-08"
+            self.write_evaluation_results(older, workbook, runs=3, completed=18)
+            self.write_evaluation_results(literal, workbook, runs=3, completed=3)
+            self.write_evaluation_results(incompatible, workbook, runs=2, completed=30)
+
+            resolved = resolve_output_dir(
+                config,
+                65,
+                today=date(2026, 9, 9),
+            )
+
+            self.assertEqual(resolved, older)
+
+    def test_date_template_uses_today_when_no_unfinished_evaluation_exists(self):
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            config = SimpleNamespace(
+                output_dir=root / "production-YYYY-MM-DD",
+                workbook=(root / "questions.xlsx").resolve(),
+                runs=3,
+                chat_url="https://example.com/chat",
+            )
+
+            resolved = resolve_output_dir(
+                config,
+                65,
+                today=date(2026, 9, 9),
+            )
+
+            self.assertEqual(resolved, root / "production-2026-09-09")
+
+    def test_date_template_reuses_complete_evaluation_when_it_is_the_only_match(self):
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            workbook = root / "questions.xlsx"
+            config = SimpleNamespace(
+                output_dir=root / "production-YYYY-MM-DD",
+                workbook=workbook.resolve(),
+                runs=3,
+                chat_url="https://example.com/chat",
+            )
+            complete = root / "production-2026-09-05"
+            self.write_evaluation_results(complete, workbook, runs=3, completed=195)
+
+            resolved = resolve_output_dir(
+                config,
+                65,
+                today=date(2026, 9, 9),
+            )
+
+            self.assertEqual(resolved, complete)
+
+    def test_dated_evaluation_wins_over_accidental_literal_placeholder(self):
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            workbook = root / "questions.xlsx"
+            config = SimpleNamespace(
+                output_dir=root / "production-YYYY-MM-DD",
+                workbook=workbook.resolve(),
+                runs=3,
+                chat_url="https://example.com/chat",
+            )
+            complete = root / "production-2026-09-05"
+            literal = root / "production-YYYY-MM-DD"
+            self.write_evaluation_results(complete, workbook, runs=3, completed=195)
+            self.write_evaluation_results(literal, workbook, runs=3, completed=3)
+
+            resolved = resolve_output_dir(
+                config,
+                65,
+                today=date(2026, 9, 9),
+            )
+
+            self.assertEqual(resolved, complete)
+
+    def test_concrete_output_directory_is_unchanged(self):
+        config = SimpleNamespace(output_dir=Path("production-2026-09-05"))
+
+        resolved = resolve_output_dir(config, 65, today=date(2026, 9, 9))
+
+        self.assertEqual(resolved, config.output_dir)
+
+    @staticmethod
+    def write_evaluation_results(
+        output_dir: Path,
+        workbook: Path,
+        *,
+        runs: int,
+        completed: int,
+    ) -> None:
+        output_dir.mkdir()
+        results = [
+            {
+                "run_number": (index // 65) + 1,
+                "question_number": (index % 65) + 1,
+                "success": True,
+            }
+            for index in range(completed)
+        ]
+        (output_dir / "results.json").write_text(
+            json.dumps(
+                {
+                    "metadata": {
+                        "workbook": str(workbook.resolve()),
+                        "question_count": 65,
+                        "runs": runs,
+                        "client_mode": "HTTP https://example.com/chat",
+                    },
+                    "results": results,
+                }
+            ),
+            encoding="utf-8",
+        )
